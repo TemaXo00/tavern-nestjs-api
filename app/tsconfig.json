@@ -7,20 +7,11 @@
       "path": "./services/gateway"
     },
     {
-      "path": "./services/tasks"
-    },
-    {
       "path": "./libs/types"
     },
     {
-      "path": "./libs/tasks-feature"
-    },
-    {
       "path": "./libs/gateway-core"
-    },
-    {
-      "path": "./libs/dto"
-    },
+    }
   ],
   "compilerOptions": {}
 }
