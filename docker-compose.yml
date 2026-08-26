@@ -1,12 +1,12 @@
 services:
   rabbitmq:
     image: rabbitmq:4.2.4-alpine
-    container_name: rabbitmq
+    container_name: tavern-rmq
     ports:
-      - "${RMQ_PORT}:5672"
+      - "${TAVERN_RMQ_PORT}:5672"
     environment:
-      RABBITMQ_DEFAULT_USER: ${RMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RMQ_PASSWORD}
+      RABBITMQ_DEFAULT_USER: ${TAVERN_RMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${TAVERN_RMQ_PASSWORD}
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 10s
@@ -15,34 +15,39 @@ services:
 
   redis:
     image: redis:8.6.5-alpine
-    container_name: redis
+    container_name: tavern-redis
     ports:
-      - "${REDIS_PORT}:6379"
+      - "${TAVERN_REDIS_PORT}:6379"
     volumes:
       - redis_data:/data
     command: >
       redis-server
       --appendonly yes
       --maxmemory-policy allkeys-lru
-      --requirepass ${REDIS_PASSWORD}
+      --requirepass ${TAVERN_REDIS_PASSWORD}
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  db:
+  auth-db:
     image: postgres:18.4-alpine
-    container_name: db
+    container_name: tavern-auth-db
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${TAVERN_AUTH_DB_NAME}
+      POSTGRES_USER: ${TAVERN_AUTH_DB_USER}
+      POSTGRES_PASSWORD: ${TAVERN_AUTH_DB_PASSWORD}
     ports:
-      - "${DB_PORT}:5432"
+      - "${TAVERN_DB_PORT}:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${TAVERN_AUTH_DB_USER} -d ${TAVERN_AUTH_DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
-      - db_data:/var/lib/postrgesql
+      - auth_db_data:/var/lib/postrgesql
 
 volumes:
   redis_data:
-  db_data:
+  auth_db_data:
