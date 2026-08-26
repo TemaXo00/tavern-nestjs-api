@@ -9,7 +9,12 @@
     "all:dev": "nx run-many -t serve",
     "all:build": "nx run-many -t build",
     "all:lint": "nx run-many -t lint",
-    "all:lint-fix": "nx run-many -t lint --fix"
+    "all:lint-fix": "nx run-many -t lint --fix",
+    "auth-db:generate": "prisma generate --config libs/auth-database/prisma.config.ts",
+    "auth-db:migrate-dev": "prisma migrate dev --config libs/auth-database/prisma.config.ts",
+    "auth-db:migrate-deploy": "prisma migrate deploy --config libs/auth-database/prisma.config.ts",
+    "auth-db:migrate-reset": "prisma migrate reset --config libs/auth-database/prisma.config.ts",
+    "auth-db:studio": "prisma studio --config libs/auth-database/prisma.config.ts"
   },
   "private": true,
   "dependencies": {
@@ -22,15 +27,19 @@
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/swagger": "^11.4.7",
     "@nx/nest": "^23.1.1",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "@temaxo00/nx-nest-bootstrap": "^0.0.1",
     "amqp-connection-manager": "^5.0.0",
     "amqplib": "^2.0.1",
+    "axios": "^1.6.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "express-rate-limit": "^8.6.2",
     "helmet": "^8.3.0",
+    "prisma": "^7.9.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0"
   },
