@@ -21,9 +21,6 @@
     {
       "path": "./libs/dto"
     },
-    {
-      "path": "./libs/config-bootstrap"
-    }
   ],
   "compilerOptions": {}
 }

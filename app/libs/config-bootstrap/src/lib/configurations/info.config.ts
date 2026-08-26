@@ -1,4 +1,0 @@
-export const SWAGGER_PATH = 'api/docs';
-export const AUTHOR_GITHUB = 'https://github.com/TemaXo00';
-export const AUTHOR_MAIL = 'melnikov.artem294@gmail.com';
-export const AUTHOR_NAME = 'TemaXo00';
