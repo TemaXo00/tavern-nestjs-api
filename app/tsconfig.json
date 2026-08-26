@@ -11,6 +11,18 @@
     },
     {
       "path": "./libs/gateway-core"
+    },
+    {
+      "path": "./services/auth"
+    },
+    {
+      "path": "./libs/dto"
+    },
+    {
+      "path": "./libs/auth-feature"
+    },
+    {
+      "path": "./libs/auth-database"
     }
   ],
   "compilerOptions": {}
