@@ -1,0 +1,115 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  email         String  @unique
+  password_hash String? @db.Text
+
+  role          Roles     @default(USER)
+  is_active     Boolean   @default(true)
+  is_blocked    Boolean   @default(false)
+  blocked_until DateTime?
+  block_reason  String?
+
+  sessions       Session[]
+  oauth_accounts OAuthAccount[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+  @@index([is_active])
+  @@index([blocked_until])
+  @@map("users")
+}
+
+model Session {
+  id String @id @default(uuid(7))
+
+  refresh_token_hash String @db.Text
+
+  local_name String?
+  device     String
+  browser    String
+  os         String
+  ip         String
+
+  user    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String? @db.Uuid
+
+  expires_at DateTime
+  is_active  Boolean  @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id])
+  @@index([expires_at])
+  @@index([is_active])
+  @@map("sessions")
+}
+
+model OAuthAccount {
+  id      String @id @default(uuid(7)) @db.Uuid
+
+  provider    OAuthProviders
+  provider_id String
+  email       String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user_id String @db.Uuid
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([provider, provider_id])
+  @@index([user_id])
+  @@index([provider])
+  @@index([provider_id])
+  @@map("oauth_accounts")
+}
+
+model Token {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  email      String
+  token_hash String     @unique
+  state      TokenState @default(ACTIVE)
+
+  created_at DateTime @default(now())
+  expires_at DateTime
+
+  @@index([email])
+  @@index([state])
+  @@index([expires_at])
+  @@map("tokens")
+}
+
+enum Roles {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+enum OAuthProviders {
+  GOOGLE
+  GITHUB
+  YANDEX
+}
+
+enum TokenState {
+  ACTIVE
+  REVOKED
+  USED
+  EXPIRED
+}
