@@ -1,0 +1,13 @@
+syntax = 'proto3';
+
+package auth;
+
+message HealthCheck {
+  string status = 1;
+}
+
+message Empty {}
+
+service TestService {
+  rpc GetHealth (Empty) returns (HealthCheck);
+}
