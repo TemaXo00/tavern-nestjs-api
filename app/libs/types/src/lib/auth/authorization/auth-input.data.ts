@@ -1,7 +1,7 @@
 export interface RegisterInput {
   email: string;
   password: string;
-  password_confirmation: string;
+  passwordConfirmation: string;
 }
 
 export interface LoginInput {
@@ -10,17 +10,17 @@ export interface LoginInput {
 }
 
 export interface RefreshInput {
-  refresh_token: string;
+  refreshToken: string;
 }
 
 export interface ValidateInput {
-  access_token: string;
+  accessToken: string;
 }
 
 export interface ChangePasswordInput {
-  old_password: string;
-  new_password: string;
-  new_password_confirmation: string;
+  oldPassword: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
 }
 
 export interface ForgotPasswordInput {
@@ -29,6 +29,6 @@ export interface ForgotPasswordInput {
 
 export interface ResetPasswordInput {
   token: string;
-  new_password: string;
-  new_password_confirmation: string;
+  newPassword: string;
+  newPassword_confirmation: string;
 }
