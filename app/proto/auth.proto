@@ -1,13 +1,17 @@
 syntax = 'proto3';
 
+import 'auth/authorization.proto';
+import 'shared/shared.proto';
+
 package auth;
 
-message HealthCheck {
-  string status = 1;
-}
-
-message Empty {}
-
-service TestService {
-  rpc GetHealth (Empty) returns (HealthCheck);
+service AuthService {
+  rpc Register (authorization.RegisterInput) returns (authorization.UserPayload);
+  rpc Login (authorization.LoginInput) returns (authorization.UserPayload);
+  rpc Refresh (authorization.RefreshInput) returns (authorization.UserPayload);
+  rpc Logout (authorization.RefreshInput) returns (shared.Empty);
+  rpc Validate (authorization.ValidateInput) returns (authorization.UserEntity);
+  rpc ForgotPassword (authorization.ForgotPasswordInput) returns (shared.Empty);
+  rpc ResetPassword (authorization.ResetPasswordInput) returns (shared.Empty);
+  rpc GetMe (authorization.ValidateInput) returns (authorization.UserEntity);
 }

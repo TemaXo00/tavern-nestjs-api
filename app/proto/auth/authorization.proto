@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package authorization;
+
+enum Roles {
+  USER = 0;
+  ADMIN = 1;
+  MODERATOR = 2;
+}
+
+// Input Messages
+
+message RegisterInput {
+  string email = 1;
+  string password = 2;
+  string password_confirmation = 3;
+}
+
+message LoginInput {
+  string email = 1;
+  string password = 2;
+}
+
+message RefreshInput {
+  string refresh_token = 1;
+}
+
+message ValidateInput {
+  string access_token = 1;
+}
+
+message ChangePasswordInput {
+  string old_password = 1;
+  string new_password = 2;
+  string new_password_confirmation = 3;
+}
+
+message ForgotPasswordInput {
+  string email = 1;
+}
+
+message ResetPasswordInput {
+  string token = 1;
+  string new_password = 2;
+  string new_password_confirmation = 3;
+}
+
+// Output Messages
+
+message AuthOutput {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message UserPayload {
+  string id = 1;
+  string session_id = 2;
+  Roles role = 3;
+}
+
+message UserEntity {
+  string id = 1;
+  string email = 2;
+  Roles role = 3;
+  bool is_active = 4;
+  string session_id = 5;
+  string session_name = 6;
+}
