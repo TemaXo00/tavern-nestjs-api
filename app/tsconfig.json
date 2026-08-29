@@ -23,6 +23,9 @@
     },
     {
       "path": "./libs/auth-database"
+    },
+    {
+      "path": "./libs/rmq-config"
     }
   ],
   "compilerOptions": {}
