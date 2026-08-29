@@ -9,7 +9,7 @@ export interface UserPayload {
 export interface UserEntity {
   id: string;
   email: string;
-  role: Roles
+  role: number;
   isActive: boolean;
   sessionId: string;
   sessionName: string;
