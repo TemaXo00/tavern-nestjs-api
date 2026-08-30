@@ -1,4 +1,6 @@
+import { status } from "@grpc/grpc-js";
 import { Injectable } from "@nestjs/common";
+import { RpcException } from "@nestjs/microservices";
 import * as argon2 from 'argon2'
 
 @Injectable()
@@ -10,5 +12,32 @@ export class AuthPasswordUtil {
       parallelism: 4,
       type: argon2.argon2id
     })
+  }
+
+  async validatePassword(passwordHash: string | null, inputPassword: string): Promise<void> {
+    if (!passwordHash) {
+      throw new RpcException({
+        message: 'User not found',
+        code: status.UNAUTHENTICATED
+      })
+    }
+
+    const isValid = await argon2.verify(passwordHash, inputPassword)
+
+    if (!isValid) {
+      throw new RpcException({
+        message: 'User not found',
+        code: status.UNAUTHENTICATED
+      })
+    }
+  }
+
+  validatePasswordInput(password: string, passwordConfirmation: string): void {
+    if (password !== passwordConfirmation) {
+      throw new RpcException({
+        message: 'Passwords not similar',
+        code: status.INVALID_ARGUMENT
+      })
+    }
   }
 }
