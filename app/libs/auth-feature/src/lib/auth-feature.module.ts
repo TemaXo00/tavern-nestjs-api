@@ -6,6 +6,7 @@ import { RmqModule, RmqService } from '@org/rmq-config'
 
 import { AuthFeatureController } from './auth-feature.controller';
 import { AuthFeatureService } from './auth-feature.service';
+import { AuthAuthorizeUtil } from './utils/auth.util';
 import { AuthDatabaseUtil } from './utils/database.util';
 import { AuthJWTUtil } from './utils/jwt.util';
 import { AuthMessagesUtil } from './utils/messages.util';
@@ -51,7 +52,8 @@ const queues: string[] = ['profile', 'log']
     AuthValidateUtil,
     AuthPasswordUtil,
     AuthMessagesUtil,
-    AuthJWTUtil
+    AuthJWTUtil,
+    AuthAuthorizeUtil
   ],
   exports: [],
 })
