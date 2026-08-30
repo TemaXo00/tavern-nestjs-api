@@ -29,6 +29,7 @@ export class AuthFeatureService implements AuthServiceContract {
   async Login(data: LoginInput): Promise<AuthOutput> {
     const existingUser = await this.validationUtil.validateEmailFound(data.email)
     await this.validationUtil.validateUserBlock(existingUser.id, existingUser.isBlocked, existingUser.blockedUntil, existingUser.blockReason)
+    await this.validationUtil.validateUserActive(existingUser.id, existingUser.isActive)
     await this.passwordUtil.validatePassword(existingUser.passwordHash, data.password)
     return await this.authUtil.authorizeNew(existingUser, data.session)
   }
@@ -46,7 +47,7 @@ export class AuthFeatureService implements AuthServiceContract {
 
   async Validate(data: ValidateInput): Promise<UserPayload> {
     const payload = this.jwtUtil.validateAccessToken(data.accessToken)
-    await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, 'access', data.session)
+    await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, 'access', data.session, true)
     return payload
   }
 
