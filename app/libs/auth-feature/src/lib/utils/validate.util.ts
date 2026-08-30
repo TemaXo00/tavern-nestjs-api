@@ -71,6 +71,7 @@ export class AuthValidateUtil {
 
     if (isBlocked && blockedUntil && blockReason) {
       if (blockedUntil <= date) {
+        await this.dbUtil.removeAllSessions(id)
         throw new RpcException({
           message: `User blocked until: ${blockedUntil.toDateString()}. Block reason: ${blockReason}`,
           code: status.UNAUTHENTICATED
