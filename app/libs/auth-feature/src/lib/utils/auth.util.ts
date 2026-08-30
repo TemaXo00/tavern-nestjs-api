@@ -36,7 +36,7 @@ export class AuthAuthorizeUtil {
 
   async authRefresh(data: RefreshInput): Promise<AuthOutput> {
     const token = this.jwtUtil.verifyToken(data.refreshToken)
-    const user = await this.validateSession(token.id, token.sessionId, data.refreshToken, data.session, true)
+    const user = await this.validateSession(token.id, token.sessionId, data.refreshToken, 'refresh', data.session, true)
     const { accessToken, refreshToken } = this.jwtUtil.generateTokens({
       id: token.id,
       sessionId: token.sessionId,
@@ -47,7 +47,7 @@ export class AuthAuthorizeUtil {
     return { accessToken, refreshToken}
   }
 
-  async validateSession(userId: string, sessionId: string, token: string, userSession: SessionInput, checkActive?: boolean): Promise<User> {
+  async validateSession(userId: string, sessionId: string, token: string, tokenType: 'access' | 'refresh', userSession: SessionInput, checkActive?: boolean): Promise<User> {
     const {user, session} = await this.validationUtil.validateUserWithSessionExists(userId, sessionId)
     const validateSession: SessionInput = {
       ip: session.ip,
@@ -55,7 +55,12 @@ export class AuthAuthorizeUtil {
       os: session.os,
       browser: session.browser
     }
-    await this.jwtUtil.validateRefreshToken(session.refreshTokenHash, token)
+    if (tokenType === 'access') {
+      this.jwtUtil.validateAccessToken(token)
+    }
+    else {
+      await this.jwtUtil.validateRefreshToken(session.refreshTokenHash, token)
+    }
     this.validationUtil.validateSessionsSimilar(userSession, validateSession)
     await this.validationUtil.validateUserBlock(user.id, user.isBlocked, user.blockedUntil, user.blockReason)
     if (checkActive) {

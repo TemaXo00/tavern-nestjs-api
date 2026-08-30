@@ -39,14 +39,14 @@ export class AuthFeatureService implements AuthServiceContract {
 
   async Logout(data: RefreshInput): Promise<Empty> {
     const token = this.jwtUtil.verifyToken(data.refreshToken)
-    await this.authUtil.validateSession(token.id, token.sessionId, data.refreshToken, data.session)
+    await this.authUtil.validateSession(token.id, token.sessionId, data.refreshToken, 'refresh', data.session)
     await this.dbUtil.removeSession(token.sessionId)
     return {}
   }
 
   async Validate(data: ValidateInput): Promise<UserPayload> {
     const payload = this.jwtUtil.validateAccessToken(data.accessToken)
-    await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, data.session)
+    await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, 'access', data.session)
     return payload
   }
 
