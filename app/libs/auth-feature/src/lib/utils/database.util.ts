@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AuthDatabaseService, User } from '@org/auth-database';
+import { AuthDatabaseService, Session, User } from '@org/auth-database';
 import { ROLE_TO_GRPC, UserEntity } from "@org/types";
 
 @Injectable()
@@ -31,10 +31,6 @@ export class AuthDatabaseUtil {
         sessions: {
           where: { id: sessionId },
           take: 1,
-          select: {
-            id: true,
-            localName: true
-          }
         },
       },
     });
@@ -55,6 +51,14 @@ export class AuthDatabaseUtil {
     };
   }
 
+  async getSession(userId: string, sessionId: string): Promise<Session | null> {
+    return await this.db.session.findUnique({
+      where: {
+        id: sessionId,
+        userId: userId
+      }
+    })
+  }
   // CREATE Methods
 
   async registerUser(email: string, passwordHash: string): Promise<User> {
@@ -94,6 +98,27 @@ export class AuthDatabaseUtil {
         isBlocked: false,
         blockReason: null,
         blockedUntil: null
+      }
+    })
+  }
+
+  async updateSessionToken(sessionId: string, refreshTokenHash: string): Promise<void> {
+    await this.db.session.update({
+      where: {
+        id: sessionId
+      },
+      data: {
+        refreshTokenHash
+      }
+    })
+  }
+
+  // DELETE Methods
+
+  async removeSession(sessionId: string): Promise<void> {
+    await this.db.session.delete({
+      where: {
+        id: sessionId
       }
     })
   }

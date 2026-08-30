@@ -1,9 +1,8 @@
 import { status } from '@grpc/grpc-js'
 import { Injectable } from "@nestjs/common";
-import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices'
-import { User } from '@org/auth-database';
-import { UserPayload } from '@org/types';
+import { Session, User } from '@org/auth-database';
+import { SessionInput, UserEntity, UserPayload } from '@org/types';
 import * as argon2 from 'argon2'
 
 import { AuthDatabaseUtil } from './database.util';
@@ -45,6 +44,8 @@ export class AuthValidateUtil {
   // TOKEN Validation
 
   async validateRefreshToken(tokenHash: string, token: string): Promise<void> {
+    this.jwt.verifyToken(token)
+
     const isValid = await argon2.verify(tokenHash, token)
 
     if (!isValid) {
@@ -55,35 +56,32 @@ export class AuthValidateUtil {
     }
   }
 
-  validateAccessToken(accessToken: string): UserPayload {
-    try {
-      const payload = this.jwt.verifyToken(accessToken)
+  validateAccessToken(token: string): UserPayload {
+      const payload = this.jwt.verifyToken(token)
       return {
         id: payload.id,
         sessionId: payload.sessionId,
         role: payload.role
       }
-    }
-    catch (error) {
-      let message = 'Invalid or expired access token';
-
-      if (error instanceof TokenExpiredError) {
-        message = 'Access token has expired';
-      } else if (error instanceof JsonWebTokenError) {
-        message = 'Invalid access token';
-      }
-
-      throw new RpcException({
-        message,
-        code: status.UNAUTHENTICATED,
-      });
-    }
   }
 
   // USER Validation
 
   async validateUserExists(id: string): Promise<User> {
     const user = await this.db.searchById(id)
+
+    if (!user) {
+      throw new RpcException({
+        message: 'User not found',
+        code: status.NOT_FOUND
+      })
+    }
+
+    return user
+  }
+
+  async validateUserEntityExists(id: string, sessionId: string): Promise<UserEntity> {
+    const user = await this.db.getUserEntity(id, sessionId)
 
     if (!user) {
       throw new RpcException({
@@ -103,12 +101,41 @@ export class AuthValidateUtil {
       if (user.blockedUntil <= date) {
         throw new RpcException({
           message: `User blocked until: ${user.blockedUntil.toDateString()}. Block reason: ${user.blockReason}`,
-          code: status.UNAVAILABLE
+          code: status.UNAUTHENTICATED
         })
       }
       else {
         await this.db.unblockUser(id)
       }
+    }
+  }
+
+  // SESSION Validation
+
+  async validateSessionExists(userId: string, sessionId: string): Promise<Session> {
+    const session = await this.db.getSession(userId, sessionId)
+
+    if (!session) {
+      throw new RpcException({
+        message: 'Session not found',
+        code: status.UNAUTHENTICATED
+      })
+    }
+
+    return session
+  }
+
+  validateSessionsSimilar(currSession: SessionInput, newSession: SessionInput): void {
+    if (
+      currSession.ip !== newSession.ip ||
+      currSession.device !== newSession.device ||
+      currSession.os !== newSession.os ||
+      currSession.browser !== newSession.browser
+    ) {
+      throw new RpcException({
+        message: 'Invalid session',
+        code: status.UNAUTHENTICATED,
+      });
     }
   }
 }

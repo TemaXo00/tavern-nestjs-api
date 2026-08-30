@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
+import { SessionInput, type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
 
 import { AuthAuthorizeUtil } from "./utils/auth.util";
 import { AuthDatabaseUtil } from "./utils/database.util";
+import { AuthJWTUtil } from "./utils/jwt.util";
 import { AuthPasswordUtil } from "./utils/password.util";
 import { AuthValidateUtil } from "./utils/validate.util";
 
@@ -13,7 +14,8 @@ export class AuthFeatureService implements AuthServiceContract {
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly validationUtil: AuthValidateUtil,
     private readonly passwordUtil: AuthPasswordUtil,
-    private readonly authUtil: AuthAuthorizeUtil
+    private readonly authUtil: AuthAuthorizeUtil,
+    private readonly jwtUtil: AuthJWTUtil
   ) {}
 
   async Register(data: RegisterInput): Promise<AuthOutput> {
@@ -31,27 +33,49 @@ export class AuthFeatureService implements AuthServiceContract {
     return await this.authUtil.authorizeNew(existingUser, data.session)
   }
 
-  Refresh(data: RefreshInput): Promise<AuthOutput> {
-    throw new Error("Method not implemented.");
+  async Refresh(data: RefreshInput): Promise<AuthOutput> {
+    return await this.authUtil.authRefresh(data)
   }
 
-  Logout(data: RefreshInput): Promise<Empty> {
-    throw new Error("Method not implemented.");
+  async Logout(data: RefreshInput): Promise<Empty> {
+    const token = this.jwtUtil.verifyToken(data.refreshToken)
+    const session = await this.validationUtil.validateSessionExists(token.id, token.sessionId)
+    const validateSession: SessionInput = {
+      ip: session.ip,
+      device: session.device,
+      os: session.os,
+      browser: session.browser
+    }
+    this.validationUtil.validateSessionsSimilar(data.session, validateSession)
+    await this.validationUtil.validateRefreshToken(session.refreshTokenHash, data.refreshToken)
+    await this.dbUtil.removeSession(session.id)
+    return {}
   }
 
-  Validate(data: ValidateInput): Promise<UserPayload> {
-    throw new Error("Method not implemented.");
+  async Validate(data: ValidateInput): Promise<UserPayload> {
+    const payload = this.validationUtil.validateAccessToken(data.accessToken)
+    await this.validationUtil.validateUserExists(payload.id)
+    const session = await this.validationUtil.validateSessionExists(payload.id, payload.sessionId)
+    const validateSession: SessionInput = {
+      ip: session.ip,
+      device: session.device,
+      os: session.os,
+      browser: session.browser
+    }
+    this.validationUtil.validateSessionsSimilar(data.session, validateSession)
+    return payload
   }
 
-  ForgotPassword(data: ForgotPasswordInput): Promise<Empty> {
-    throw new Error("Method not implemented.");
+  async ForgotPassword(data: ForgotPasswordInput): Promise<Empty> {
+    return {}
   }
 
-  ResetPassword(data: ResetPasswordInput): Promise<Empty> {
-    throw new Error("Method not implemented.");
+  async ResetPassword(data: ResetPasswordInput): Promise<Empty> {
+    return {}
   }
 
-  GetMe(data: ValidateInput): Promise<UserEntity> {
-    throw new Error("Method not implemented.");
+  async GetMe(data: ValidateInput): Promise<UserEntity> {
+    const payload = this.validationUtil.validateAccessToken(data.accessToken)
+    return await this.validationUtil.validateUserEntityExists(payload.id, payload.sessionId)
   }
 }

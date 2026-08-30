@@ -1,6 +1,8 @@
+import { status } from "@grpc/grpc-js";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
+import { JsonWebTokenError, JwtService, TokenExpiredError } from "@nestjs/jwt";
+import { RpcException } from "@nestjs/microservices";
 import { AuthOutput, UserPayload } from "@org/types";
 import * as argon2 from 'argon2'
 
@@ -34,7 +36,20 @@ export class AuthJWTUtil {
   }
 
   verifyToken(token: string): UserPayload & { iat: number; exp: number } {
-    return this.jwt.verify(token);
+    try {
+      return this.jwt.verify(token);
+    } catch (error) {
+      let message = 'Invalid or expired token';
+      if (error instanceof TokenExpiredError) {
+        message = 'Token has expired';
+      } else if (error instanceof JsonWebTokenError) {
+        message = 'Invalid token';
+      }
+      throw new RpcException({
+        message,
+        code: status.UNAUTHENTICATED,
+      });
+    }
   }
 
   async hashToken(token: string): Promise<string> {
