@@ -15,6 +15,18 @@ export class AuthDatabaseUtil {
     });
   }
 
+  async createSession(dto: { id: string, userId: string, device: string, browser: string, ip: string, os: string, refreshTokenHash: string, expiresAt: string }): Promise<{ sessionId: string }> {
+    const newSession = await this.db.session.create({
+      data: {
+        ...dto
+      }
+    })
+
+    return {
+      sessionId: newSession.id
+    }
+  }
+
   async updatePassword(userId: string, password: string): Promise<void> {
     await this.db.user.update({
       where: { id: userId },
