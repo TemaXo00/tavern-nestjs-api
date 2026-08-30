@@ -14,19 +14,23 @@ message RegisterInput {
   string email = 1;
   string password = 2;
   string passwordConfirmation = 3;
+  SessionInput session = 4;
 }
 
 message LoginInput {
   string email = 1;
   string password = 2;
+  SessionInput session = 3;
 }
 
 message RefreshInput {
   string refreshToken = 1;
+  SessionInput session = 2;
 }
 
 message ValidateInput {
   string accessToken = 1;
+  SessionInput session = 2;
 }
 
 message ChangePasswordInput {
@@ -43,6 +47,13 @@ message ResetPasswordInput {
   string token = 1;
   string newPassword = 2;
   string newPasswordConfirmation = 3;
+}
+
+message SessionInput {
+    string os = 1;
+    string device = 2;
+    string browser = 3;
+    string ip = 4;
 }
 
 // Output Messages
