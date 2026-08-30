@@ -18,7 +18,7 @@ export class AuthPasswordUtil {
     if (!passwordHash) {
       throw new RpcException({
         message: 'User not found',
-        code: status.UNAUTHENTICATED
+        code: status.NOT_FOUND
       })
     }
 
@@ -27,7 +27,7 @@ export class AuthPasswordUtil {
     if (!isValid) {
       throw new RpcException({
         message: 'User not found',
-        code: status.UNAUTHENTICATED
+        code: status.NOT_FOUND
       })
     }
   }
