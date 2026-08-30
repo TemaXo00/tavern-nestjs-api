@@ -1,9 +1,7 @@
-import { Roles } from '../../enums/auth.enum.js';
-
 export interface UserPayload {
   id: string;
   sessionId: string;
-  role: Roles
+  role: number;
 }
 
 export interface UserEntity {
