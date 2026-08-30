@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { SessionInput, type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
+import { ROLE_TO_GRPC, type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
 
 import { AuthAuthorizeUtil } from "./utils/auth.util";
 import { AuthDatabaseUtil } from "./utils/database.util";
@@ -28,7 +28,7 @@ export class AuthFeatureService implements AuthServiceContract {
 
   async Login(data: LoginInput): Promise<AuthOutput> {
     const existingUser = await this.validationUtil.validateEmailFound(data.email)
-    await this.validationUtil.validateUserBLock(existingUser.id)
+    await this.validationUtil.validateUserBlock(existingUser.id, existingUser.isBlocked, existingUser.blockedUntil, existingUser.blockReason)
     await this.passwordUtil.validatePassword(existingUser.passwordHash, data.password)
     return await this.authUtil.authorizeNew(existingUser, data.session)
   }
@@ -39,30 +39,14 @@ export class AuthFeatureService implements AuthServiceContract {
 
   async Logout(data: RefreshInput): Promise<Empty> {
     const token = this.jwtUtil.verifyToken(data.refreshToken)
-    const session = await this.validationUtil.validateSessionExists(token.id, token.sessionId)
-    const validateSession: SessionInput = {
-      ip: session.ip,
-      device: session.device,
-      os: session.os,
-      browser: session.browser
-    }
-    this.validationUtil.validateSessionsSimilar(data.session, validateSession)
-    await this.validationUtil.validateRefreshToken(session.refreshTokenHash, data.refreshToken)
-    await this.dbUtil.removeSession(session.id)
+    await this.authUtil.validateSession(token.id, token.sessionId, data.refreshToken, data.session)
+    await this.dbUtil.removeSession(token.sessionId)
     return {}
   }
 
   async Validate(data: ValidateInput): Promise<UserPayload> {
-    const payload = this.validationUtil.validateAccessToken(data.accessToken)
-    await this.validationUtil.validateUserExists(payload.id)
-    const session = await this.validationUtil.validateSessionExists(payload.id, payload.sessionId)
-    const validateSession: SessionInput = {
-      ip: session.ip,
-      device: session.device,
-      os: session.os,
-      browser: session.browser
-    }
-    this.validationUtil.validateSessionsSimilar(data.session, validateSession)
+    const payload = this.jwtUtil.validateAccessToken(data.accessToken)
+    await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, data.session)
     return payload
   }
 
@@ -75,7 +59,15 @@ export class AuthFeatureService implements AuthServiceContract {
   }
 
   async GetMe(data: ValidateInput): Promise<UserEntity> {
-    const payload = this.validationUtil.validateAccessToken(data.accessToken)
-    return await this.validationUtil.validateUserEntityExists(payload.id, payload.sessionId)
+    const payload = await this.Validate(data)
+    const { user, session } = await this.validationUtil.validateUserWithSessionExists(payload.id, payload.sessionId)
+    return {
+      id: user.id,
+      email: user.email,
+      role: ROLE_TO_GRPC[user.role],
+      isActive: user.isActive,
+      sessionId: session.id,
+      sessionName: session.localName ?? `Session ${session.id}`
+    }
   }
 }

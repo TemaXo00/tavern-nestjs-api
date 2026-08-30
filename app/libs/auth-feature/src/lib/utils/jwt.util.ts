@@ -60,4 +60,26 @@ export class AuthJWTUtil {
       type: argon2.argon2id
     })
   }
+
+  async validateRefreshToken(tokenHash: string, token: string): Promise<void> {
+    this.verifyToken(token)
+
+    const isValid = await argon2.verify(tokenHash, token)
+
+    if (!isValid) {
+      throw new RpcException({
+        message: 'Token invalid',
+        code: status.UNAUTHENTICATED
+      })
+    }
+  }
+
+  validateAccessToken(token: string): UserPayload {
+      const payload = this.verifyToken(token)
+      return {
+        id: payload.id,
+        sessionId: payload.sessionId,
+        role: payload.role
+      }
+  }
 }

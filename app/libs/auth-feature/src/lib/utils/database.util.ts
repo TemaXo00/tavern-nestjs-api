@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { AuthDatabaseService, Session, User } from '@org/auth-database';
-import { ROLE_TO_GRPC, UserEntity } from "@org/types";
 
 @Injectable()
 export class AuthDatabaseUtil {
@@ -8,7 +7,7 @@ export class AuthDatabaseUtil {
 
   // GET Methods
 
-  async searchByEmail(email: string): Promise<User | null> {
+  async searchUserByEmail(email: string): Promise<User | null> {
     return await this.db.user.findUnique({
         where: {
           email
@@ -16,7 +15,7 @@ export class AuthDatabaseUtil {
       })
   }
 
-  async searchById(id: string): Promise<User | null> {
+  async searchUserById(id: string): Promise<User | null> {
     return await this.db.user.findUnique({
       where: {
         id
@@ -24,7 +23,15 @@ export class AuthDatabaseUtil {
     })
   }
 
-  async getUserEntity(userId: string, sessionId: string): Promise<UserEntity | undefined> {
+  async getSessionById(sessionId: string): Promise<Session | null> {
+    return await this.db.session.findUnique({
+      where: {
+        id: sessionId,
+      }
+    })
+  }
+
+  async getUserWithSession(userId: string, sessionId: string): Promise<{user: User, session: Session} | undefined> {
     const user = await this.db.user.findUnique({
       where: { id: userId },
       include: {
@@ -39,26 +46,12 @@ export class AuthDatabaseUtil {
       return undefined;
     }
 
-    const session = user.sessions[0];
-
     return {
-      id: user.id,
-      email: user.email,
-      role: ROLE_TO_GRPC[user.role],
-      isActive: user.isActive,
-      sessionId: session.id,
-      sessionName: session.localName ?? `Session ${session.id}`,
-    };
+      user: user,
+      session: user.sessions[0]
+    }
   }
 
-  async getSession(userId: string, sessionId: string): Promise<Session | null> {
-    return await this.db.session.findUnique({
-      where: {
-        id: sessionId,
-        userId: userId
-      }
-    })
-  }
   // CREATE Methods
 
   async registerUser(email: string, passwordHash: string): Promise<User> {
@@ -80,13 +73,24 @@ export class AuthDatabaseUtil {
 
   // UPDATE Methods
 
-  async updatePassword(userId: string, password: string): Promise<void> {
+  async updateUserPassword(userId: string, password: string): Promise<void> {
     await this.db.user.update({
       where: { id: userId },
       data: {
         passwordHash: password,
       },
     });
+  }
+
+  async setUserActive(id: string): Promise<void> {
+    await this.db.user.update({
+      where: {
+        id
+      },
+      data: {
+        isActive: true
+      }
+    })
   }
 
   async unblockUser(id: string): Promise<void> {
@@ -119,6 +123,14 @@ export class AuthDatabaseUtil {
     await this.db.session.delete({
       where: {
         id: sessionId
+      }
+    })
+  }
+
+  async removeAllSessions(userId: string): Promise<void> {
+    await this.db.session.deleteMany({
+      where: {
+        userId: userId
       }
     })
   }
