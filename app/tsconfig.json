@@ -28,26 +28,14 @@
       "path": "./libs/rmq-config"
     },
     {
-      "path": "./services/log-e2e"
-    },
-    {
       "path": "./services/log"
-    },
-    {
-      "path": "./services/profile-e2e"
     },
     {
       "path": "./services/profile"
     },
     {
-      "path": "./services/mail-e2e"
-    },
-    {
       "path": "./services/mail"
     },
-    {
-      "path": "./libs/auth-mail"
-    }
   ],
   "compilerOptions": {}
 }
