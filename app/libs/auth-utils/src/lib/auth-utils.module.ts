@@ -9,6 +9,7 @@ import { AuthDatabaseUtil } from './utils/database.util';
 import { AuthJWTUtil } from './utils/jwt.util';
 import { AuthMessagesUtil } from './utils/messages.util';
 import { AuthPasswordUtil } from './utils/password.util';
+import { AuthTokenUtil } from './utils/token.util';
 import { AuthValidateUtil } from './utils/validate.util';
 
 const queues: string[] = ['profile', 'log', 'mail']
@@ -48,7 +49,8 @@ const queues: string[] = ['profile', 'log', 'mail']
     AuthJWTUtil,
     AuthMessagesUtil,
     AuthPasswordUtil,
-    AuthValidateUtil
+    AuthValidateUtil,
+    AuthTokenUtil
   ],
   exports: [
     AuthAuthorizeUtil,
@@ -56,7 +58,8 @@ const queues: string[] = ['profile', 'log', 'mail']
     AuthJWTUtil,
     AuthMessagesUtil,
     AuthPasswordUtil,
-    AuthValidateUtil
+    AuthValidateUtil,
+    AuthTokenUtil
   ],
 })
 export class AuthUtilsModule {}

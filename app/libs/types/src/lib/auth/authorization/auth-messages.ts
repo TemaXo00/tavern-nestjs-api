@@ -1,5 +1,5 @@
-export interface AuthCreatedMessage  {
+export interface AuthRegisteredMessage  {
   id: string;
   email: string;
-  createdAt: string
+  createdAt: Date
 }

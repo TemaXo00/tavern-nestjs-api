@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AuthDatabaseService, Session, User } from '@org/auth-database';
+import { AuthDatabaseService, Session, Token, TokenState, User } from '@org/auth-database';
 
 @Injectable()
 export class AuthDatabaseUtil {
@@ -52,6 +52,17 @@ export class AuthDatabaseUtil {
     }
   }
 
+  async searchTokenByEmail(email: string): Promise<Token | null> {
+    return await this.db.token.findFirst({
+      where: {
+        email
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+  }
+
   // CREATE Methods
 
   async registerUser(email: string, passwordHash: string): Promise<User> {
@@ -71,11 +82,23 @@ export class AuthDatabaseUtil {
     })
   }
 
+  async createToken(dto: { email: string, tokenHash: string }): Promise<void> {
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 1)
+
+    await this.db.token.create({
+      data: {
+        ...dto,
+        expiresAt: expiresAt
+      }
+    })
+  }
+
   // UPDATE Methods
 
-  async updateUserPassword(userId: string, password: string): Promise<void> {
+  async updateUserPassword(userEmail: string, password: string): Promise<void> {
     await this.db.user.update({
-      where: { id: userId },
+      where: { email: userEmail },
       data: {
         passwordHash: password,
       },
@@ -113,6 +136,17 @@ export class AuthDatabaseUtil {
       },
       data: {
         refreshTokenHash
+      }
+    })
+  }
+
+  async updateTokenState(id: string, state: TokenState): Promise<void> {
+    await this.db.token.update({
+      where: {
+        id
+      },
+      data: {
+        state
       }
     })
   }

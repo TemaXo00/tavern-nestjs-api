@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AuthAuthorizeUtil, AuthDatabaseUtil, AuthJWTUtil, AuthPasswordUtil, AuthValidateUtil } from "@org/auth-utils";
+import { AuthAuthorizeUtil, AuthDatabaseUtil, AuthJWTUtil, AuthMessagesUtil, AuthPasswordUtil, AuthTokenUtil, AuthValidateUtil } from "@org/auth-utils";
 import { ROLE_TO_GRPC, type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
 
 @Injectable()
@@ -10,7 +10,9 @@ export class AuthFeatureService implements AuthServiceContract {
     private readonly validationUtil: AuthValidateUtil,
     private readonly passwordUtil: AuthPasswordUtil,
     private readonly authUtil: AuthAuthorizeUtil,
-    private readonly jwtUtil: AuthJWTUtil
+    private readonly jwtUtil: AuthJWTUtil,
+    private readonly messagesUtil: AuthMessagesUtil,
+    private readonly tokenUtil: AuthTokenUtil
   ) {}
 
   async Register(data: RegisterInput): Promise<AuthOutput> {
@@ -18,7 +20,12 @@ export class AuthFeatureService implements AuthServiceContract {
     this.passwordUtil.validatePasswordInput(data.password, data.passwordConfirmation)
     const hashedPassword = await this.passwordUtil.hashPassword(data.password)
     const newUser = await this.dbUtil.registerUser(data.email, hashedPassword)
-    return await this.authUtil.authorizeNew(newUser, data.session)
+    const { accessToken, refreshToken } = await this.authUtil.authorizeNew(newUser, data.session)
+    this.messagesUtil.sendUserRegisterMessage({ id: newUser.id, email: data.email, createdAt: newUser.createdAt })
+    return {
+      accessToken,
+      refreshToken
+    }
   }
 
   async Login(data: LoginInput): Promise<AuthOutput> {
@@ -26,8 +33,12 @@ export class AuthFeatureService implements AuthServiceContract {
     await this.validationUtil.validateUserBlock(existingUser.id, existingUser.isBlocked, existingUser.blockedUntil, existingUser.blockReason)
     await this.validationUtil.validateUserActive(existingUser.id, existingUser.isActive)
     await this.passwordUtil.validatePassword(existingUser.passwordHash, data.password)
-    return await this.authUtil.authorizeNew(existingUser, data.session)
-  }
+    const { accessToken, refreshToken } = await this.authUtil.authorizeNew(existingUser, data.session)
+    this.messagesUtil.sendUserLoginMessage({ id: existingUser.id, email: existingUser.email, session: data.session })
+    return {
+      accessToken,
+      refreshToken
+    }  }
 
   async Refresh(data: RefreshInput): Promise<AuthOutput> {
     return await this.authUtil.authRefresh(data)
@@ -47,10 +58,26 @@ export class AuthFeatureService implements AuthServiceContract {
   }
 
   async ForgotPassword(data: ForgotPasswordInput): Promise<Empty> {
+    const user = await this.dbUtil.searchUserByEmail(data.email)
+    if (!user) {
+      return {}
+    }
+    if (await this.validationUtil.validateTokenExisting(data.email)) {
+      return {}
+    }
+    const { token, hashToken } = await this.tokenUtil.generateTokens()
+    await this.dbUtil.createToken({ email: data.email, tokenHash: hashToken })
+    this.messagesUtil.sendUserForgotPasswordMessage(data.email, token, hashToken)
     return {}
   }
 
   async ResetPassword(data: ResetPasswordInput): Promise<Empty> {
+    const token = await this.validationUtil.validateTokenFound(data.email)
+    this.passwordUtil.validatePasswordInput(data.newPassword, data.newPasswordConfirmation)
+    await this.tokenUtil.validateTokenHash(data.token, token.tokenHash)
+    await this.dbUtil.updateUserPassword(data.email, data.newPassword)
+    await this.dbUtil.updateTokenState(token.id, 'USED')
+    this.messagesUtil.sendUserRestorePassword({email: data.email, session: data.session})
     return {}
   }
 

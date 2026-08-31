@@ -32,9 +32,11 @@ export interface ForgotPasswordInput {
 }
 
 export interface ResetPasswordInput {
+  email: string;
   token: string;
   newPassword: string;
-  newPassword_confirmation: string;
+  newPasswordConfirmation: string;
+  session: SessionInput
 }
 
 export interface SessionInput {
