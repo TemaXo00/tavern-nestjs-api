@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { AuthRegisteredMessage, SessionInput } from "@org/types";
+import { AuthForgotPasswordMessage, AuthLogForgotPassword, AuthLoginMessage, AuthLogoutMessage, AuthMailForgotPassword, AuthRegisteredMessage, SessionInput } from "@org/types";
 
 @Injectable()
 export class AuthMessagesUtil {
@@ -17,26 +17,26 @@ export class AuthMessagesUtil {
     this.mail.emit(message, data)
   }
 
-  sendUserLoginMessage(data: { id: string, email: string, session: SessionInput }): void {
+  sendUserLoginMessage(data: AuthLoginMessage): void {
     const message = 'user.login'
     this.mail.emit(message, data)
     this.log.emit(message, data)
   }
 
-  sendUserForgotPasswordMessage(email: string, token: string, tokenHash: string): void {
+  sendUserLogoutMessage(data: AuthLogoutMessage): void {
+    const message = 'user.logout'
+    this.log.emit(message, data)
+  }
+
+  sendUserForgotPasswordMessage(data: AuthForgotPasswordMessage): void {
     const message = 'user.forgot.password'
-    this.mail.emit(message, {email: email, token: token})
-    this.log.emit(message, {email: email, tokenHash: tokenHash})
+    this.mail.emit(message, {email: data.email, token: data.token} as AuthMailForgotPassword)
+    this.log.emit(message, {email: data.email, tokenHash: data.tokenHash} as AuthLogForgotPassword)
   }
 
   sendUserRestorePassword(data: { email: string, session: SessionInput }): void {
     const message = 'user.restore.password'
     this.mail.emit(message, data)
-    this.log.emit(message, data)
-  }
-
-  sendUserLogoutMessage(data: { userId: string, sessionId: string }): void {
-    const message = 'user.logout'
     this.log.emit(message, data)
   }
 }

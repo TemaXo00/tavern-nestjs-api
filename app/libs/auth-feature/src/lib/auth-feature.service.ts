@@ -21,7 +21,7 @@ export class AuthFeatureService implements AuthServiceContract {
     const hashedPassword = await this.passwordUtil.hashPassword(data.password)
     const newUser = await this.dbUtil.registerUser(data.email, hashedPassword)
     const { accessToken, refreshToken } = await this.authUtil.authorizeNew(newUser, data.session)
-    this.messagesUtil.sendUserRegisterMessage({ id: newUser.id, email: data.email, createdAt: newUser.createdAt })
+    this.messagesUtil.sendUserRegisterMessage({ id: newUser.id, email: data.email, session: data.session, createdAt: newUser.createdAt })
     return {
       accessToken,
       refreshToken
@@ -68,7 +68,7 @@ export class AuthFeatureService implements AuthServiceContract {
     }
     const { token, hashToken } = await this.tokenUtil.generateTokens()
     await this.dbUtil.createToken({ email: data.email, tokenHash: hashToken })
-    this.messagesUtil.sendUserForgotPasswordMessage(data.email, token, hashToken)
+    this.messagesUtil.sendUserForgotPasswordMessage({email: data.email, token: token, tokenHash: hashToken })
     return {}
   }
 
