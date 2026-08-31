@@ -13,7 +13,7 @@ import { AuthMessagesUtil } from './utils/messages.util';
 import { AuthPasswordUtil } from './utils/password.util';
 import { AuthValidateUtil } from './utils/validate.util';
 
-const queues: string[] = ['profile', 'log']
+const queues: string[] = ['profile', 'log', 'mail']
 
 @Module({
   imports: [
