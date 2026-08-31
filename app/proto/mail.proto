@@ -1,0 +1,9 @@
+syntax = 'proto3';
+
+import 'shared/shared.proto';
+
+package mail;
+
+service MailService {
+    rpc Ping(shared.Empty) returns (shared.Empty);
+}

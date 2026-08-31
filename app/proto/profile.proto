@@ -1,0 +1,13 @@
+syntax = 'proto3';
+
+import 'shared/shared.proto';
+
+package profile;
+
+message HealthCheck {
+    string status = 1;
+}
+
+service TestService {
+    rpc Health(shared.Empty) returns (HealthCheck);
+}
