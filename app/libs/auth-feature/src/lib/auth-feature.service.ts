@@ -48,6 +48,7 @@ export class AuthFeatureService implements AuthServiceContract {
     const token = this.jwtUtil.verifyToken(data.refreshToken)
     await this.authUtil.validateSession(token.id, token.sessionId, data.refreshToken, 'refresh', data.session)
     await this.dbUtil.removeSession(token.sessionId)
+    this.messagesUtil.sendUserLogoutMessage({userId: token.id, sessionId: token.sessionId})
     return {}
   }
 

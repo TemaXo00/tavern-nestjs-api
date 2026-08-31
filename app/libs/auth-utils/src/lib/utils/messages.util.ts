@@ -34,4 +34,9 @@ export class AuthMessagesUtil {
     this.mail.emit(message, data)
     this.log.emit(message, data)
   }
+
+  sendUserLogoutMessage(data: { userId: string, sessionId: string }): void {
+    const message = 'user.logout'
+    this.log.emit(message, data)
+  }
 }
