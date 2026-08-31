@@ -38,6 +38,15 @@
     },
     {
       "path": "./libs/auth-utils"
+    },
+    {
+      "path": "./libs/rmq-profile-feature"
+    },
+    {
+      "path": "./libs/logs-auth"
+    },
+    {
+      "path": "./libs/mail-auth"
     }
   ],
   "compilerOptions": {}

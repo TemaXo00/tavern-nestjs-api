@@ -21,12 +21,6 @@
       "path": "../auth-utils/tsconfig.lib.json"
     },
     {
-      "path": "../rmq-config/tsconfig.lib.json"
-    },
-    {
-      "path": "../auth-database/tsconfig.lib.json"
-    },
-    {
       "path": "../types/tsconfig.lib.json"
     }
   ]
