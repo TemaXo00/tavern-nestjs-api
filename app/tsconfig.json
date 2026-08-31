@@ -36,6 +36,9 @@
     {
       "path": "./services/mail"
     },
+    {
+      "path": "./libs/auth-utils"
+    }
   ],
   "compilerOptions": {}
 }
