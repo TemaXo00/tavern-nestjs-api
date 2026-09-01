@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { AuthAuthorizeUtil, AuthCacheUtil, AuthDatabaseUtil, AuthJWTUtil, AuthMessagesUtil, AuthPasswordUtil, AuthTokenUtil, AuthValidateUtil } from "@org/auth-utils";
 import { ROLE_TO_GRPC, type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
 
+import { AuthValidateService } from "./auth-validate.service";
+
 @Injectable()
 export class AuthFeatureService implements AuthServiceContract {
 
@@ -13,7 +15,8 @@ export class AuthFeatureService implements AuthServiceContract {
     private readonly jwtUtil: AuthJWTUtil,
     private readonly messagesUtil: AuthMessagesUtil,
     private readonly tokenUtil: AuthTokenUtil,
-    private readonly cacheUtil: AuthCacheUtil
+    private readonly cacheUtil: AuthCacheUtil,
+    private readonly validation: AuthValidateService
   ) {}
 
   async Register(data: RegisterInput): Promise<AuthOutput> {
@@ -55,14 +58,7 @@ export class AuthFeatureService implements AuthServiceContract {
   }
 
   async Validate(data: ValidateInput): Promise<UserPayload> {
-    const payload = this.jwtUtil.validateAccessToken(data.accessToken)
-    const redisPayload = await this.cacheUtil.getPayload(payload.id, payload.sessionId)
-    if (redisPayload) {
-      return redisPayload
-    }
-    await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, 'access', data.session, true)
-    await this.cacheUtil.setPayload(payload)
-    return payload
+    return await this.validation.Validate(data)
   }
 
   async ForgotPassword(data: ForgotPasswordInput): Promise<Empty> {
