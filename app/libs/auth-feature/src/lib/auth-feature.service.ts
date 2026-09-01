@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AuthAuthorizeUtil, AuthDatabaseUtil, AuthJWTUtil, AuthMessagesUtil, AuthPasswordUtil, AuthTokenUtil, AuthValidateUtil } from "@org/auth-utils";
+import { AuthAuthorizeUtil, AuthCacheUtil, AuthDatabaseUtil, AuthJWTUtil, AuthMessagesUtil, AuthPasswordUtil, AuthTokenUtil, AuthValidateUtil } from "@org/auth-utils";
 import { ROLE_TO_GRPC, type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
 
 @Injectable()
@@ -12,7 +12,8 @@ export class AuthFeatureService implements AuthServiceContract {
     private readonly authUtil: AuthAuthorizeUtil,
     private readonly jwtUtil: AuthJWTUtil,
     private readonly messagesUtil: AuthMessagesUtil,
-    private readonly tokenUtil: AuthTokenUtil
+    private readonly tokenUtil: AuthTokenUtil,
+    private readonly cacheUtil: AuthCacheUtil
   ) {}
 
   async Register(data: RegisterInput): Promise<AuthOutput> {
@@ -46,6 +47,7 @@ export class AuthFeatureService implements AuthServiceContract {
 
   async Logout(data: RefreshInput): Promise<Empty> {
     const token = this.jwtUtil.verifyToken(data.refreshToken)
+    await this.cacheUtil.delPayload(token.id, token.sessionId)
     await this.authUtil.validateSession(token.id, token.sessionId, data.refreshToken, 'refresh', data.session)
     await this.dbUtil.removeSession(token.sessionId)
     this.messagesUtil.sendUserLogoutMessage({userId: token.id, sessionId: token.sessionId})
@@ -54,7 +56,12 @@ export class AuthFeatureService implements AuthServiceContract {
 
   async Validate(data: ValidateInput): Promise<UserPayload> {
     const payload = this.jwtUtil.validateAccessToken(data.accessToken)
+    const redisPayload = await this.cacheUtil.getPayload(payload.id, payload.sessionId)
+    if (redisPayload) {
+      return redisPayload
+    }
     await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, 'access', data.session, true)
+    await this.cacheUtil.setPayload(payload)
     return payload
   }
 
@@ -74,24 +81,37 @@ export class AuthFeatureService implements AuthServiceContract {
 
   async ResetPassword(data: ResetPasswordInput): Promise<Empty> {
     const token = await this.validationUtil.validateTokenFound(data.email)
+    const user = await this.validationUtil.validateEmailFound(data.email)
     this.passwordUtil.validatePasswordInput(data.newPassword, data.newPasswordConfirmation)
     await this.tokenUtil.validateTokenHash(data.token, token.tokenHash)
     await this.dbUtil.updateUserPassword(data.email, data.newPassword)
     await this.dbUtil.updateTokenState(token.id, 'USED')
+    await this.dbUtil.removeAllSessions(user.id)
     this.messagesUtil.sendUserRestorePassword({email: data.email, session: data.session})
     return {}
   }
 
   async GetMe(data: ValidateInput): Promise<UserEntity> {
-    const payload = await this.Validate(data)
-    const { user, session } = await this.validationUtil.validateUserWithSessionExists(payload.id, payload.sessionId)
-    return {
+    const payload = this.jwtUtil.validateAccessToken(data.accessToken)
+    const { user, session } = await this.validationUtil.validateUserWithSessionExists(
+      payload.id,
+      payload.sessionId,
+    )
+    await this.validationUtil.validateUserBlock(
+      user.id,
+      user.isBlocked,
+      user.blockedUntil,
+      user.blockReason,
+    )
+    await this.validationUtil.validateUserActive(user.id, user.isActive)
+    const entity = {
       id: user.id,
       email: user.email,
       role: ROLE_TO_GRPC[user.role],
       isActive: user.isActive,
       sessionId: session.id,
-      sessionName: session.localName ?? `Session ${session.id}`
+      sessionName: session.localName ?? `Session ${session.id}`,
     }
+    return entity
   }
 }
