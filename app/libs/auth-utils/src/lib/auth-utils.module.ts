@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientProviderOptions, ClientsModule } from '@nestjs/microservices';
+import { RedisModule } from '@nestjs-modules/ioredis'
 import { RmqModule, RmqService } from '@org/rmq-config'
 
 import { AuthAuthorizeUtil } from './utils/auth.util';
+import { AuthCacheUtil } from './utils/cache.util';
 import { AuthDatabaseUtil } from './utils/database.util';
 import { AuthJWTUtil } from './utils/jwt.util';
 import { AuthMessagesUtil } from './utils/messages.util';
@@ -41,6 +43,17 @@ const queues: string[] = ['profile', 'log', 'mail']
         },
       }),
     }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        type: 'single',
+        url: config.get<string>('TAVERN_REDIS_URL', 'localhost:6379'),
+        options: {
+          password: config.get<string>('TAVERN_REDIS_PASSWORD', '123456')
+        }
+      }),
+      inject: [ConfigService]
+    })
   ],
   controllers: [],
   providers: [
@@ -50,7 +63,8 @@ const queues: string[] = ['profile', 'log', 'mail']
     AuthMessagesUtil,
     AuthPasswordUtil,
     AuthValidateUtil,
-    AuthTokenUtil
+    AuthTokenUtil,
+    AuthCacheUtil
   ],
   exports: [
     AuthAuthorizeUtil,
@@ -59,7 +73,8 @@ const queues: string[] = ['profile', 'log', 'mail']
     AuthMessagesUtil,
     AuthPasswordUtil,
     AuthValidateUtil,
-    AuthTokenUtil
+    AuthTokenUtil,
+    AuthCacheUtil
   ],
 })
 export class AuthUtilsModule {}
