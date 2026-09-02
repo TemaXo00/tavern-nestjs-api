@@ -110,7 +110,6 @@ export class AuthValidateUtil {
 
   validateSessionsSimilar(currSession: SessionInput, newSession: SessionInput): void {
     if (
-      currSession.ip !== newSession.ip ||
       currSession.device !== newSession.device ||
       currSession.os !== newSession.os ||
       currSession.browser !== newSession.browser

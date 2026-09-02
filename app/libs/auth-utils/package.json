@@ -25,6 +25,8 @@
     "@org/types": "0.0.1",
     "uuid": "^14.0.2",
     "@grpc/grpc-js": "^1.14.4",
-    "argon2": "^0.45.1"
+    "argon2": "^0.45.1",
+    "@nestjs-modules/ioredis": "^2.2.2",
+    "ioredis": "^6.0.0"
   }
 }
