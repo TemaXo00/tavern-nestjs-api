@@ -33,4 +33,11 @@ export class AuthCacheUtil {
   async delPayload(userId: string, sessionId: string): Promise<void> {
     await this.cache.del(`session:${userId}:${sessionId}`)
   }
+
+  async delAllPayloads(userId: string): Promise<void> {
+    const keys = await this.cache.keys(`session:${userId}:*`)
+    if (keys.length > 0) {
+      await this.cache.del(keys)
+    }
+  }
 }
