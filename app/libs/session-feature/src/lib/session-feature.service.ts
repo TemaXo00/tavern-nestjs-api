@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { AuthValidateService } from "@org/auth-feature";
-import { AuthDatabaseUtil, AuthMessagesUtil, AuthValidateUtil } from "@org/auth-utils";
+import { AuthCacheUtil, AuthDatabaseUtil, AuthMessagesUtil, AuthValidateUtil } from "@org/auth-utils";
 import { AllMySessions, AllSessionsByUserInput, AllSessionsOutput, DeleteAllSessionsInput, DeleteSessionByIdInput, Empty, Roles, SessionLocalNameInput, SessionOutput, SessionServiceContract } from "@org/types";
 
 @Injectable()
@@ -9,11 +9,13 @@ export class SessionFeatureService implements SessionServiceContract {
     private readonly validation: AuthValidateService,
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly validateUtil: AuthValidateUtil,
-    private readonly messagesUtil: AuthMessagesUtil
+    private readonly messagesUtil: AuthMessagesUtil,
+    private readonly cacheUtil: AuthCacheUtil
   ) {}
 
   async GetSessionsByUser(data: AllSessionsByUserInput): Promise<AllSessionsOutput> {
     const payload = await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
+    await this.validateUtil.validateUserExists(data.userId)
     const sessions = await this.dbUtil.getAllSessionsByUser(data.userId)
     this.messagesUtil.sendAdminCheckUserSessions({userId: data.userId, adminId: payload.id})
     return { sessions: sessions }
@@ -35,13 +37,15 @@ export class SessionFeatureService implements SessionServiceContract {
     const payload = await this.validation.Validate(data.validation)
     this.validateUtil.validateNotCurrentSession(payload.sessionId, data.sessionId)
     await this.validateUtil.validateSessionExists(data.sessionId)
-    this.messagesUtil.sendUserDeleteSession({userId: payload.id, sessionId: data.sessionId})
+    await this.cacheUtil.delPayload(payload.id, payload.sessionId)
+    this.messagesUtil.sendUserDeleteSession({ userId: payload.id, sessionId: data.sessionId })
     return await this.dbUtil.removeSession(data.sessionId)
   }
 
   async DeleteAllSessions(data: DeleteAllSessionsInput): Promise<Empty> {
     const payload = await this.validation.Validate(data.validation)
     await this.dbUtil.removeAllSessions(payload.id)
+    await this.cacheUtil.delAllPayloads(payload.id)
     this.messagesUtil.sendUserDeleteAllSessions({ userId: payload.id })
     return {}
   }
