@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthDatabaseModule } from '@org/auth-database'
 import { AuthFeatureModule } from '@org/auth-feature'
+import { SessionFeatureModule } from '@org/session-feature'
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { AuthFeatureModule } from '@org/auth-feature'
     }),
     AuthDatabaseModule,
     AuthFeatureModule,
+    SessionFeatureModule
   ],
   controllers: [],
   providers: [],

@@ -41,6 +41,9 @@
     },
     {
       "path": "./libs/logs-auth"
+    },
+    {
+      "path": "./libs/session-feature"
     }
   ],
   "compilerOptions": {}
