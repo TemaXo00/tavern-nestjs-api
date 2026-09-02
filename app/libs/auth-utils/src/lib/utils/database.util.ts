@@ -85,7 +85,7 @@ export class AuthDatabaseUtil {
     });
   }
 
-  async createSession(dto: { id: string, userId: string, device: string, browser: string, ip: string, os: string, refreshTokenHash: string, expiresAt: string }): Promise<void> {
+  async createSession(dto: { id: string, userId: string, device: string, browser: string, ip: string, os: string, refreshTokenHash: string }): Promise<void> {
     await this.db.session.create({
       data: {
         ...dto
