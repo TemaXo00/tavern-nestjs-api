@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { AuthForgotPasswordMessage, AuthLogForgotPassword, AuthLoginMessage, AuthLogoutMessage, AuthMailForgotPassword, AuthRegisteredMessage, SessionInput } from "@org/types";
+import { AuthForgotPasswordMessage, AuthLogForgotPassword, AuthLoginMessage, AuthLogoutMessage, AuthMailForgotPassword, AuthRegisteredMessage, AuthRestorePasswordMessage, SessionCheckByAdminMessage, UserRemoveAllSessionsMessage, UserRemoveSessionMessage, UserUpdatedSessionNameMessage } from "@org/types";
 
 @Injectable()
 export class AuthMessagesUtil {
@@ -34,9 +34,29 @@ export class AuthMessagesUtil {
     this.log.emit(message, {email: data.email, tokenHash: data.tokenHash} as AuthLogForgotPassword)
   }
 
-  sendUserRestorePassword(data: { email: string, session: SessionInput }): void {
+  sendUserRestorePassword(data: AuthRestorePasswordMessage): void {
     const message = 'user.restore.password'
     this.mail.emit(message, data)
+    this.log.emit(message, data)
+  }
+
+  sendAdminCheckUserSessions(data: SessionCheckByAdminMessage): void {
+    const message = 'admin.session.check'
+    this.log.emit(message, data)
+  }
+
+  sendUserChangeLocalSessionName(data: UserUpdatedSessionNameMessage): void {
+    const message = 'user.session.name'
+    this.log.emit(message, data)
+  }
+
+  sendUserDeleteSession(data: UserRemoveSessionMessage): void {
+    const message = 'user.session.delete'
+    this.log.emit(message, data)
+  }
+
+  sendUserDeleteAllSessions(data: UserRemoveAllSessionsMessage): void {
+    const message = 'user.all.sessions.delete'
     this.log.emit(message, data)
   }
 }
