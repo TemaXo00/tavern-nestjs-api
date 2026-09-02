@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "tslib": "^2.3.0",
-    "@nestjs/common": "^11.0.0"
+    "@nestjs/common": "^11.0.0",
+    "@org/auth-feature": "0.0.1",
+    "@org/auth-utils": "0.0.1"
   }
 }
