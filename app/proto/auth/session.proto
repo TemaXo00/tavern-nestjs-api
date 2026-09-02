@@ -35,6 +35,10 @@ message DeleteSessionByIdInput {
     ValidateInput validation = 2;
 }
 
+message DeleteAllSessionsInput {
+    ValidateInput validation = 1;
+}
+
 // Output messages
 
 message SessionOutput {
@@ -50,5 +54,5 @@ message SessionOutput {
 }
 
 message AllSessionsOutput {
-    repeated SessionInput sessions = 1;
+    repeated SessionOutput sessions = 1;
 }

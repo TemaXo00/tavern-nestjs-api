@@ -22,5 +22,5 @@ service SessionService {
     rpc GetMySession (session.AllMySessions) returns (session.AllSessionsOutput);
     rpc ChangeSessionLocalName (session.SessionLocalNameInput) returns (session.SessionOutput);
     rpc DeleteSessionById (session.DeleteSessionByIdInput) returns (session.SessionOutput);
-    rpc DeleteAllSessions (session.ValidateInput) returns (shared.Empty);
+    rpc DeleteAllSessions (session.DeleteAllSessionsInput) returns (shared.Empty);
 }
