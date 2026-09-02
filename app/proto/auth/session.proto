@@ -45,9 +45,8 @@ message SessionOutput {
     string browser = 5;
     string os = 6;
     string ip = 7;
-    string expiresAt = 8;
-    bool isActive = 9;
-    string createdAt = 10;
+    string createdAt = 8;
+    string updatedAt = 9;
 }
 
 message AllSessionsOutput {
