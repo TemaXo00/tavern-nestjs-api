@@ -1,0 +1,7 @@
+# logs-auth
+
+This library was generated with [Nx](https://nx.dev).
+
+## Building
+
+Run `nx build logs-auth` to build the library.

@@ -1,6 +1,7 @@
 syntax = 'proto3';
 
 import 'auth/authorization.proto';
+import 'auth/session.proto';
 import 'shared/shared.proto';
 
 package auth;
@@ -14,4 +15,12 @@ service AuthService {
   rpc ForgotPassword (authorization.ForgotPasswordInput) returns (shared.Empty);
   rpc ResetPassword (authorization.ResetPasswordInput) returns (shared.Empty);
   rpc GetMe (authorization.ValidateInput) returns (authorization.UserEntity);
+}
+
+service SessionService {
+    rpc GetSessionsByUser (session.AllSessionsByUserInput) returns (session.AllSessionsOutput);
+    rpc GetMySession (session.AllMySessions) returns (session.AllSessionsOutput);
+    rpc ChangeSessionLocalName (session.SessionLocalNameInput) returns (session.SessionOutput);
+    rpc DeleteSessionById (session.DeleteSessionByIdInput) returns (session.SessionOutput);
+    rpc DeleteAllSessions (session.DeleteAllSessionsInput) returns (shared.Empty);
 }

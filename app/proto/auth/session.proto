@@ -1,0 +1,58 @@
+syntax = 'proto3';
+
+package session;
+
+// Input Messages
+
+message ValidateInput {
+  string accessToken = 1;
+  SessionInput session = 2;
+}
+
+message SessionInput {
+    string os = 1;
+    string device = 2;
+    string browser = 3;
+    string ip = 4;
+}
+
+message AllSessionsByUserInput {
+    string userId = 1;
+    ValidateInput validation = 2;
+}
+
+message AllMySessions {
+    ValidateInput validation = 1;
+}
+
+message SessionLocalNameInput {
+    string localName = 2;
+    ValidateInput validation = 3;
+}
+
+message DeleteSessionByIdInput {
+    string sessionId = 1;
+    ValidateInput validation = 2;
+}
+
+message DeleteAllSessionsInput {
+    ValidateInput validation = 1;
+}
+
+// Output messages
+
+message SessionOutput {
+    string id = 1;
+    string userId = 2;
+    string localName = 3;
+    string device = 4;
+    string browser = 5;
+    string os = 6;
+    string ip = 7;
+    string createdAt = 8;
+    string updatedAt = 9;
+}
+
+message AllSessionsOutput {
+    repeated SessionOutput sessions = 1;
+}

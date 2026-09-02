@@ -1,60 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-import { ClientProviderOptions, ClientsModule } from '@nestjs/microservices';
-import { RmqModule, RmqService } from '@org/rmq-config'
+import { AuthUtilsModule } from '@org/auth-utils'
 
 import { AuthFeatureController } from './auth-feature.controller';
 import { AuthFeatureService } from './auth-feature.service';
-import { AuthAuthorizeUtil } from './utils/auth.util';
-import { AuthDatabaseUtil } from './utils/database.util';
-import { AuthJWTUtil } from './utils/jwt.util';
-import { AuthMessagesUtil } from './utils/messages.util';
-import { AuthPasswordUtil } from './utils/password.util';
-import { AuthValidateUtil } from './utils/validate.util';
-
-const queues: string[] = ['profile', 'log']
+import { AuthValidateService } from './auth-validate.service';
 
 @Module({
   imports: [
-    RmqModule,
-    ClientsModule.registerAsync(
-      queues.map((queue) => ({
-        name: `${queue.toUpperCase()}_CLIENT`,
-        imports: [RmqModule],
-        useFactory: (rmq: RmqService): ClientProviderOptions => {
-          return rmq.getRmqConfig(queue)
-        },
-        inject: [RmqService]
-      }))
-    ),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('TAVERN_JWT_SECRET', 'DEFAULT_JWT_SECRET_DONT_USE_IN_PRODUCTION'),
-        signOptions: {
-          algorithm: 'HS256',
-        },
-        verifyOptions: {
-          algorithms: ['HS256'],
-          ignoreExpiration: false,
-        },
-      }),
-    }),
+    AuthUtilsModule
   ],
-  controllers: [
-    AuthFeatureController
-  ],
-  providers: [
-    AuthFeatureService,
-    AuthDatabaseUtil,
-    AuthValidateUtil,
-    AuthPasswordUtil,
-    AuthMessagesUtil,
-    AuthJWTUtil,
-    AuthAuthorizeUtil
-  ],
-  exports: [],
+  controllers: [AuthFeatureController],
+  providers: [AuthFeatureService, AuthValidateService],
+  exports: [AuthValidateService],
 })
 export class AuthFeatureModule {}

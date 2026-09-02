@@ -1,7 +1,7 @@
 import { status } from '@grpc/grpc-js'
 import { Injectable } from "@nestjs/common";
 import { RpcException } from '@nestjs/microservices'
-import { Session, User } from '@org/auth-database';
+import { Session, Token, User } from '@org/auth-database';
 import { SessionInput } from '@org/types';
 
 import { AuthDatabaseUtil } from './database.util';
@@ -110,7 +110,6 @@ export class AuthValidateUtil {
 
   validateSessionsSimilar(currSession: SessionInput, newSession: SessionInput): void {
     if (
-      currSession.ip !== newSession.ip ||
       currSession.device !== newSession.device ||
       currSession.os !== newSession.os ||
       currSession.browser !== newSession.browser
@@ -120,5 +119,40 @@ export class AuthValidateUtil {
         code: status.UNAUTHENTICATED,
       });
     }
+  }
+
+  // TOKEN Validation
+
+  async validateTokenExisting(email: string): Promise<boolean> {
+    return !!(await this.dbUtil.searchTokenByEmail(email))
+  }
+
+  async validateTokenFound(email: string): Promise<Token> {
+    const token = await this.dbUtil.searchTokenByEmail(email)
+    const date = new Date()
+
+    if (!token) {
+      throw new RpcException({
+        message: 'Token not found',
+        code: status.NOT_FOUND
+      })
+    }
+
+    if (token.state === 'USED') {
+      throw new RpcException({
+        message: 'Token already used',
+        code: status.ALREADY_EXISTS
+      })
+    }
+
+    if (token.expiresAt <= date) {
+      await this.dbUtil.updateTokenState(token.id, 'EXPIRED')
+      throw new RpcException({
+        message: 'Token expired',
+        code: status.ALREADY_EXISTS
+      })
+    }
+
+    return token
   }
 }

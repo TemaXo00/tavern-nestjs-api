@@ -28,11 +28,6 @@ message RefreshInput {
   SessionInput session = 2;
 }
 
-message ValidateInput {
-  string accessToken = 1;
-  SessionInput session = 2;
-}
-
 message ChangePasswordInput {
   string oldPassword = 1;
   string newPassword = 2;
@@ -44,9 +39,11 @@ message ForgotPasswordInput {
 }
 
 message ResetPasswordInput {
-  string token = 1;
-  string newPassword = 2;
-  string newPasswordConfirmation = 3;
+  string email = 1;
+  string token = 2;
+  string newPassword = 3;
+  string newPasswordConfirmation = 4;
+  SessionInput session = 5;
 }
 
 message SessionInput {
@@ -54,6 +51,11 @@ message SessionInput {
     string device = 2;
     string browser = 3;
     string ip = 4;
+}
+
+message ValidateInput {
+  string accessToken = 1;
+  SessionInput session = 2;
 }
 
 // Output Messages

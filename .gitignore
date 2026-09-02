@@ -65,3 +65,4 @@ temp/
 *.gz
 *.zip
 *.tar
+app/.zed/
