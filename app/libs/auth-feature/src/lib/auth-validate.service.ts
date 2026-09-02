@@ -1,6 +1,8 @@
+import { status } from '@grpc/grpc-js';
 import { Injectable } from '@nestjs/common'
+import { RpcException } from '@nestjs/microservices';
 import { AuthAuthorizeUtil, AuthCacheUtil, AuthJWTUtil } from '@org/auth-utils';
-import { UserPayload, ValidateInput } from '@org/types';
+import { ROLE_TO_GRPC, Roles, UserPayload, ValidateInput } from '@org/types';
 
 @Injectable()
 export class AuthValidateService {
@@ -19,5 +21,24 @@ export class AuthValidateService {
     await this.authUtil.validateSession(payload.id, payload.sessionId, data.accessToken, 'access', data.session, true)
     await this.cacheUtil.setPayload(payload)
     return payload
+  }
+
+  async validateWithRoles(
+    data: ValidateInput,
+    allowedRoles: Roles[],
+  ): Promise<UserPayload> {
+    const payload = await this.Validate(data);
+
+    const allowedGrpcRoles = allowedRoles.map((r) => ROLE_TO_GRPC[r]);
+
+    if (!allowedGrpcRoles.includes(payload.role)) {
+      const roleNames = allowedRoles.join(', ');
+      throw new RpcException({
+        message: `Access denied. Required roles: ${roleNames}`,
+        code: status.PERMISSION_DENIED,
+      });
+    }
+
+    return payload;
   }
 }
