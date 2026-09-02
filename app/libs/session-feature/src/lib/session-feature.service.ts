@@ -12,14 +12,14 @@ export class SessionFeatureService implements SessionServiceContract {
     private readonly messagesUtil: AuthMessagesUtil
   ) {}
 
-  async GetSessionByUser(data: AllSessionsByUserInput): Promise<AllSessionsOutput> {
+  async GetSessionsByUser(data: AllSessionsByUserInput): Promise<AllSessionsOutput> {
     const payload = await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
     const sessions = await this.dbUtil.getAllSessionsByUser(data.userId)
     this.messagesUtil.sendAdminCheckUserSessions({userId: data.userId, adminId: payload.id})
     return { sessions: sessions }
   }
 
-  async GetMySession(data: AllMySessions): Promise<AllSessionsOutput> {
+  async GetMySessions(data: AllMySessions): Promise<AllSessionsOutput> {
     const payload = await this.validation.Validate(data.validation)
     const sessions = await this.dbUtil.getAllSessionsByUser(payload.id)
     return { sessions: sessions }
