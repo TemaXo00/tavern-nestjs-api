@@ -18,6 +18,8 @@
     "tslib": "^2.3.0",
     "@nestjs/common": "^11.0.0",
     "@org/auth-feature": "0.0.1",
-    "@org/auth-utils": "0.0.1"
+    "@org/auth-utils": "0.0.1",
+    "@nestjs/microservices": "^11.2.1",
+    "@org/types": "0.0.1"
   }
 }

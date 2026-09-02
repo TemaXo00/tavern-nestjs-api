@@ -19,6 +19,7 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/microservices": "^11.2.1",
     "@org/types": "0.0.1",
-    "@org/auth-utils": "0.0.1"
+    "@org/auth-utils": "0.0.1",
+    "@grpc/grpc-js": "^1.14.4"
   }
 }
