@@ -130,6 +130,15 @@ export class AuthValidateUtil {
     }
   }
 
+  validateSessionOnCurrentUser(userId: string, idFromSession: string): void {
+    if (userId !== idFromSession) {
+      throw new RpcException({
+        message: "You can't delete this session",
+        code: status.INVALID_ARGUMENT
+      })
+    }
+  }
+
   // TOKEN Validation
 
   async validateTokenExisting(email: string): Promise<boolean> {

@@ -36,7 +36,8 @@ export class SessionFeatureService implements SessionServiceContract {
   async DeleteSessionById(data: DeleteSessionByIdInput): Promise<SessionOutput> {
     const payload = await this.validation.Validate(data.validation)
     this.validateUtil.validateNotCurrentSession(payload.sessionId, data.sessionId)
-    await this.validateUtil.validateSessionExists(data.sessionId)
+    const session = await this.validateUtil.validateSessionExists(data.sessionId)
+    this.validateUtil.validateSessionOnCurrentUser(payload.id, session.userId)
     await this.cacheUtil.delPayload(payload.id, payload.sessionId)
     this.messagesUtil.sendUserDeleteSession({ userId: payload.id, sessionId: data.sessionId })
     return await this.dbUtil.removeSession(data.sessionId)
