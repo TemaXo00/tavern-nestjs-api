@@ -9,6 +9,7 @@ export * from './lib/auth/authorization/auth-messages.js'
 // SESSION SERVICE
 export * from './lib/auth/session/session-input.data.js'
 export * from './lib/auth/session/session-output.data.js'
+export * from './lib/auth/session/session-messages.js'
 
 // ENUMS
 

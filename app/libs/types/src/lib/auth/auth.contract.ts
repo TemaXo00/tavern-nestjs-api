@@ -24,8 +24,8 @@ export interface AuthServiceContract {
 }
 
 export interface SessionServiceContract {
-  GetSessionByUser(data: AllSessionsByUserInput): Promise<AllSessionsOutput>
-  GetMySession(data: AllMySessions): Promise<AllSessionsOutput>
+  GetSessionsByUser(data: AllSessionsByUserInput): Promise<AllSessionsOutput>
+  GetMySessions(data: AllMySessions): Promise<AllSessionsOutput>
   ChangeSessionLocalName(data: SessionLocalNameInput): Promise<SessionOutput>
   DeleteSessionById(data: DeleteSessionByIdInput): Promise<SessionOutput>
   DeleteAllSessions(data: DeleteAllSessionsInput): Promise<Empty>

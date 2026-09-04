@@ -63,6 +63,17 @@ export class AuthDatabaseUtil {
     })
   }
 
+  async getAllSessionsByUser(userId: string): Promise<Session[]> {
+    const sessions = await this.db.session.findMany({
+      where: { userId },
+    });
+
+    return sessions.map((session) => ({
+      ...session,
+      localName: session.localName ?? `Session ${session.id}`,
+    }));
+  }
+
   // CREATE Methods
 
   async registerUser(email: string, passwordHash: string): Promise<User> {
@@ -74,7 +85,7 @@ export class AuthDatabaseUtil {
     });
   }
 
-  async createSession(dto: { id: string, userId: string, device: string, browser: string, ip: string, os: string, refreshTokenHash: string, expiresAt: string }): Promise<void> {
+  async createSession(dto: { id: string, userId: string, device: string, browser: string, ip: string, os: string, refreshTokenHash: string }): Promise<void> {
     await this.db.session.create({
       data: {
         ...dto
@@ -140,6 +151,17 @@ export class AuthDatabaseUtil {
     })
   }
 
+  async updateSessionLocalname(sessionId: string, localName: string): Promise<Session> {
+    return await this.db.session.update({
+      where: {
+        id: sessionId
+      },
+      data: {
+        localName
+      }
+    })
+  }
+
   async updateTokenState(id: string, state: TokenState): Promise<void> {
     await this.db.token.update({
       where: {
@@ -153,8 +175,8 @@ export class AuthDatabaseUtil {
 
   // DELETE Methods
 
-  async removeSession(sessionId: string): Promise<void> {
-    await this.db.session.delete({
+  async removeSession(sessionId: string): Promise<Session> {
+    return await this.db.session.delete({
       where: {
         id: sessionId
       }

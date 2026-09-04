@@ -83,6 +83,7 @@ export class AuthFeatureService implements AuthServiceContract {
     await this.dbUtil.updateUserPassword(data.email, data.newPassword)
     await this.dbUtil.updateTokenState(token.id, 'USED')
     await this.dbUtil.removeAllSessions(user.id)
+    await this.cacheUtil.delAllPayloads(user.id)
     this.messagesUtil.sendUserRestorePassword({email: data.email, session: data.session})
     return {}
   }

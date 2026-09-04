@@ -121,6 +121,24 @@ export class AuthValidateUtil {
     }
   }
 
+  validateNotCurrentSession(payloadSession: string, neededSession: string): void {
+    if (payloadSession === neededSession) {
+      throw new RpcException({
+        message: "You can't delete your own session. If you need, you can logout",
+        code: status.INVALID_ARGUMENT
+      })
+    }
+  }
+
+  validateSessionOnCurrentUser(userId: string, idFromSession: string): void {
+    if (userId !== idFromSession) {
+      throw new RpcException({
+        message: "You can't delete this session",
+        code: status.INVALID_ARGUMENT
+      })
+    }
+  }
+
   // TOKEN Validation
 
   async validateTokenExisting(email: string): Promise<boolean> {

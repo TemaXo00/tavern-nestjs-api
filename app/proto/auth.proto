@@ -7,19 +7,19 @@ import 'shared/shared.proto';
 package auth;
 
 service AuthService {
-  rpc Register (authorization.RegisterInput) returns (authorization.AuthOutput);
-  rpc Login (authorization.LoginInput) returns (authorization.AuthOutput);
-  rpc Refresh (authorization.RefreshInput) returns (authorization.AuthOutput);
-  rpc Logout (authorization.RefreshInput) returns (shared.Empty);
-  rpc Validate (authorization.ValidateInput) returns (authorization.UserPayload);
-  rpc ForgotPassword (authorization.ForgotPasswordInput) returns (shared.Empty);
-  rpc ResetPassword (authorization.ResetPasswordInput) returns (shared.Empty);
-  rpc GetMe (authorization.ValidateInput) returns (authorization.UserEntity);
+    rpc Register (authorization.RegisterInput) returns (authorization.AuthOutput);
+    rpc Login (authorization.LoginInput) returns (authorization.AuthOutput);
+    rpc Refresh (authorization.RefreshInput) returns (authorization.AuthOutput);
+    rpc Logout (authorization.RefreshInput) returns (shared.Empty);
+    rpc Validate (authorization.ValidateInput) returns (authorization.UserPayload);
+    rpc ForgotPassword (authorization.ForgotPasswordInput) returns (shared.Empty);
+    rpc ResetPassword (authorization.ResetPasswordInput) returns (shared.Empty);
+    rpc GetMe (authorization.ValidateInput) returns (authorization.UserEntity);
 }
 
 service SessionService {
     rpc GetSessionsByUser (session.AllSessionsByUserInput) returns (session.AllSessionsOutput);
-    rpc GetMySession (session.AllMySessions) returns (session.AllSessionsOutput);
+    rpc GetMySessions (session.AllMySessions) returns (session.AllSessionsOutput);
     rpc ChangeSessionLocalName (session.SessionLocalNameInput) returns (session.SessionOutput);
     rpc DeleteSessionById (session.DeleteSessionByIdInput) returns (session.SessionOutput);
     rpc DeleteAllSessions (session.DeleteAllSessionsInput) returns (shared.Empty);

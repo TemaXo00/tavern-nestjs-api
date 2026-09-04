@@ -28,7 +28,6 @@ export class AuthAuthorizeUtil {
       id: sessionId,
       userId: user.id,
       refreshTokenHash,
-      expiresAt: this.jwtUtil.getExpireDate(),
       ...session
     })
     return { accessToken, refreshToken}
