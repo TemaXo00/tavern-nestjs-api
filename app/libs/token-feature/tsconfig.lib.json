@@ -16,5 +16,12 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts"],
-  "references": []
+  "references": [
+    {
+      "path": "../auth-utils/tsconfig.lib.json"
+    },
+    {
+      "path": "../auth-feature/tsconfig.lib.json"
+    }
+  ]
 }
