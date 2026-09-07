@@ -2,6 +2,7 @@ syntax = 'proto3';
 
 import 'auth/authorization.proto';
 import 'auth/session.proto';
+import 'auth/token.proto';
 import 'shared/shared.proto';
 
 package auth;
@@ -23,4 +24,12 @@ service SessionService {
     rpc ChangeSessionLocalName (session.SessionLocalNameInput) returns (session.SessionOutput);
     rpc DeleteSessionById (session.DeleteSessionByIdInput) returns (session.SessionOutput);
     rpc DeleteAllSessions (session.DeleteAllSessionsInput) returns (shared.Empty);
+}
+
+service TokenService {
+    rpc GetTokensWithPagination (token.GetTokensInput) returns (token.AllTokensOutput);
+    rpc GetTokenById (token.TokenByIdInput) returns (token.TokenOutput);
+    rpc SetTokenRevoked (token.RevokeTokenInput) returns (token.TokenOutput);
+    rpc DeleteTokenById (token.DeleteTokenInput) returns (token.TokenOutput);
+    rpc DeleteAllNotActiveTokens (token.DeleteAllNotActiveTokensInput) returns (shared.Empty);
 }
