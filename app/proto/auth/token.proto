@@ -30,14 +30,14 @@ message PaginationInput {
     TokenState state = 4;
 }
 
-message TokenByIdInput {
-    ValidateInput validation = 1;
-    string id = 2;
-}
-
 message GetTokensInput {
     ValidateInput validation = 1;
     PaginationInput pagination = 2;
+}
+
+message TokenByIdInput {
+    ValidateInput validation = 1;
+    string id = 2;
 }
 
 message RevokeTokenInput {
@@ -64,6 +64,7 @@ message PaginationOutput {
     bool hasNext = 5;
     bool hasPrev = 6;
     string search = 7;
+    TokenState state = 8;
 }
 
 message TokenOutput {
