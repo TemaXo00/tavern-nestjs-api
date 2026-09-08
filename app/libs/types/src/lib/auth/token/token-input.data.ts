@@ -2,7 +2,7 @@ import { PaginationBaseInput } from "../../shared/pagination.type.js";
 import { ValidateInput } from "../authorization/auth-input.data.js";
 
 export interface TokenPaginationInput extends PaginationBaseInput {
-  state: number
+  state?: number
 }
 
 export interface GetTokensInput {
