@@ -46,6 +46,12 @@ export class AuthValidateService {
   }
 
   private validateInputFields(validation: ValidateInput): void {
+    if (!validation) {
+      throw new RpcException({
+        message: 'Validation data is required',
+        code: status.INVALID_ARGUMENT,
+      });
+    }
     this.stringUtil.validateAnyString(validation.accessToken, 'Access Token')
     this.stringUtil.validateAnyString(validation.session.browser, 'Browser')
     this.stringUtil.validateAnyString(validation.session.ip, 'IP')
