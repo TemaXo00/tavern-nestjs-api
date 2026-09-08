@@ -15,6 +15,9 @@
     }
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@nestjs/common": "^11.0.0",
+    "@grpc/grpc-js": "^1.14.4",
+    "@nestjs/microservices": "^11.2.1"
   }
 }
