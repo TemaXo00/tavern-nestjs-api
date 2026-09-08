@@ -52,6 +52,14 @@ export class AuthValidateService {
         code: status.INVALID_ARGUMENT,
       });
     }
+
+    if (!validation.session) {
+      throw new RpcException({
+        message: 'Session data is required',
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+
     this.stringUtil.validateAnyString(validation.accessToken, 'Access Token')
     this.stringUtil.validateAnyString(validation.session.browser, 'Browser')
     this.stringUtil.validateAnyString(validation.session.ip, 'IP')
