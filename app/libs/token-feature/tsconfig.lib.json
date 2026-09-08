@@ -18,6 +18,12 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
+      "path": "../auth-database/tsconfig.lib.json"
+    },
+    {
+      "path": "../types/tsconfig.lib.json"
+    },
+    {
       "path": "../auth-utils/tsconfig.lib.json"
     },
     {
