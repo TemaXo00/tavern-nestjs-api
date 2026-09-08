@@ -47,6 +47,9 @@
     },
     {
       "path": "./libs/token-feature"
+    },
+    {
+      "path": "./libs/shared-utils"
     }
   ],
   "compilerOptions": {}
