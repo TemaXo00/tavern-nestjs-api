@@ -2,6 +2,7 @@ import { status } from '@grpc/grpc-js';
 import { Injectable } from '@nestjs/common'
 import { RpcException } from '@nestjs/microservices';
 import { AuthAuthorizeUtil, AuthCacheUtil, AuthJWTUtil } from '@org/auth-utils';
+import { StringValidationUtil } from '@org/shared-utils';
 import { ROLE_TO_GRPC, Roles, UserPayload, ValidateInput } from '@org/types';
 
 @Injectable()
@@ -9,10 +10,12 @@ export class AuthValidateService {
   constructor(
     private readonly jwtUtil: AuthJWTUtil,
     private readonly cacheUtil: AuthCacheUtil,
-    private readonly authUtil: AuthAuthorizeUtil
+    private readonly authUtil: AuthAuthorizeUtil,
+    private readonly stringUtil: StringValidationUtil
   ) { }
 
   async Validate(data: ValidateInput): Promise<UserPayload> {
+    this.validateInputFields(data)
     const payload = this.jwtUtil.validateAccessToken(data.accessToken)
     const redisPayload = await this.cacheUtil.getPayload(payload.id, payload.sessionId)
     if (redisPayload) {
@@ -40,5 +43,13 @@ export class AuthValidateService {
     }
 
     return payload;
+  }
+
+  private validateInputFields(validation: ValidateInput): void {
+    this.stringUtil.validateAnyString(validation.accessToken, 'Access Token')
+    this.stringUtil.validateAnyString(validation.session.browser, 'Browser')
+    this.stringUtil.validateAnyString(validation.session.ip, 'IP')
+    this.stringUtil.validateAnyString(validation.session.device, 'Device')
+    this.stringUtil.validateAnyString(validation.session.os, 'OS')
   }
 }
