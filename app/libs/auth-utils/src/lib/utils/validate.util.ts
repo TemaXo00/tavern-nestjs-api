@@ -2,6 +2,7 @@ import { status } from '@grpc/grpc-js'
 import { Injectable } from "@nestjs/common";
 import { RpcException } from '@nestjs/microservices'
 import { Session, Token, User } from '@org/auth-database';
+import { StringValidationUtil } from '@org/shared-utils';
 import { SessionInput } from '@org/types';
 
 import { AuthDatabaseUtil } from './database.util';
@@ -10,6 +11,7 @@ import { AuthDatabaseUtil } from './database.util';
 export class AuthValidateUtil {
   constructor(
     private readonly dbUtil: AuthDatabaseUtil,
+    private readonly stringUtil: StringValidationUtil
   ) { }
 
   // EMAIL Validation
@@ -145,9 +147,19 @@ export class AuthValidateUtil {
     return !!(await this.dbUtil.searchTokenByEmail(email))
   }
 
-  async validateTokenFound(email: string): Promise<Token> {
-    const token = await this.dbUtil.searchTokenByEmail(email)
+  async validateTokenFound(value: string, format: 'email' | 'id'): Promise<Token> {
     const date = new Date()
+
+    let token: Token | null
+
+    if (format === 'id') {
+      this.stringUtil.validateId(value)
+      token = await this.dbUtil.searchTokenById(value)
+    }
+    else {
+      this.stringUtil.validateEmail(value)
+      token = await this.dbUtil.searchTokenByEmail(value)
+    }
 
     if (!token) {
       throw new RpcException({
