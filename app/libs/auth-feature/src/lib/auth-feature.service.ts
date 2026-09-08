@@ -76,7 +76,7 @@ export class AuthFeatureService implements AuthServiceContract {
   }
 
   async ResetPassword(data: ResetPasswordInput): Promise<Empty> {
-    const token = await this.validationUtil.validateTokenFound(data.email)
+    const token = await this.validationUtil.validateTokenFound(data.email, 'email')
     const user = await this.validationUtil.validateEmailFound(data.email)
     this.passwordUtil.validatePasswordInput(data.newPassword, data.newPasswordConfirmation)
     await this.tokenUtil.validateTokenHash(data.token, token.tokenHash)

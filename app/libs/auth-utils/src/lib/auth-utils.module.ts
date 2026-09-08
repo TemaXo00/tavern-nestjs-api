@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ClientProviderOptions, ClientsModule } from '@nestjs/microservices';
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { RmqModule, RmqService } from '@org/rmq-config'
+import { SharedUtilsModule } from '@org/shared-utils'
 
 import { AuthAuthorizeUtil } from './utils/auth.util';
 import { AuthCacheUtil } from './utils/cache.util';
@@ -18,6 +19,7 @@ const queues: string[] = ['profile', 'log', 'mail']
 
 @Module({
   imports: [
+    SharedUtilsModule,
     RmqModule,
     ClientsModule.registerAsync(
       queues.map((queue) => ({

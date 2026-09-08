@@ -1,11 +1,16 @@
 import { status } from "@grpc/grpc-js";
 import { Injectable } from "@nestjs/common";
 import { RpcException } from "@nestjs/microservices";
+import { StringValidationUtil } from "@org/shared-utils";
 import * as argon2 from 'argon2'
 
 @Injectable()
 export class AuthPasswordUtil {
+
+  constructor(private readonly stringUtil: StringValidationUtil) {}
+
   async hashPassword(password: string): Promise<string> {
+    this.stringUtil.validateAnyString(password, 'Password')
     return await argon2.hash(password, {
       timeCost: 3,
       memoryCost: 65536,
@@ -15,6 +20,7 @@ export class AuthPasswordUtil {
   }
 
   async validatePassword(passwordHash: string | null, inputPassword: string): Promise<void> {
+    this.stringUtil.validateAnyString(inputPassword, 'Password')
     if (!passwordHash) {
       throw new RpcException({
         message: 'User not found',
@@ -33,6 +39,8 @@ export class AuthPasswordUtil {
   }
 
   validatePasswordInput(password: string, passwordConfirmation: string): void {
+    this.stringUtil.validateAnyString(password, 'Password')
+    this.stringUtil.validateAnyString(password, 'Password Confirmation')
     if (password !== passwordConfirmation) {
       throw new RpcException({
         message: 'Passwords not similar',
