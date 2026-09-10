@@ -3,6 +3,7 @@ import { User } from "@org/auth-database";
 import { AuthOutput, RefreshInput, ROLE_TO_GRPC, SessionInput } from "@org/types";
 import { v7 as uuidv7 } from 'uuid'
 
+import { AuthCacheUtil } from "./cache.util";
 import { AuthDatabaseUtil } from "./database.util";
 import { AuthJWTUtil } from "./jwt.util";
 import { AuthValidateUtil } from "./validate.util";
@@ -13,7 +14,8 @@ export class AuthAuthorizeUtil {
   constructor(
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly jwtUtil: AuthJWTUtil,
-    private readonly validationUtil: AuthValidateUtil
+    private readonly validationUtil: AuthValidateUtil,
+    private readonly cacheUtil: AuthCacheUtil
   ) { }
 
   async authorizeNew(user: User, session: SessionInput): Promise<AuthOutput> {
@@ -43,6 +45,7 @@ export class AuthAuthorizeUtil {
     })
     const refreshTokenHash = await this.jwtUtil.hashToken(refreshToken)
     await this.dbUtil.updateSessionToken(token.sessionId, refreshTokenHash)
+    await this.cacheUtil.delPayload(token.id, token.sessionId)
     return { accessToken, refreshToken}
   }
 
