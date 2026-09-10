@@ -263,12 +263,13 @@ export class AuthDatabaseUtil {
     })
   }
 
-  async removeInactiveTokens(): Promise<void> {
-    await this.db.token.deleteMany({
+  async removeInactiveTokens(): Promise<number> {
+    const tokens = await this.db.token.deleteMany({
       where: {
         state: {not: 'ACTIVE'}
       }
     })
+    return tokens.count
   }
 
   // QUERY BUILDERS
