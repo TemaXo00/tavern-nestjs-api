@@ -6,7 +6,7 @@ config:
   protobuf:
     protoFiles:
       - type: file
-        path: ../../../proto/auth.proto
+        path: ../../../app/proto/auth.proto
   proxy:
     inherit: true
     config:
