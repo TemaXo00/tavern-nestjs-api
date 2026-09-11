@@ -7,18 +7,18 @@ grpc:
   url: localhost:5000
   method: /auth.AuthService/Login
   methodType: unary
-  protoFilePath: ../../../proto/auth.proto
+  protoFilePath: ../../../app/proto/auth.proto
   message:
     - title: message 1
       message: |-
         {
-          "email": "test@gmail.com",
-          "password": "123456",
+          "email": "{{USER_EMAIL}}",
+          "password": "{{USER_PASSWORD}}",
           "session": {
-            "device": "iPhone 18 Pro Max",
-            "ip": "127.0.0.1",
-            "os": "iOS 27",
-            "browser": "Safari 27"
+            "device": "{{USER_DEVICE}}",
+            "ip": "{{USER_IP}}",
+            "os": "{{USER_OS}}",
+            "browser": "{{USER_BROWSER}}"
           }
         }
   auth: inherit
