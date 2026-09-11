@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config'
-import { LogsAuthModule } from '@org/logs-auth'
+import { LogsCoreModule } from '@org/logs-core'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    LogsAuthModule
+    LogsCoreModule
   ],
   controllers: [],
   providers: [],

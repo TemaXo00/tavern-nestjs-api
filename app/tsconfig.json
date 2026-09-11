@@ -40,9 +40,6 @@
       "path": "./libs/auth-utils"
     },
     {
-      "path": "./libs/logs-auth"
-    },
-    {
       "path": "./libs/session-feature"
     },
     {
@@ -50,6 +47,9 @@
     },
     {
       "path": "./libs/shared-utils"
+    },
+    {
+      "path": "./libs/logs-core"
     }
   ],
   "compilerOptions": {}
