@@ -1,0 +1,31 @@
+[
+  {
+    "label": "Up Docker containers",
+    "command": "docker compose up --build -d",
+    "use_new_terminal": true,
+  },
+  {
+    "label": "Run all apps",
+    "command": "npm run all:dev",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "Fix linting",
+    "command": "npm run all:lint-fix",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "Run Auth Microservice",
+    "command": "nx serve auth",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "Run Auth DB studio",
+    "command": "npm run auth-db:studio",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  }
+]
