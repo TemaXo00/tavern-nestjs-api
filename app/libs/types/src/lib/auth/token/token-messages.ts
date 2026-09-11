@@ -1,26 +1,26 @@
 import { TokenPaginationInput } from "./token-input.data.js";
 
-export interface AdminCheckTokens {
+export interface AdminCheckTokensMessage {
   id: string,
   pagination: TokenPaginationInput
 }
 
-export interface AdminGetTokenById {
+export interface AdminGetTokenByIdMessage {
   adminId: string;
   tokenId: string;
 }
 
-export interface AdminSetTokenRevoked {
+export interface AdminSetTokenRevokedMessage {
   adminId: string;
   tokenId: string;
 }
 
-export interface AdminDeleteToken {
+export interface AdminDeleteTokenMessage {
   adminId: string;
   tokenId: string;
 }
 
-export interface AdminDeleteInactiveTokens {
+export interface AdminDeleteInactiveTokensMessage {
   adminId: string;
   tokensAmount: number;
 }

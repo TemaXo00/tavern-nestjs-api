@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { AuthForgotPasswordMessage, AuthLogForgotPassword, AuthLoginMessage, AuthLogoutMessage, AuthMailForgotPassword, AuthRegisteredMessage, AuthRestorePasswordMessage, SessionCheckByAdminMessage, UserRemoveAllSessionsMessage, UserRemoveSessionMessage, UserUpdatedSessionNameMessage } from "@org/types";
+import { AdminCheckTokensMessage, AdminDeleteInactiveTokensMessage, AdminDeleteTokenMessage, AdminGetTokenByIdMessage, AdminSetTokenRevokedMessage, AuthForgotPasswordMessage, AuthLogForgotPassword, AuthLoginMessage, AuthLogoutMessage, AuthMailForgotPassword, AUTHORIZATION_MESSAGES, AuthRegisteredMessage, AuthRestorePasswordMessage, SESSION_MESSAGES, SessionCheckByAdminMessage, TOKEN_MESSAGES, UserRemoveAllSessionsMessage, UserRemoveSessionMessage, UserUpdatedSessionNameMessage } from "@org/types";
 
 @Injectable()
 export class AuthMessagesUtil {
@@ -11,52 +11,63 @@ export class AuthMessagesUtil {
   ) {}
 
   sendUserRegisterMessage(data: AuthRegisteredMessage): void {
-    const message = 'user.registered'
-    this.profile.emit(message, data)
-    this.log.emit(message, data)
-    this.mail.emit(message, data)
+    this.profile.emit(AUTHORIZATION_MESSAGES.REGISTER, data)
+    this.log.emit(AUTHORIZATION_MESSAGES.REGISTER, data)
+    this.mail.emit(AUTHORIZATION_MESSAGES.REGISTER, data)
   }
 
   sendUserLoginMessage(data: AuthLoginMessage): void {
-    const message = 'user.login'
-    this.mail.emit(message, data)
-    this.log.emit(message, data)
+    this.mail.emit(AUTHORIZATION_MESSAGES.LOGIN, data)
+    this.log.emit(AUTHORIZATION_MESSAGES.LOGIN, data)
   }
 
   sendUserLogoutMessage(data: AuthLogoutMessage): void {
-    const message = 'user.logout'
-    this.log.emit(message, data)
+    this.log.emit(AUTHORIZATION_MESSAGES.LOGOUT, data)
   }
 
   sendUserForgotPasswordMessage(data: AuthForgotPasswordMessage): void {
-    const message = 'user.forgot.password'
-    this.mail.emit(message, {email: data.email, token: data.token} as AuthMailForgotPassword)
-    this.log.emit(message, {email: data.email, tokenHash: data.tokenHash} as AuthLogForgotPassword)
+    this.mail.emit(AUTHORIZATION_MESSAGES.FORGOT_PASSWORD, {email: data.email, token: data.token} as AuthMailForgotPassword)
+    this.log.emit(AUTHORIZATION_MESSAGES.FORGOT_PASSWORD, {email: data.email, tokenHash: data.tokenHash} as AuthLogForgotPassword)
   }
 
   sendUserRestorePassword(data: AuthRestorePasswordMessage): void {
-    const message = 'user.restore.password'
-    this.mail.emit(message, data)
-    this.log.emit(message, data)
+    this.mail.emit(AUTHORIZATION_MESSAGES.RESTORE_PASSWORD, data)
+    this.log.emit(AUTHORIZATION_MESSAGES.RESTORE_PASSWORD, data)
   }
 
   sendAdminCheckUserSessions(data: SessionCheckByAdminMessage): void {
-    const message = 'admin.session.check'
-    this.log.emit(message, data)
+    this.log.emit(SESSION_MESSAGES.CHECK, data)
   }
 
   sendUserChangeLocalSessionName(data: UserUpdatedSessionNameMessage): void {
-    const message = 'user.session.name'
-    this.log.emit(message, data)
+    this.log.emit(SESSION_MESSAGES.CHANGE_NAME, data)
   }
 
   sendUserDeleteSession(data: UserRemoveSessionMessage): void {
-    const message = 'user.session.delete'
-    this.log.emit(message, data)
+    this.log.emit(SESSION_MESSAGES.DELETE, data)
   }
 
   sendUserDeleteAllSessions(data: UserRemoveAllSessionsMessage): void {
-    const message = 'user.all.sessions.delete'
-    this.log.emit(message, data)
+    this.log.emit(SESSION_MESSAGES.ALL_DELETE, data)
+  }
+
+  sendAdminCheckTokens(data: AdminCheckTokensMessage): void {
+    this.log.emit(TOKEN_MESSAGES.CHECK, data)
+  }
+
+  sendAdminGetToken(data: AdminGetTokenByIdMessage): void {
+    this.log.emit(TOKEN_MESSAGES.BY_ID, data)
+  }
+
+  sendAdminRevokeToken(data: AdminSetTokenRevokedMessage): void {
+    this.log.emit(TOKEN_MESSAGES.REVOKE, data)
+  }
+
+  sendAdminDeleteToken(data: AdminDeleteTokenMessage): void {
+    this.log.emit(TOKEN_MESSAGES.DELETE_ONE, data)
+  }
+
+  sendAdminDeleteInactiveTokens(data: AdminDeleteInactiveTokensMessage): void {
+    this.log.emit(TOKEN_MESSAGES.INACTIVE_DELETE, data)
   }
 }

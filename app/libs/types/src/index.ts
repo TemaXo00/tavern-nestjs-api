@@ -25,3 +25,7 @@ export * from './lib/enums/auth.enum.js'
 
 export * from './lib/shared/empty.type.js'
 export * from './lib/shared/pagination.type.js'
+
+// MESSAGES
+
+export * from './lib/messages/auth.messages.js'
