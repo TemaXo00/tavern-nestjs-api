@@ -1,0 +1,25 @@
+info:
+  name: Register
+  type: grpc
+  seq: 1
+
+grpc:
+  url: localhost:5000
+  method: /auth.AuthService/Register
+  methodType: unary
+  protoFilePath: ../../../proto/auth.proto
+  message:
+    - title: message 1
+      message: |-
+        {
+          "email": "test@gmail.com",
+          "password": "123456",
+          "passwordConfirmation": "123456",
+          "session": {
+            "device": "iPhone 18 Pro Max",
+            "ip": "127.0.0.1",
+            "os": "iOS 27",
+            "browser": "Safari 27"
+          }
+        }
+  auth: inherit
