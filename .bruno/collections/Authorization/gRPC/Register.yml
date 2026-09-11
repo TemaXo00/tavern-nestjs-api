@@ -4,7 +4,7 @@ info:
   seq: 1
 
 grpc:
-  url: localhost:5000
+  url: "{{AUTH_GRPC_URL}}"
   method: /auth.AuthService/Register
   methodType: unary
   protoFilePath: ../../../app/proto/auth.proto
