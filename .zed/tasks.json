@@ -1,30 +1,72 @@
 [
   {
-    "label": "Up Docker containers",
+    "label": "DOCKER: Up containers",
     "command": "docker compose up --build -d",
     "use_new_terminal": true,
   },
   {
-    "label": "Run all apps",
+    "label": "NPM: Install deps",
+    "command": "npm ci",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "NX: Generate Nest lib",
+    "command": "npx nx g @nx/nest:lib --buildable --linter eslint --unitTestRunner none",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "NX: Generate TypeScript lib",
+    "command": "npx nx g @nx/js:lib --bundler tsc --linter eslint --unitTestRunner none --minimal",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "NX: Graph",
+    "command": "npm run nx:graph",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "NX: Clean",
+    "command": "npm run nx:clean",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "NX: Microservices DEV",
     "command": "npm run all:dev",
     "use_new_terminal": true,
     "cwd": "$ZED_WORKTREE_ROOT/app"
   },
   {
-    "label": "Fix linting",
+    "label": "LINTER: Fix",
     "command": "npm run all:lint-fix",
     "use_new_terminal": true,
     "cwd": "$ZED_WORKTREE_ROOT/app"
   },
   {
-    "label": "Run Auth Microservice",
-    "command": "nx serve auth",
+    "label": "AUTH: Service DEV",
+    "command": "npx nx serve auth",
     "use_new_terminal": true,
     "cwd": "$ZED_WORKTREE_ROOT/app"
   },
   {
-    "label": "Run Auth DB studio",
+    "label": "AUTH: DB studio",
     "command": "npm run auth-db:studio",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "AUTH: DB Apply Migrations",
+    "command": "npm run auth-db:migrate-deploy",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
+    "label": "AUTH: DB Create Migration",
+    "command": "npm run auth-db:migrate-dev",
     "use_new_terminal": true,
     "cwd": "$ZED_WORKTREE_ROOT/app"
   }
