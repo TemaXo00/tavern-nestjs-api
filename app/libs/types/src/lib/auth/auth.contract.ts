@@ -9,7 +9,7 @@ import {
 import { AuthOutput } from './authorization/auth-output.data.js';
 import { Empty } from '../shared/empty.type.js';
 import { UserEntity, UserPayload } from './authorization/auth.entity.js';
-import { AllMySessions, AllSessionsByUserInput, DeleteAllSessionsInput, DeleteSessionByIdInput, SessionLocalNameInput } from './session/session-input.data.js';
+import { AllMySessionsInput, AllSessionsByUserInput, DeleteAllSessionsInput, DeleteSessionByIdInput, SessionLocalNameInput } from './session/session-input.data.js';
 import { AllSessionsOutput, SessionOutput } from './session/session-output.data.js';
 import { DeleteAllNotActiveTokensInput, DeleteTokenInput, GetTokensInput, RevokeTokenInput, TokenByIdInput } from './token/token-input.data.js';
 import { AllTokensOutput, TokenOutput } from './token/token-output.data.js';
@@ -27,7 +27,7 @@ export interface AuthServiceContract {
 
 export interface SessionServiceContract {
   GetSessionsByUser(data: AllSessionsByUserInput): Promise<AllSessionsOutput>
-  GetMySessions(data: AllMySessions): Promise<AllSessionsOutput>
+  GetMySessions(data: AllMySessionsInput): Promise<AllSessionsOutput>
   ChangeSessionLocalName(data: SessionLocalNameInput): Promise<SessionOutput>
   DeleteSessionById(data: DeleteSessionByIdInput): Promise<SessionOutput>
   DeleteAllSessions(data: DeleteAllSessionsInput): Promise<Empty>

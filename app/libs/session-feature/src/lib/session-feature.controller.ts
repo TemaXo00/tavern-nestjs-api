@@ -3,7 +3,7 @@ import { GrpcMethod } from "@nestjs/microservices";
 
 import { SessionFeatureService } from "./session-feature.service";
 
-import type { AllMySessions, AllSessionsByUserInput, AllSessionsOutput, DeleteAllSessionsInput, DeleteSessionByIdInput, Empty, SessionLocalNameInput, SessionOutput, SessionServiceContract } from "@org/types";
+import type { AllMySessionsInput, AllSessionsByUserInput, AllSessionsOutput, DeleteAllSessionsInput, DeleteSessionByIdInput, Empty, SessionLocalNameInput, SessionOutput, SessionServiceContract } from "@org/types";
 
 @Controller()
 export class SessionFeatureController implements SessionServiceContract {
@@ -15,7 +15,7 @@ export class SessionFeatureController implements SessionServiceContract {
   }
 
   @GrpcMethod('SessionService', 'GetMySessions')
-  async GetMySessions(data: AllMySessions): Promise<AllSessionsOutput> {
+  async GetMySessions(data: AllMySessionsInput): Promise<AllSessionsOutput> {
     return await this.service.GetMySessions(data)
   }
 

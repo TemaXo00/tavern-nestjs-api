@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AuthValidateService } from "@org/auth-feature";
 import { AuthCacheUtil, AuthDatabaseUtil, AuthMessagesUtil, AuthValidateUtil } from "@org/auth-utils";
-import { AllMySessions, AllSessionsByUserInput, AllSessionsOutput, DeleteAllSessionsInput, DeleteSessionByIdInput, Empty, Roles, SessionLocalNameInput, SessionOutput, SessionServiceContract } from "@org/types";
+import { AllMySessionsInput, AllSessionsByUserInput, AllSessionsOutput, DeleteAllSessionsInput, DeleteSessionByIdInput, Empty, Roles, SessionLocalNameInput, SessionOutput, SessionServiceContract } from "@org/types";
 
 @Injectable()
 export class SessionFeatureService implements SessionServiceContract {
@@ -21,7 +21,7 @@ export class SessionFeatureService implements SessionServiceContract {
     return { sessions: sessions }
   }
 
-  async GetMySessions(data: AllMySessions): Promise<AllSessionsOutput> {
+  async GetMySessions(data: AllMySessionsInput): Promise<AllSessionsOutput> {
     const payload = await this.validation.Validate(data.validation)
     const sessions = await this.dbUtil.getAllSessionsByUser(payload.id)
     return { sessions: sessions }

@@ -5,7 +5,7 @@ export interface AllSessionsByUserInput {
   validation: ValidateInput
 }
 
-export interface AllMySessions {
+export interface AllMySessionsInput {
   validation: ValidateInput
 }
 
