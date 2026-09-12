@@ -3,6 +3,7 @@ syntax = 'proto3';
 import 'auth/authorization.proto';
 import 'auth/session.proto';
 import 'auth/token.proto';
+import 'auth/user.proto';
 import 'shared/shared.proto';
 
 package auth;
@@ -32,4 +33,17 @@ service TokenService {
     rpc SetTokenRevoked (token.RevokeTokenInput) returns (token.TokenOutput);
     rpc DeleteTokenById (token.DeleteTokenInput) returns (token.TokenOutput);
     rpc DeleteAllNotActiveTokens (token.DeleteAllNotActiveTokensInput) returns (shared.Empty);
+}
+
+service UserService {
+    rpc GetAllUsers (user.GetAllUsersInput) returns (user.PaginatedUsersOutput);
+    rpc GetUserById (user.GetUserByIdInput) returns (user.UserOutput);
+    rpc BlockUser (user.BlockUserInput) returns (user.UserOutput);
+    rpc UnblockUser (user.UnblockUserInput) returns (user.UserOutput);
+    rpc PromoteToModerator (user.PromoteToModeratorInput) returns (user.UserOutput);
+    rpc DemoteFromModerator (user.DemoteFromModeratorInput) returns (user.UserOutput);
+    rpc ChangeEmail (user.ChangeEmailInput) returns (user.UserOutput);
+    rpc ChangePassword (user.ChangePasswordInput) returns (user.UserOutput);
+    rpc SetUserInactive (user.SetUserInactiveInput) returns (shared.Empty);
+    rpc ChangeUserToActive (user.ChangeUserToActiveInput) returns (user.UserOutput);
 }
