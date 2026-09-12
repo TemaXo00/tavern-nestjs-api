@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientProviderOptions, ClientsModule } from '@nestjs/microservices';
@@ -15,8 +15,20 @@ import { AuthPasswordUtil } from './utils/password.util';
 import { AuthTokenUtil } from './utils/token.util';
 import { AuthValidateUtil } from './utils/validate.util';
 
+const UTILS = [
+  AuthAuthorizeUtil,
+  AuthDatabaseUtil,
+  AuthJWTUtil,
+  AuthMessagesUtil,
+  AuthPasswordUtil,
+  AuthValidateUtil,
+  AuthTokenUtil,
+  AuthCacheUtil
+]
+
 const queues: string[] = ['profile', 'log', 'mail']
 
+@Global()
 @Module({
   imports: [
     SharedUtilsModule,
@@ -58,25 +70,7 @@ const queues: string[] = ['profile', 'log', 'mail']
     })
   ],
   controllers: [],
-  providers: [
-    AuthAuthorizeUtil,
-    AuthDatabaseUtil,
-    AuthJWTUtil,
-    AuthMessagesUtil,
-    AuthPasswordUtil,
-    AuthValidateUtil,
-    AuthTokenUtil,
-    AuthCacheUtil
-  ],
-  exports: [
-    AuthAuthorizeUtil,
-    AuthDatabaseUtil,
-    AuthJWTUtil,
-    AuthMessagesUtil,
-    AuthPasswordUtil,
-    AuthValidateUtil,
-    AuthTokenUtil,
-    AuthCacheUtil
-  ],
+  providers: [...UTILS],
+  exports: [...UTILS],
 })
 export class AuthUtilsModule {}

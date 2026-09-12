@@ -18,6 +18,9 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
+      "path": "../auth-core/tsconfig.lib.json"
+    },
+    {
       "path": "../types/tsconfig.lib.json"
     },
     {

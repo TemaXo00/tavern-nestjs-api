@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AuthValidateService } from "@org/auth-feature";
+import { AuthValidateService } from "@org/auth-core";
 import { AuthCacheUtil, AuthDatabaseUtil, AuthMessagesUtil, AuthValidateUtil } from "@org/auth-utils";
 import { AllMySessionsInput, AllSessionsByUserInput, AllSessionsOutput, DeleteAllSessionsInput, DeleteSessionByIdInput, Empty, Roles, SessionLocalNameInput, SessionOutput, SessionServiceContract } from "@org/types";
 

@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { AuthValidateService } from "@org/auth-core";
 import { AuthAuthorizeUtil, AuthCacheUtil, AuthDatabaseUtil, AuthJWTUtil, AuthMessagesUtil, AuthPasswordUtil, AuthTokenUtil, AuthValidateUtil } from "@org/auth-utils";
 import { ROLE_TO_GRPC, type AuthOutput, type AuthServiceContract, type Empty, type ForgotPasswordInput, type LoginInput, type RefreshInput, type RegisterInput, type ResetPasswordInput, type UserEntity, type UserPayload, type ValidateInput } from "@org/types";
-
-import { AuthValidateService } from "./auth-validate.service";
 
 @Injectable()
 export class AuthFeatureService implements AuthServiceContract {

@@ -50,6 +50,9 @@
     },
     {
       "path": "./libs/logs-core"
+    },
+    {
+      "path": "./libs/auth-core"
     }
   ],
   "compilerOptions": {}

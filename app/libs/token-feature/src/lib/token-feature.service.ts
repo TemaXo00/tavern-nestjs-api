@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { AuthValidateService } from "@org/auth-core";
 import { Token } from "@org/auth-database";
-import { AuthValidateService } from "@org/auth-feature";
 import { AuthDatabaseUtil, AuthMessagesUtil, AuthValidateUtil } from "@org/auth-utils";
 import { AllTokensOutput, DeleteAllNotActiveTokensInput, DeleteTokenInput, Empty, GetTokensInput, RevokeTokenInput, Roles, TOKEN_STATE_TO_GRPC, TokenByIdInput, TokenOutput, TokenServiceContract, TokenStates } from '@org/types'
 
