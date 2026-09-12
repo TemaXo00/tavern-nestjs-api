@@ -21,7 +21,6 @@ model User {
   blockReason  String?   @map("block_reason")
 
   sessions      Session[]
-  oauthAccounts OAuthAccount[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -54,26 +53,6 @@ model Session {
   @@map("sessions")
 }
 
-model OAuthAccount {
-  id String @id @default(uuid(7)) @db.Uuid
-
-  provider   OAuthProviders
-  providerId String         @map("provider_id")
-  email      String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  userId String @map("user_id") @db.Uuid
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerId])
-  @@index([userId])
-  @@index([provider])
-  @@index([providerId])
-  @@map("oauth_accounts")
-}
-
 model Token {
   id String @id @default(uuid(7)) @db.Uuid
 
@@ -94,12 +73,6 @@ enum Roles {
   ADMIN
   MODERATOR
   USER
-}
-
-enum OAuthProviders {
-  GOOGLE
-  GITHUB
-  YANDEX
 }
 
 enum TokenState {
