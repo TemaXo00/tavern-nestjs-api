@@ -21,9 +21,6 @@
       "path": "../auth-core/tsconfig.lib.json"
     },
     {
-      "path": "../shared-utils/tsconfig.lib.json"
-    },
-    {
       "path": "../auth-utils/tsconfig.lib.json"
     },
     {

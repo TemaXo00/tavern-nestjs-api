@@ -25,9 +25,6 @@
     },
     {
       "path": "../auth-utils/tsconfig.lib.json"
-    },
-    {
-      "path": "../auth-feature/tsconfig.lib.json"
     }
   ]
 }
