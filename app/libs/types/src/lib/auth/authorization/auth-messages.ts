@@ -1,4 +1,4 @@
-import { SessionInput } from "./auth-input.data.js";
+import { SessionInput } from "../../shared/validation.type.js";
 
 export interface AuthRegisteredMessage  {
   id: string;

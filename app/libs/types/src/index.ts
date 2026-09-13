@@ -1,6 +1,5 @@
-// AUTH MICROSERVICE
+// AUTH MICROSERVICE BEGIN
 // AUTH SERVICE
-export * from './lib/auth/auth.contract.js'
 export * from './lib/auth/authorization/auth.entity.js'
 export * from './lib/auth/authorization/auth-input.data.js'
 export * from './lib/auth/authorization/auth-output.data.js'
@@ -17,6 +16,18 @@ export * from './lib/auth/token/token-input.data.js'
 export * from './lib/auth/token/token-output.data.js'
 export * from './lib/auth/token/token-messages.js'
 
+// USER SERVICE
+
+export * from './lib/auth/user/user-input.data.js'
+export * from './lib/auth/user/user-output.data.js'
+export * from './lib/auth/user/user-messages.js'
+
+// CONTRACTS
+
+export * from './lib/auth/auth.contract.js'
+
+// AUTH MICROSERVICE END
+
 // ENUMS
 
 export * from './lib/enums/auth.enum.js'
@@ -25,6 +36,7 @@ export * from './lib/enums/auth.enum.js'
 
 export * from './lib/shared/empty.type.js'
 export * from './lib/shared/pagination.type.js'
+export * from './lib/shared/validation.type.js'
 
 // MESSAGES
 

@@ -1,4 +1,4 @@
-import { ValidateInput } from "../authorization/auth-input.data.js";
+import { ValidateInput } from "../../shared/validation.type.js";
 
 export interface AllSessionsByUserInput {
   userId: string;

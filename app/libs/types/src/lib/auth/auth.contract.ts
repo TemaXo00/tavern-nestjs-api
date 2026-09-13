@@ -4,7 +4,6 @@ import {
   RefreshInput,
   RegisterInput,
   ResetPasswordInput,
-  ValidateInput,
 } from './authorization/auth-input.data.js';
 import { AuthOutput } from './authorization/auth-output.data.js';
 import { Empty } from '../shared/empty.type.js';
@@ -13,6 +12,9 @@ import { AllMySessionsInput, AllSessionsByUserInput, DeleteAllSessionsInput, Del
 import { AllSessionsOutput, SessionOutput } from './session/session-output.data.js';
 import { DeleteAllNotActiveTokensInput, DeleteTokenInput, GetTokensInput, RevokeTokenInput, TokenByIdInput } from './token/token-input.data.js';
 import { AllTokensOutput, TokenOutput } from './token/token-output.data.js';
+import { ValidateInput } from '../shared/validation.type.js';
+import { BlockUserInput, ChangeEmailInput, ChangePasswordInput, ChangeUserToActiveInput, DemoteFromModeratorInput, GetAllUsersInput, GetUserByIdInput, PromoteToModeratorInput, SetUserInactiveInput, UnblockUserInput } from './user/user-input.data.js';
+import { PaginatedUserOutput, UserOutput } from './user/user-output.data.js';
 
 export interface AuthServiceContract {
   Register(data: RegisterInput): Promise<AuthOutput>;
@@ -39,4 +41,17 @@ export interface TokenServiceContract {
   SetTokenRevoked(data: RevokeTokenInput): Promise<TokenOutput>
   DeleteTokenById(data: DeleteTokenInput): Promise<TokenOutput>
   DeleteAllNotActiveTokens(data: DeleteAllNotActiveTokensInput): Promise<Empty>
+}
+
+export interface UserServiceContract {
+  GetAllUsers(data: GetAllUsersInput): Promise<PaginatedUserOutput>
+  GetUserById(data: GetUserByIdInput): Promise<UserOutput>
+  BlockUser(data: BlockUserInput): Promise<UserOutput>
+  UnblockUser(data: UnblockUserInput): Promise<UserOutput>
+  PromoteToModerator(data: PromoteToModeratorInput): Promise<UserOutput>
+  DemoteFromModerator(data: DemoteFromModeratorInput): Promise<UserOutput>
+  ChangeEmail(data: ChangeEmailInput): Promise<UserOutput>
+  ChangePassword(data: ChangePasswordInput): Promise<UserOutput>
+  SetUserInactive(data: SetUserInactiveInput): Promise<Empty>
+  ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput>
 }
