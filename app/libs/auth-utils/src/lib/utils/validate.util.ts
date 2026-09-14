@@ -141,6 +141,18 @@ export class AuthValidateUtil {
     }
   }
 
+  async validatePermissionToDeleteSession(sessionId: string): Promise<void> {
+    const userSession = await this.validateSessionExists(sessionId)
+    const deletePermited = new Date()
+    deletePermited.setDate(deletePermited.getDate() - 1)
+    if (userSession.createdAt > deletePermited) {
+      throw new RpcException({
+        message: "You can't delete sessions",
+        code: status.PERMISSION_DENIED
+      })
+    }
+  }
+
   // TOKEN Validation
 
   async validateTokenExisting(email: string): Promise<boolean> {

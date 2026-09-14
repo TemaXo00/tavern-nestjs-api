@@ -254,6 +254,19 @@ export class AuthDatabaseUtil {
     })
   }
 
+  async removeSessionsNotIncludeCurrent(userId: string, sessionId: string): Promise<void> {
+    this.stringUtil.validateId(userId)
+    this.stringUtil.validateId(sessionId)
+    await this.db.session.deleteMany({
+      where: {
+        userId: userId,
+        NOT: {
+          id: sessionId
+        }
+      },
+    })
+  }
+
   async removeToken(id: string): Promise<Token> {
     this.stringUtil.validateId(id)
     return await this.db.token.delete({

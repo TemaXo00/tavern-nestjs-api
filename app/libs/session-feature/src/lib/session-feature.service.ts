@@ -35,9 +35,10 @@ export class SessionFeatureService implements SessionServiceContract {
 
   async DeleteSessionById(data: DeleteSessionByIdInput): Promise<SessionOutput> {
     const payload = await this.validation.Validate(data.validation)
-    this.validateUtil.validateNotCurrentSession(payload.sessionId, data.sessionId)
     const session = await this.validateUtil.validateSessionExists(data.sessionId)
     this.validateUtil.validateSessionOnCurrentUser(payload.id, session.userId)
+    await this.validateUtil.validatePermissionToDeleteSession(payload.sessionId)
+    this.validateUtil.validateNotCurrentSession(payload.sessionId, data.sessionId)
     await this.cacheUtil.delPayload(payload.id, data.sessionId)
     this.messagesUtil.sendUserDeleteSession({ userId: payload.id, sessionId: data.sessionId })
     return await this.dbUtil.removeSession(data.sessionId)
@@ -45,7 +46,8 @@ export class SessionFeatureService implements SessionServiceContract {
 
   async DeleteAllSessions(data: DeleteAllSessionsInput): Promise<Empty> {
     const payload = await this.validation.Validate(data.validation)
-    await this.dbUtil.removeAllSessions(payload.id)
+    await this.validateUtil.validatePermissionToDeleteSession(payload.sessionId)
+    await this.dbUtil.removeSessionsNotIncludeCurrent(payload.id, payload.sessionId)
     await this.cacheUtil.delAllPayloads(payload.id)
     this.messagesUtil.sendUserDeleteAllSessions({ userId: payload.id })
     return {}
