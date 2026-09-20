@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { AuthValidateService } from '@org/auth-core'
-import { User } from "@org/auth-database";
-import { AuthDatabaseUtil, AuthValidateUtil } from '@org/auth-utils'
+import { AuthDatabaseUtil, AuthMapUtil, AuthValidateUtil } from '@org/auth-utils'
 import { Roles, type BlockUserInput, type ChangeEmailInput, type ChangePasswordInput, type ChangeUserToActiveInput, type DemoteFromModeratorInput, type Empty, type GetAllUsersInput, type GetUserByIdInput, type PaginatedUserOutput, type PromoteToModeratorInput, type SetUserInactiveInput, type UnblockUserInput, type UserOutput, type UserServiceContract } from '@org/types'
 
 @Injectable()
@@ -10,6 +9,7 @@ export class UserFeatureService implements UserServiceContract {
   constructor(
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly validateUtil: AuthValidateUtil,
+    private readonly mapUtil: AuthMapUtil,
     private readonly validation: AuthValidateService
   ) { }
 
@@ -21,6 +21,7 @@ export class UserFeatureService implements UserServiceContract {
   async GetUserById(data: GetUserByIdInput): Promise<UserOutput> {
     await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
     const user = await this.validateUtil.validateUserExists(data.id)
+    return this.mapUtil.mapUser(user)
   }
 
   BlockUser(data: BlockUserInput): Promise<UserOutput> {
