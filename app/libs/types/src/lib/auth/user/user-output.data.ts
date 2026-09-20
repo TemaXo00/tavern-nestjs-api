@@ -12,8 +12,8 @@ export interface UserOutput {
   role: number
   isActive: boolean
   isBlocked: boolean
-  blockedUntil?: Date
-  blockReason?: string
+  blockedUntil: Date | null
+  blockReason: string | null
   createdAt: Date
 }
 
