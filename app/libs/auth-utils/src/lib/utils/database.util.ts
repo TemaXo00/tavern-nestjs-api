@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { AuthDatabaseService, Session, Token, TokenState, TokenWhereInput, User } from '@org/auth-database';
+import { AuthDatabaseService, Session, Token, TokenState, TokenWhereInput, User, UserWhereInput } from '@org/auth-database';
 import { PaginationUtil, StringValidationUtil } from "@org/shared-utils";
-import { AllTokensOutput, GRPC_TO_TOKEN_STATE, TOKEN_STATE_TO_GRPC, TokenPaginationInput } from "@org/types";
+import { AllTokensOutput, GRPC_TO_ROLE, GRPC_TO_TOKEN_STATE, PaginatedUserOutput, ROLE_TO_GRPC, TOKEN_STATE_TO_GRPC, TokenPaginationInput, UserPaginationInput } from "@org/types";
 
 @Injectable()
 export class AuthDatabaseUtil {
@@ -105,9 +105,9 @@ export class AuthDatabaseUtil {
       where,
       skip: params.skip,
       take: params.limit,
-      omit: { tokenHash: true}
+      omit: { tokenHash: true }
     })
-    const mappedTokens = tokens.map((token) => {return {...token, state: TOKEN_STATE_TO_GRPC[token.state]}})
+    const mappedTokens = tokens.map((token) => { return {...token, state: TOKEN_STATE_TO_GRPC[token.state]} })
     return {
       pagination: {
         ...params,
@@ -115,6 +115,27 @@ export class AuthDatabaseUtil {
         state: safePagination.state
       },
       tokens: mappedTokens
+    }
+  }
+
+  async getPaginatedUsers(pagination?: UserPaginationInput): Promise<PaginatedUserOutput> {
+    const safePagination = pagination || {}
+    const where = this.buildQueryForUser(safePagination)
+    const total = await this.db.user.count({ where })
+    const params = this.paginationUtil.getPaginationParams(total, safePagination.page, safePagination.limit)
+    const users = await this.db.user.findMany({
+      where,
+      skip: params.skip,
+      take: params.limit,
+      omit: {passwordHash: true }
+    })
+    const mappedUsers = users.map((user) => { return { ...user, role: ROLE_TO_GRPC[user.role] } })
+    return {
+      pagination: {
+        ...params,
+        ...safePagination
+      },
+      users: mappedUsers
     }
   }
 
@@ -303,5 +324,31 @@ export class AuthDatabaseUtil {
     }
 
     return where;
+  }
+
+  buildQueryForUser(query: UserPaginationInput): UserWhereInput {
+    const where: UserWhereInput = {}
+
+    if (query.search) {
+      where.OR = [
+        {
+          email: {contains: query.search, mode: 'insensitive'}
+        }
+      ]
+    }
+
+    if (query.isActive) {
+      where.isActive = query.isActive
+    }
+
+    if (query.isBlocked) {
+      where.isBlocked = query.isBlocked
+    }
+
+    if (query.role) {
+      where.role = GRPC_TO_ROLE[query.role]
+    }
+
+    return where
   }
 }
