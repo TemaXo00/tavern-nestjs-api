@@ -10,6 +10,7 @@ import { AuthAuthorizeUtil } from './utils/auth.util';
 import { AuthCacheUtil } from './utils/cache.util';
 import { AuthDatabaseUtil } from './utils/database.util';
 import { AuthJWTUtil } from './utils/jwt.util';
+import { AuthMapUtil } from './utils/map.util';
 import { AuthMessagesUtil } from './utils/messages.util';
 import { AuthPasswordUtil } from './utils/password.util';
 import { AuthTokenUtil } from './utils/token.util';
@@ -23,7 +24,8 @@ const UTILS = [
   AuthPasswordUtil,
   AuthValidateUtil,
   AuthTokenUtil,
-  AuthCacheUtil
+  AuthCacheUtil,
+  AuthMapUtil
 ]
 
 const queues: string[] = ['profile', 'log', 'mail']
