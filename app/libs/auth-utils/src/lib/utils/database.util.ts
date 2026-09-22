@@ -193,9 +193,9 @@ export class AuthDatabaseUtil {
     });
   }
 
-  async setUserActive(id: string): Promise<void> {
+  async setUserActive(id: string): Promise<User> {
     this.stringUtil.validateId(id)
-    await this.db.user.update({
+    return await this.db.user.update({
       where: {
         id
       },
@@ -243,6 +243,23 @@ export class AuthDatabaseUtil {
       data: {
         role
     }})
+  }
+
+  async updateUserEmail(userId: string, newEmail: string): Promise<User> {
+    this.stringUtil.validateId(userId);
+    this.stringUtil.validateEmail(newEmail);
+    return await this.db.user.update({
+      where: { id: userId },
+      data: { email: newEmail },
+    });
+  }
+
+  async setUserInactive(userId: string): Promise<void> {
+    this.stringUtil.validateId(userId);
+    await this.db.user.update({
+      where: { id: userId },
+      data: { isActive: false },
+    });
   }
 
   async updateSessionToken(sessionId: string, refreshTokenHash: string): Promise<void> {

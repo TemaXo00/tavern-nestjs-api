@@ -40,6 +40,16 @@ export class AuthValidateUtil {
     return isExists
   }
 
+  async validateEmailNotExists(email: string): Promise<void> {
+    const exists = await this.dbUtil.searchUserByEmail(email);
+    if (exists) {
+      throw new RpcException({
+        message: 'Email already in use',
+        code: status.ALREADY_EXISTS,
+      });
+    }
+  }
+
   // USER Validation
 
   async validateUserExists(id: string): Promise<User> {
@@ -115,6 +125,15 @@ export class AuthValidateUtil {
       throw new RpcException({
         message: 'User inactive',
         code: status.UNAUTHENTICATED
+      })
+    }
+  }
+
+  validateUserNotBlocked(isBlocked: boolean): void {
+    if (!isBlocked) {
+      throw new RpcException({
+        message: 'User is not blocked',
+        code: status.FAILED_PRECONDITION,
       })
     }
   }
