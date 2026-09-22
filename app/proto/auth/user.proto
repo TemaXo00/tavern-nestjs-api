@@ -1,0 +1,116 @@
+syntax = 'proto3';
+
+package user;
+
+enum Roles {
+  USER = 0;
+  ADMIN = 1;
+  MODERATOR = 2;
+}
+
+// Input Messages
+
+message ValidateInput {
+  string accessToken = 1;
+  SessionInput session = 2;
+}
+
+message SessionInput {
+    string os = 1;
+    string device = 2;
+    string browser = 3;
+    string ip = 4;
+}
+
+message PaginationInput {
+    optional int32 page = 1;
+    optional int32 limit = 2;
+    optional string search = 3;
+    optional bool isBlocked = 4;
+    optional bool isActive = 5;
+    optional Roles role = 6;
+}
+
+message GetAllUsersInput {
+    ValidateInput validation = 1;
+    PaginationInput pagination = 2;
+}
+
+message GetUserByIdInput {
+    string id = 1;
+    ValidateInput validation = 2;
+}
+
+message BlockUserInput {
+    string id = 1;
+    string blockedUntil = 2;
+    string blockReason = 3;
+    ValidateInput validation = 4;
+}
+
+message UnblockUserInput {
+    string id = 1;
+    ValidateInput validation = 2;
+}
+
+message PromoteToModeratorInput {
+    string id = 1;
+    ValidateInput validation = 2;
+}
+
+message DemoteFromModeratorInput {
+    string id = 1;
+    ValidateInput validation = 2;
+}
+
+message ChangeEmailInput {
+    string newEmail = 1;
+    ValidateInput validation = 2;
+}
+
+message ChangePasswordInput {
+    string oldPassword = 1;
+    string newPassword = 2;
+    string newPasswordConfirmation = 3;
+    ValidateInput validation = 4;
+}
+
+message SetUserInactiveInput {
+    ValidateInput validation = 1;
+}
+
+message ChangeUserToActiveInput {
+    string id = 1;
+    ValidateInput validation = 2;
+}
+
+// Output Messages
+
+message UserOutput {
+    string id = 1;
+    string email = 2;
+    Roles role = 3;
+    bool isActive = 4;
+    bool isBlocked = 5;
+    optional string blockedUntil = 6;
+    optional string blockReason = 7;
+    string createdAt = 8;
+}
+
+message PaginationOutput {
+    int32 page = 1;
+    int32 limit = 2;
+    int32 total = 3;
+    int32 totalPages = 4;
+    bool hasNext = 5;
+    bool hasPrev = 6;
+    optional string search = 7;
+    optional bool isBlocked = 8;
+    optional bool isActive = 9;
+    optional Roles role = 10;
+}
+
+message PaginatedUsersOutput {
+    PaginationOutput pagination = 1;
+    repeated UserOutput users = 2;
+}

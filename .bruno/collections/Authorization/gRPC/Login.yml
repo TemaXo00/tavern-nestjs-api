@@ -1,0 +1,24 @@
+info:
+  name: Login
+  type: grpc
+  seq: 2
+
+grpc:
+  url: "{{AUTH_GRPC_URL}}"
+  method: /auth.AuthService/Login
+  methodType: unary
+  protoFilePath: ../../../app/proto/auth.proto
+  message:
+    - title: message 1
+      message: |-
+        {
+          "email": "{{USER_EMAIL}}",
+          "password": "{{USER_PASSWORD}}",
+          "session": {
+            "device": "{{USER_DEVICE}}",
+            "ip": "{{USER_IP}}",
+            "os": "{{USER_OS}}",
+            "browser": "{{USER_BROWSER}}"
+          }
+        }
+  auth: inherit

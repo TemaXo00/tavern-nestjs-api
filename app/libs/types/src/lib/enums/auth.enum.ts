@@ -24,19 +24,19 @@ export enum TokenStates {
   ACTIVE = 'ACTIVE',
   REVOKED = 'REVOKED',
   USED = 'USED',
-  EXPIRED = 'EXPIRED'
+  EXPIRED = 'EXPIRED',
 }
 
 export const TOKEN_STATE_TO_GRPC: Record<TokenStates, number> = {
   [TokenStates.ACTIVE]: 0,
   [TokenStates.REVOKED]: 1,
   [TokenStates.USED]: 2,
-  [TokenStates.EXPIRED]: 3
-}
+  [TokenStates.EXPIRED]: 3,
+};
 
 export const GRPC_TO_TOKEN_STATE: Record<number, TokenStates> = {
   0: TokenStates.ACTIVE,
   1: TokenStates.REVOKED,
   2: TokenStates.USED,
-  3: TokenStates.EXPIRED
-}
+  3: TokenStates.EXPIRED,
+};

@@ -1,18 +1,18 @@
-import { PaginationBaseOutput } from "../../shared/pagination.type.js";
+import { PaginationBaseOutput } from '../../shared/pagination.type.js';
 
 export interface TokenPaginationOutput extends PaginationBaseOutput {
   state?: number;
 }
 
 export interface TokenOutput {
-  id: string,
+  id: string;
   email: string;
-  state: number,
-  createdAt: Date,
-  expiresAt: Date
+  state: number;
+  createdAt: Date;
+  expiresAt: Date;
 }
 
 export interface AllTokensOutput {
-  pagination: TokenPaginationOutput,
-  tokens: TokenOutput[]
+  pagination: TokenPaginationOutput;
+  tokens: TokenOutput[];
 }

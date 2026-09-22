@@ -21,7 +21,7 @@ message AllSessionsByUserInput {
     ValidateInput validation = 2;
 }
 
-message AllMySessions {
+message AllMySessionsInput {
     ValidateInput validation = 1;
 }
 

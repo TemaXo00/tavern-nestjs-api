@@ -1,0 +1,29 @@
+name: AUTHORIZATION DATA
+variables:
+  - name: USER_EMAIL
+    value: user@gmail.com
+    description: ""
+  - name: USER_PASSWORD
+    value: "123456"
+    description: ""
+  - name: USER_ACCESS_TOKEN
+    value: "123456"
+    description: ""
+  - name: USER_REFRESH_TOKEN
+    value: "123456"
+    description: ""
+  - name: USER_DEVICE
+    value: device
+    description: ""
+  - name: USER_IP
+    value: 1.1.1.1
+    description: ""
+  - name: USER_BROWSER
+    value: bruno
+    description: ""
+  - name: USER_OS
+    value: linux
+    description: ""
+  - name: AUTH_GRPC_URL
+    value: localhost:5000
+    description: ""

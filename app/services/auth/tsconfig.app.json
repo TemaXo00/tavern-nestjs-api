@@ -13,16 +13,28 @@
   "exclude": ["eslint.config.js", "eslint.config.cjs", "eslint.config.mjs"],
   "references": [
     {
+      "path": "../../libs/bootstrap/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/user-feature/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/token-feature/tsconfig.lib.json"
     },
     {
       "path": "../../libs/session-feature/tsconfig.lib.json"
     },
     {
+      "path": "../../libs/auth-utils/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/auth-feature/tsconfig.lib.json"
     },
     {
       "path": "../../libs/auth-database/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/auth-core/tsconfig.lib.json"
     }
   ]
 }

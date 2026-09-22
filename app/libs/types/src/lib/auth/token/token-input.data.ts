@@ -1,30 +1,30 @@
-import { PaginationBaseInput } from "../../shared/pagination.type.js";
-import { ValidateInput } from "../authorization/auth-input.data.js";
+import { PaginationBaseInput } from '../../shared/pagination.type.js';
+import { ValidateInput } from '../../shared/validation.type.js';
 
 export interface TokenPaginationInput extends PaginationBaseInput {
-  state?: number
+  state?: number;
 }
 
 export interface GetTokensInput {
-  validation: ValidateInput
-  pagination: TokenPaginationInput
+  validation: ValidateInput;
+  pagination: TokenPaginationInput;
 }
 
 export interface TokenByIdInput {
-  validation: ValidateInput
-  id: string
+  validation: ValidateInput;
+  id: string;
 }
 
 export interface RevokeTokenInput {
-  id: string
-  validation: ValidateInput
+  id: string;
+  validation: ValidateInput;
 }
 
 export interface DeleteTokenInput {
-  id: string
-  validation: ValidateInput
+  id: string;
+  validation: ValidateInput;
 }
 
 export interface DeleteAllNotActiveTokensInput {
-  validation: ValidateInput
+  validation: ValidateInput;
 }

@@ -1,48 +1,69 @@
-import { Injectable } from "@nestjs/common";
-import { AuthDatabaseService, Session, Token, TokenState, TokenWhereInput, User } from '@org/auth-database';
-import { PaginationUtil, StringValidationUtil } from "@org/shared-utils";
-import { AllTokensOutput, GRPC_TO_TOKEN_STATE, TOKEN_STATE_TO_GRPC, TokenPaginationInput } from "@org/types";
+import { Injectable } from '@nestjs/common';
+import {
+  AuthDatabaseService,
+  Session,
+  Token,
+  TokenState,
+  TokenWhereInput,
+  User,
+  UserWhereInput,
+} from '@org/auth-database';
+import { PaginationUtil, StringValidationUtil } from '@org/shared-utils';
+import {
+  AllTokensOutput,
+  GRPC_TO_ROLE,
+  GRPC_TO_TOKEN_STATE,
+  PaginatedUserOutput,
+  ROLE_TO_GRPC,
+  Roles,
+  TOKEN_STATE_TO_GRPC,
+  TokenPaginationInput,
+  UserPaginationInput,
+} from '@org/types';
 
 @Injectable()
 export class AuthDatabaseUtil {
   constructor(
     private readonly db: AuthDatabaseService,
     private readonly paginationUtil: PaginationUtil,
-    private readonly stringUtil: StringValidationUtil
-  ) { }
+    private readonly stringUtil: StringValidationUtil,
+  ) {}
 
   // GET Methods
 
   async searchUserByEmail(email: string): Promise<User | null> {
-    this.stringUtil.validateEmail(email)
+    this.stringUtil.validateEmail(email);
     return await this.db.user.findUnique({
-        where: {
-          email
-        },
-      })
+      where: {
+        email,
+      },
+    });
   }
 
   async searchUserById(id: string): Promise<User | null> {
-    this.stringUtil.validateId(id)
+    this.stringUtil.validateId(id);
     return await this.db.user.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   }
 
   async getSessionById(sessionId: string): Promise<Session | null> {
-    this.stringUtil.validateId(sessionId)
+    this.stringUtil.validateId(sessionId);
     return await this.db.session.findUnique({
       where: {
         id: sessionId,
-      }
-    })
+      },
+    });
   }
 
-  async getUserWithSession(userId: string, sessionId: string): Promise<{ user: User, session: Session } | undefined> {
-    this.stringUtil.validateId(userId)
-    this.stringUtil.validateId(sessionId)
+  async getUserWithSession(
+    userId: string,
+    sessionId: string,
+  ): Promise<{ user: User; session: Session } | undefined> {
+    this.stringUtil.validateId(userId);
+    this.stringUtil.validateId(sessionId);
     const user = await this.db.user.findUnique({
       where: { id: userId },
       include: {
@@ -59,33 +80,33 @@ export class AuthDatabaseUtil {
 
     return {
       user: user,
-      session: user.sessions[0]
-    }
+      session: user.sessions[0],
+    };
   }
 
   async searchTokenByEmail(email: string): Promise<Token | null> {
-    this.stringUtil.validateEmail(email)
+    this.stringUtil.validateEmail(email);
     return await this.db.token.findFirst({
       where: {
-        email
+        email,
       },
       orderBy: {
-        createdAt: 'desc'
-      }
-    })
+        createdAt: 'desc',
+      },
+    });
   }
 
   async searchTokenById(id: string): Promise<Token | null> {
-    this.stringUtil.validateId(id)
+    this.stringUtil.validateId(id);
     return await this.db.token.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   }
 
   async getAllSessionsByUser(userId: string): Promise<Session[]> {
-    this.stringUtil.validateId(userId)
+    this.stringUtil.validateId(userId);
     const sessions = await this.db.session.findMany({
       where: { userId },
     });
@@ -96,33 +117,70 @@ export class AuthDatabaseUtil {
     }));
   }
 
-  async getPaginatedTokens(pagination?: TokenPaginationInput): Promise<AllTokensOutput> {
+  async getPaginatedTokens(
+    pagination?: TokenPaginationInput,
+  ): Promise<AllTokensOutput> {
     const safePagination = pagination || {};
     const where = this.buildQueryForToken(safePagination);
-    const total = await this.db.token.count({ where })
-    const params = this.paginationUtil.getPaginationParams(total, safePagination.page, safePagination.limit)
+    const total = await this.db.token.count({ where });
+    const params = this.paginationUtil.getPaginationParams(
+      total,
+      safePagination.page,
+      safePagination.limit,
+    );
     const tokens = await this.db.token.findMany({
       where,
       skip: params.skip,
       take: params.limit,
-      omit: { tokenHash: true}
-    })
-    const mappedTokens = tokens.map((token) => {return {...token, state: TOKEN_STATE_TO_GRPC[token.state]}})
+      omit: { tokenHash: true },
+    });
+    const mappedTokens = tokens.map((token) => {
+      return { ...token, state: TOKEN_STATE_TO_GRPC[token.state] };
+    });
     return {
       pagination: {
         ...params,
         search: safePagination.search,
-        state: safePagination.state
+        state: safePagination.state,
       },
-      tokens: mappedTokens
-    }
+      tokens: mappedTokens,
+    };
+  }
+
+  async getPaginatedUsers(
+    pagination?: UserPaginationInput,
+  ): Promise<PaginatedUserOutput> {
+    const safePagination = pagination || {};
+    const where = this.buildQueryForUser(safePagination);
+    const total = await this.db.user.count({ where });
+    const params = this.paginationUtil.getPaginationParams(
+      total,
+      safePagination.page,
+      safePagination.limit,
+    );
+    const users = await this.db.user.findMany({
+      where,
+      skip: params.skip,
+      take: params.limit,
+      omit: { passwordHash: true },
+    });
+    const mappedUsers = users.map((user) => {
+      return { ...user, role: ROLE_TO_GRPC[user.role] };
+    });
+    return {
+      pagination: {
+        ...params,
+        ...safePagination,
+      },
+      users: mappedUsers,
+    };
   }
 
   // CREATE Methods
 
   async registerUser(email: string, passwordHash: string): Promise<User> {
-    this.stringUtil.validateEmail(email)
-    this.stringUtil.validateAnyString(passwordHash, 'Password')
+    this.stringUtil.validateEmail(email);
+    this.stringUtil.validateAnyString(passwordHash, 'Password');
     return await this.db.user.create({
       data: {
         email: email,
@@ -131,39 +189,50 @@ export class AuthDatabaseUtil {
     });
   }
 
-  async createSession(dto: { id: string, userId: string, device: string, browser: string, ip: string, os: string, refreshTokenHash: string }): Promise<void> {
+  async createSession(dto: {
+    id: string;
+    userId: string;
+    device: string;
+    browser: string;
+    ip: string;
+    os: string;
+    refreshTokenHash: string;
+  }): Promise<void> {
     this.stringUtil.validateId(dto.userId);
     this.stringUtil.validateId(dto.id);
-    this.stringUtil.validateAnyString(dto.device, 'Device')
-    this.stringUtil.validateAnyString(dto.browser, 'Browser')
-    this.stringUtil.validateAnyString(dto.ip, 'IP')
-    this.stringUtil.validateAnyString(dto.os, 'OS')
-    this.stringUtil.validateAnyString(dto.refreshTokenHash, 'Refresh Token Hash')
+    this.stringUtil.validateAnyString(dto.device, 'Device');
+    this.stringUtil.validateAnyString(dto.browser, 'Browser');
+    this.stringUtil.validateAnyString(dto.ip, 'IP');
+    this.stringUtil.validateAnyString(dto.os, 'OS');
+    this.stringUtil.validateAnyString(
+      dto.refreshTokenHash,
+      'Refresh Token Hash',
+    );
     await this.db.session.create({
       data: {
-        ...dto
-      }
-    })
+        ...dto,
+      },
+    });
   }
 
-  async createToken(dto: { email: string, tokenHash: string }): Promise<void> {
-    this.stringUtil.validateEmail(dto.email)
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 1)
+  async createToken(dto: { email: string; tokenHash: string }): Promise<void> {
+    this.stringUtil.validateEmail(dto.email);
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 1);
 
     await this.db.token.create({
       data: {
         ...dto,
-        expiresAt: expiresAt
-      }
-    })
+        expiresAt: expiresAt,
+      },
+    });
   }
 
   // UPDATE Methods
 
   async updateUserPassword(userEmail: string, password: string): Promise<void> {
-    this.stringUtil.validateEmail(userEmail)
-    this.stringUtil.validateAnyString(password, 'Password')
+    this.stringUtil.validateEmail(userEmail);
+    this.stringUtil.validateAnyString(password, 'Password');
     await this.db.user.update({
       where: { email: userEmail },
       data: {
@@ -172,120 +241,217 @@ export class AuthDatabaseUtil {
     });
   }
 
-  async setUserActive(id: string): Promise<void> {
-    this.stringUtil.validateId(id)
-    await this.db.user.update({
+  async setUserActive(id: string): Promise<User> {
+    this.stringUtil.validateId(id);
+    return await this.db.user.update({
       where: {
-        id
+        id,
       },
       data: {
-        isActive: true
-      }
-    })
+        isActive: true,
+      },
+    });
   }
 
-  async unblockUser(id: string): Promise<void> {
-    this.stringUtil.validateId(id)
-    await this.db.user.update({
+  async unblockUser(id: string): Promise<User> {
+    this.stringUtil.validateId(id);
+    return await this.db.user.update({
       where: {
-        id
+        id,
       },
       data: {
         isBlocked: false,
         blockReason: null,
-        blockedUntil: null
-      }
-    })
+        blockedUntil: null,
+      },
+    });
   }
 
-  async updateSessionToken(sessionId: string, refreshTokenHash: string): Promise<void> {
-    this.stringUtil.validateId(sessionId)
+  async blockUser(
+    id: string,
+    blockedUntil: Date,
+    blockReason: string,
+  ): Promise<User> {
+    this.stringUtil.validateId(id);
+    this.stringUtil.validateAnyString(blockReason, 'block reason');
+    return await this.db.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isBlocked: true,
+        blockReason,
+        blockedUntil,
+      },
+    });
+  }
+
+  async changeUserRole(id: string, role: Roles): Promise<User> {
+    this.stringUtil.validateUUIDV7(id);
+    return await this.db.user.update({
+      where: {
+        id,
+      },
+      data: {
+        role,
+      },
+    });
+  }
+
+  async updateUserEmail(userId: string, newEmail: string): Promise<User> {
+    this.stringUtil.validateId(userId);
+    this.stringUtil.validateEmail(newEmail);
+    return await this.db.user.update({
+      where: { id: userId },
+      data: { email: newEmail },
+    });
+  }
+
+  async setUserInactive(userId: string): Promise<void> {
+    this.stringUtil.validateId(userId);
+    await this.db.user.update({
+      where: { id: userId },
+      data: { isActive: false },
+    });
+  }
+
+  async updateSessionToken(
+    sessionId: string,
+    refreshTokenHash: string,
+  ): Promise<void> {
+    this.stringUtil.validateId(sessionId);
     await this.db.session.update({
       where: {
-        id: sessionId
+        id: sessionId,
       },
       data: {
-        refreshTokenHash
-      }
-    })
+        refreshTokenHash,
+      },
+    });
   }
 
-  async updateSessionLocalname(sessionId: string, localName: string): Promise<Session> {
-    this.stringUtil.validateAnyString(localName, 'Local name')
+  async updateSessionLocalname(
+    sessionId: string,
+    localName: string,
+  ): Promise<Session> {
+    this.stringUtil.validateAnyString(localName, 'Local name');
     return await this.db.session.update({
       where: {
-        id: sessionId
+        id: sessionId,
       },
       data: {
-        localName
-      }
-    })
+        localName,
+      },
+    });
   }
 
   async updateTokenState(id: string, state: TokenState): Promise<Token> {
-    this.stringUtil.validateId(id)
+    this.stringUtil.validateId(id);
     return await this.db.token.update({
       where: {
-        id
+        id,
       },
       data: {
-        state
-      }
-    })
+        state,
+      },
+    });
   }
 
   // DELETE Methods
 
   async removeSession(sessionId: string): Promise<Session> {
-    this.stringUtil.validateId(sessionId)
+    this.stringUtil.validateId(sessionId);
     return await this.db.session.delete({
       where: {
-        id: sessionId
-      }
-    })
+        id: sessionId,
+      },
+    });
   }
 
   async removeAllSessions(userId: string): Promise<void> {
-    this.stringUtil.validateId(userId)
+    this.stringUtil.validateId(userId);
     await this.db.session.deleteMany({
       where: {
-        userId: userId
-      }
-    })
+        userId: userId,
+      },
+    });
+  }
+
+  async removeSessionsNotIncludeCurrent(
+    userId: string,
+    sessionId: string,
+  ): Promise<void> {
+    this.stringUtil.validateId(userId);
+    this.stringUtil.validateId(sessionId);
+    await this.db.session.deleteMany({
+      where: {
+        userId: userId,
+        NOT: {
+          id: sessionId,
+        },
+      },
+    });
   }
 
   async removeToken(id: string): Promise<Token> {
-    this.stringUtil.validateId(id)
+    this.stringUtil.validateId(id);
     return await this.db.token.delete({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   }
 
-  async removeInactiveTokens(): Promise<void> {
-    await this.db.token.deleteMany({
+  async removeInactiveTokens(): Promise<number> {
+    const tokens = await this.db.token.deleteMany({
       where: {
-        state: {not: 'ACTIVE'}
-      }
-    })
+        state: { not: 'ACTIVE' },
+      },
+    });
+    return tokens.count;
   }
 
   // QUERY BUILDERS
 
   buildQueryForToken(query: TokenPaginationInput): TokenWhereInput {
-    const where: TokenWhereInput = {}
+    const where: TokenWhereInput = {};
 
     if (query.search) {
       where.OR = [
         {
-          email: {contains: query.search, mode: 'insensitive'}
-        }
-      ]
+          email: { contains: query.search, mode: 'insensitive' },
+        },
+      ];
     }
 
     if (query.state) {
-      where.state = GRPC_TO_TOKEN_STATE[query.state]
+      where.state = GRPC_TO_TOKEN_STATE[query.state];
+    }
+
+    return where;
+  }
+
+  buildQueryForUser(query: UserPaginationInput): UserWhereInput {
+    const where: UserWhereInput = {};
+
+    if (query.search) {
+      where.OR = [
+        {
+          email: { contains: query.search, mode: 'insensitive' },
+        },
+      ];
+    }
+
+    if (query.isActive) {
+      where.isActive = query.isActive;
+    }
+
+    if (query.isBlocked) {
+      where.isBlocked = query.isBlocked;
+    }
+
+    if (query.role) {
+      where.role = GRPC_TO_ROLE[query.role];
     }
 
     return where;

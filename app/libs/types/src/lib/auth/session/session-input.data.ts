@@ -1,24 +1,24 @@
-import { ValidateInput } from "../authorization/auth-input.data.js";
+import { ValidateInput } from '../../shared/validation.type.js';
 
 export interface AllSessionsByUserInput {
   userId: string;
-  validation: ValidateInput
+  validation: ValidateInput;
 }
 
-export interface AllMySessions {
-  validation: ValidateInput
+export interface AllMySessionsInput {
+  validation: ValidateInput;
 }
 
 export interface SessionLocalNameInput {
   localName: string;
-  validation: ValidateInput
+  validation: ValidateInput;
 }
 
 export interface DeleteSessionByIdInput {
   sessionId: string;
-  validation: ValidateInput
+  validation: ValidateInput;
 }
 
 export interface DeleteAllSessionsInput {
-  validation: ValidateInput
+  validation: ValidateInput;
 }

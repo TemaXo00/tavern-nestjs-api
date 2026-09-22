@@ -1,22 +1,36 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientProviderOptions, ClientsModule } from '@nestjs/microservices';
-import { RedisModule } from '@nestjs-modules/ioredis'
-import { RmqModule, RmqService } from '@org/rmq-config'
-import { SharedUtilsModule } from '@org/shared-utils'
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { RmqModule, RmqService } from '@org/rmq-config';
+import { SharedUtilsModule } from '@org/shared-utils';
 
 import { AuthAuthorizeUtil } from './utils/auth.util';
 import { AuthCacheUtil } from './utils/cache.util';
 import { AuthDatabaseUtil } from './utils/database.util';
 import { AuthJWTUtil } from './utils/jwt.util';
+import { AuthMapUtil } from './utils/map.util';
 import { AuthMessagesUtil } from './utils/messages.util';
 import { AuthPasswordUtil } from './utils/password.util';
 import { AuthTokenUtil } from './utils/token.util';
 import { AuthValidateUtil } from './utils/validate.util';
 
-const queues: string[] = ['profile', 'log', 'mail']
+const UTILS = [
+  AuthAuthorizeUtil,
+  AuthDatabaseUtil,
+  AuthJWTUtil,
+  AuthMessagesUtil,
+  AuthPasswordUtil,
+  AuthValidateUtil,
+  AuthTokenUtil,
+  AuthCacheUtil,
+  AuthMapUtil,
+];
 
+const queues: string[] = ['profile', 'log', 'mail'];
+
+@Global()
 @Module({
   imports: [
     SharedUtilsModule,
@@ -26,16 +40,19 @@ const queues: string[] = ['profile', 'log', 'mail']
         name: `${queue.toUpperCase()}_CLIENT`,
         imports: [RmqModule],
         useFactory: (rmq: RmqService): ClientProviderOptions => {
-          return rmq.getRmqConfig(queue)
+          return rmq.getRmqConfig(queue);
         },
-        inject: [RmqService]
-      }))
+        inject: [RmqService],
+      })),
     ),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('TAVERN_JWT_SECRET', 'DEFAULT_JWT_SECRET_DONT_USE_IN_PRODUCTION'),
+        secret: config.get<string>(
+          'TAVERN_JWT_SECRET',
+          'DEFAULT_JWT_SECRET_DONT_USE_IN_PRODUCTION',
+        ),
         signOptions: {
           algorithm: 'HS256',
         },
@@ -51,32 +68,14 @@ const queues: string[] = ['profile', 'log', 'mail']
         type: 'single',
         url: config.get<string>('TAVERN_REDIS_URL', 'localhost:6379'),
         options: {
-          password: config.get<string>('TAVERN_REDIS_PASSWORD', '123456')
-        }
+          password: config.get<string>('TAVERN_REDIS_PASSWORD', '123456'),
+        },
       }),
-      inject: [ConfigService]
-    })
+      inject: [ConfigService],
+    }),
   ],
   controllers: [],
-  providers: [
-    AuthAuthorizeUtil,
-    AuthDatabaseUtil,
-    AuthJWTUtil,
-    AuthMessagesUtil,
-    AuthPasswordUtil,
-    AuthValidateUtil,
-    AuthTokenUtil,
-    AuthCacheUtil
-  ],
-  exports: [
-    AuthAuthorizeUtil,
-    AuthDatabaseUtil,
-    AuthJWTUtil,
-    AuthMessagesUtil,
-    AuthPasswordUtil,
-    AuthValidateUtil,
-    AuthTokenUtil,
-    AuthCacheUtil
-  ],
+  providers: [...UTILS],
+  exports: [...UTILS],
 })
 export class AuthUtilsModule {}

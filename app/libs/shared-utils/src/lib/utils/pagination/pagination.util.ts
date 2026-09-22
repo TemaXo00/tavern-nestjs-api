@@ -1,9 +1,20 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PaginationUtil {
-  getPaginationParams(total: number, page = 1, limit = 10): { total: number, page: number, totalPages: number, skip: number, limit: number, hasNext: boolean, hasPrev: boolean } {
-
+  getPaginationParams(
+    total: number,
+    page = 1,
+    limit = 10,
+  ): {
+    total: number;
+    page: number;
+    totalPages: number;
+    skip: number;
+    limit: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  } {
     const totalPages = Math.ceil(total / limit) || 1;
 
     if (page > totalPages) {
@@ -11,7 +22,7 @@ export class PaginationUtil {
     }
 
     if (page <= 0) {
-      page = 1
+      page = 1;
     }
 
     const skip = (page - 1) * limit;

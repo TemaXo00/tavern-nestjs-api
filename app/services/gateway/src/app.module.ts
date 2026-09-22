@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
-import {ConfigModule} from "@nestjs/config";
-import { OrgGatewayCoreModule } from '@org/gateway-core'
+import { ConfigModule } from '@nestjs/config';
+import { OrgGatewayCoreModule } from '@org/gateway-core';
 
 @Module({
-  imports: [
-      ConfigModule.forRoot({ isGlobal: true }),
-      OrgGatewayCoreModule,
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), OrgGatewayCoreModule],
   controllers: [],
   providers: [],
 })

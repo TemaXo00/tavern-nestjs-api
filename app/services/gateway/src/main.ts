@@ -1,4 +1,4 @@
-import {monolithLaunch} from "@temaxo00/nx-nest-bootstrap";
+import { monolithLaunch } from '@org/bootstrap';
 
 import { AppModule } from './app.module';
 
@@ -14,4 +14,4 @@ void monolithLaunch<AppModule>({
   cors: true,
   swagger: true,
   compression: true,
-})
+});
