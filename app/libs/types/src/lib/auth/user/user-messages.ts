@@ -1,4 +1,5 @@
 import { UserPaginationInput } from "./user-input.data.js";
+import { SessionInput } from "../../shared/validation.type.js";
 
 interface BaseAdminUserMessage {
   adminId: string
@@ -29,8 +30,13 @@ export type AdminUnblockUserMessage =  BaseAdminUserMessage
 export type AdminPromoteUserMessage = BaseAdminUserMessage
 export type AdminDemoteUserMessage = BaseAdminUserMessage
 
-export type UserChangeEmailMessage = BaseUserMessage
-export type UserChangePasswordMessage = BaseUserMessage
+export interface UserChangeEmailMessage extends BaseUserMessage {
+  session: SessionInput
+}
+
+export interface UserChangePasswordMessage extends BaseUserMessage {
+  session: SessionInput
+}
 
 export type UserSetInactiveMessage = BaseUserMessage
 export type AdminSetUserActiveMessage = BaseAdminUserMessage
