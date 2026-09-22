@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { AuthValidateService } from '@org/auth-core'
-import { AuthDatabaseUtil, AuthMapUtil, AuthValidateUtil } from '@org/auth-utils'
+import { AuthCacheUtil, AuthDatabaseUtil, AuthMapUtil, AuthValidateUtil } from '@org/auth-utils'
 import { Roles, type BlockUserInput, type ChangeEmailInput, type ChangePasswordInput, type ChangeUserToActiveInput, type DemoteFromModeratorInput, type Empty, type GetAllUsersInput, type GetUserByIdInput, type PaginatedUserOutput, type PromoteToModeratorInput, type SetUserInactiveInput, type UnblockUserInput, type UserOutput, type UserServiceContract } from '@org/types'
 
 @Injectable()
@@ -10,6 +10,7 @@ export class UserFeatureService implements UserServiceContract {
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly validateUtil: AuthValidateUtil,
     private readonly mapUtil: AuthMapUtil,
+    private readonly cacheUtil: AuthCacheUtil,
     private readonly validation: AuthValidateService
   ) { }
 
@@ -24,28 +25,44 @@ export class UserFeatureService implements UserServiceContract {
     return this.mapUtil.mapUser(user)
   }
 
-  BlockUser(data: BlockUserInput): Promise<UserOutput> {
+  async BlockUser(data: BlockUserInput): Promise<UserOutput> {
+    await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
+    const user = await this.validateUtil.validateUserExists(data.id)
+    await this.validateUtil.validateUserBlock(user.id, user.isBlocked, user.blockedUntil, user.blockReason)
+    await this.cacheUtil.delAllPayloads(user.id)
+    const blockedUser = await this.dbUtil.blockUser(user.id, data.blockedUntil, data.blockReason)
+    return this.mapUtil.mapUser(blockedUser)
+  }
+
+  async UnblockUser(data: UnblockUserInput): Promise<UserOutput> {
+    await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
+    const user = await this.validateUtil.validateUserExists(data.id)
+    await this.validateUtil.validateUserBlock(user.id, user.isBlocked, user.blockedUntil, user.blockReason)
+    const unblockerUser = await this.dbUtil.unblockUser(user.id)
+    return this.mapUtil.mapUser(unblockerUser)
+  }
+
+  async PromoteToModerator(data: PromoteToModeratorInput): Promise<UserOutput> {
     throw new Error("Method not implemented.");
   }
-  UnblockUser(data: UnblockUserInput): Promise<UserOutput> {
+
+  async DemoteFromModerator(data: DemoteFromModeratorInput): Promise<UserOutput> {
     throw new Error("Method not implemented.");
   }
-  PromoteToModerator(data: PromoteToModeratorInput): Promise<UserOutput> {
+
+  async ChangeEmail(data: ChangeEmailInput): Promise<UserOutput> {
     throw new Error("Method not implemented.");
   }
-  DemoteFromModerator(data: DemoteFromModeratorInput): Promise<UserOutput> {
+
+  async ChangePassword(data: ChangePasswordInput): Promise<UserOutput> {
     throw new Error("Method not implemented.");
   }
-  ChangeEmail(data: ChangeEmailInput): Promise<UserOutput> {
+
+  async SetUserInactive(data: SetUserInactiveInput): Promise<Empty> {
     throw new Error("Method not implemented.");
   }
-  ChangePassword(data: ChangePasswordInput): Promise<UserOutput> {
-    throw new Error("Method not implemented.");
-  }
-  SetUserInactive(data: SetUserInactiveInput): Promise<Empty> {
-    throw new Error("Method not implemented.");
-  }
-  ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput> {
+
+  async ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput> {
     throw new Error("Method not implemented.");
   }
 }

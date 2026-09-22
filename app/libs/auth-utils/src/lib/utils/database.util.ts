@@ -205,9 +205,9 @@ export class AuthDatabaseUtil {
     })
   }
 
-  async unblockUser(id: string): Promise<void> {
+  async unblockUser(id: string): Promise<User> {
     this.stringUtil.validateId(id)
-    await this.db.user.update({
+    return await this.db.user.update({
       where: {
         id
       },
@@ -215,6 +215,21 @@ export class AuthDatabaseUtil {
         isBlocked: false,
         blockReason: null,
         blockedUntil: null
+      }
+    })
+  }
+
+  async blockUser(id: string, blockedUntil: Date, blockReason: string): Promise<User> {
+    this.stringUtil.validateId(id)
+    this.stringUtil.validateAnyString(blockReason, "block reason")
+    return await this.db.user.update({
+      where: {
+        id
+      },
+      data: {
+        isBlocked: true,
+        blockReason,
+        blockedUntil
       }
     })
   }
