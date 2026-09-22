@@ -20,3 +20,16 @@ export enum TOKEN_MESSAGES {
   DELETE_ONE = 'token.delete',
   INACTIVE_DELETE = 'inactive.tokens.delete'
 }
+
+export enum USER_MESSAGES {
+  CHECK = 'users.check',
+  BY_ID = 'user.by.id',
+  BLOCK = 'user.block',
+  UNBLOCK = 'user.unblock',
+  PROMOTE = 'user.promote',
+  DEMOTE = 'user.demote',
+  EMAIL_CHANGE = 'user.change.email',
+  PASSWORD = 'user.change.password',
+  SET_INACTIVE = 'user.inactive',
+  SET_ACTIVE = 'user.active'
+}
