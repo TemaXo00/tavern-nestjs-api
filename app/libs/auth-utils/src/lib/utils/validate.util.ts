@@ -85,6 +85,21 @@ export class AuthValidateUtil {
     }
   }
 
+  async validateUserCanBePromoted(id: string): Promise<void> {
+    const user = await this.validateUserExists(id)
+
+    const now = new Date()
+    const oneYear = new Date(user.createdAt)
+    oneYear.setFullYear(oneYear.getFullYear() + 1)
+
+    if (now <= oneYear) {
+      throw new RpcException({
+        message: "User cannot be promoted",
+        code: status.ABORTED
+      })
+    }
+  }
+
   async validateUserActive(userId: string, isActive: boolean): Promise<void> {
     if (!isActive) {
       await this.dbUtil.removeAllSessions(userId)

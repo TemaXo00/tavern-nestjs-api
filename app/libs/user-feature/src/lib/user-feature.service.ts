@@ -43,26 +43,32 @@ export class UserFeatureService implements UserServiceContract {
   }
 
   async PromoteToModerator(data: PromoteToModeratorInput): Promise<UserOutput> {
-    throw new Error("Method not implemented.");
+    await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
+    await this.validateUtil.validateUserCanBePromoted(data.id)
+    const newModerator = await this.dbUtil.promoteUser(data.id, Roles.MODERATOR)
+    return this.mapUtil.mapUser(newModerator)
   }
 
   async DemoteFromModerator(data: DemoteFromModeratorInput): Promise<UserOutput> {
-    throw new Error("Method not implemented.");
+    await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
+    const demotedUser = await this.dbUtil.promoteUser(data.id, Roles.USER)
+    return this.mapUtil.mapUser(demotedUser)
   }
 
   async ChangeEmail(data: ChangeEmailInput): Promise<UserOutput> {
-    throw new Error("Method not implemented.");
+    await this.validation.Validate(data.validation)
   }
 
   async ChangePassword(data: ChangePasswordInput): Promise<UserOutput> {
-    throw new Error("Method not implemented.");
+    await this.validation.Validate(data.validation)
   }
 
   async SetUserInactive(data: SetUserInactiveInput): Promise<Empty> {
-    throw new Error("Method not implemented.");
+    await this.validation.Validate(data.validation)
+    return {}
   }
 
   async ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput> {
-    throw new Error("Method not implemented.");
+    await this.validation.Validate(data.validation)
   }
 }

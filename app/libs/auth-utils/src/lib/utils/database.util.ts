@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AuthDatabaseService, Session, Token, TokenState, TokenWhereInput, User, UserWhereInput } from '@org/auth-database';
 import { PaginationUtil, StringValidationUtil } from "@org/shared-utils";
-import { AllTokensOutput, GRPC_TO_ROLE, GRPC_TO_TOKEN_STATE, PaginatedUserOutput, ROLE_TO_GRPC, TOKEN_STATE_TO_GRPC, TokenPaginationInput, UserPaginationInput } from "@org/types";
+import { AllTokensOutput, GRPC_TO_ROLE, GRPC_TO_TOKEN_STATE, PaginatedUserOutput, ROLE_TO_GRPC, Roles, TOKEN_STATE_TO_GRPC, TokenPaginationInput, UserPaginationInput } from "@org/types";
 
 @Injectable()
 export class AuthDatabaseUtil {
@@ -232,6 +232,17 @@ export class AuthDatabaseUtil {
         blockedUntil
       }
     })
+  }
+
+  async promoteUser(id: string, role: Roles): Promise<User> {
+    this.stringUtil.validateUUIDV7(id)
+    return await this.db.user.update({
+      where: {
+        id
+      },
+      data: {
+        role
+    }})
   }
 
   async updateSessionToken(sessionId: string, refreshTokenHash: string): Promise<void> {
