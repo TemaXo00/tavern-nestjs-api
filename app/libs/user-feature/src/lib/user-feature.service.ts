@@ -45,13 +45,15 @@ export class UserFeatureService implements UserServiceContract {
   async PromoteToModerator(data: PromoteToModeratorInput): Promise<UserOutput> {
     await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
     await this.validateUtil.validateUserCanBePromoted(data.id)
-    const newModerator = await this.dbUtil.promoteUser(data.id, Roles.MODERATOR)
+    const newModerator = await this.dbUtil.changeUserRole(data.id, Roles.MODERATOR)
     return this.mapUtil.mapUser(newModerator)
   }
 
   async DemoteFromModerator(data: DemoteFromModeratorInput): Promise<UserOutput> {
     await this.validation.validateWithRoles(data.validation, [Roles.ADMIN])
-    const demotedUser = await this.dbUtil.promoteUser(data.id, Roles.USER)
+    const user = await this.validateUtil.validateUserExists(data.id)
+    this.validateUtil.validateUserModerator(user.role as Roles)
+    const demotedUser = await this.dbUtil.changeUserRole(data.id, Roles.USER)
     return this.mapUtil.mapUser(demotedUser)
   }
 

@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { RpcException } from '@nestjs/microservices'
 import { Session, Token, User } from '@org/auth-database';
 import { StringValidationUtil } from '@org/shared-utils';
-import { SessionInput } from '@org/types';
+import { Roles, SessionInput } from '@org/types';
 
 import { AuthDatabaseUtil } from './database.util';
 
@@ -96,6 +96,15 @@ export class AuthValidateUtil {
       throw new RpcException({
         message: "User cannot be promoted",
         code: status.ABORTED
+      })
+    }
+  }
+
+  validateUserModerator(role: Roles): void {
+    if (role !== Roles.MODERATOR) {
+      throw new RpcException({
+        message: "User not moderator",
+        code: status.CANCELLED
       })
     }
   }

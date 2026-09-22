@@ -234,7 +234,7 @@ export class AuthDatabaseUtil {
     })
   }
 
-  async promoteUser(id: string, role: Roles): Promise<User> {
+  async changeUserRole(id: string, role: Roles): Promise<User> {
     this.stringUtil.validateUUIDV7(id)
     return await this.db.user.update({
       where: {
