@@ -1,6 +1,6 @@
-import { status } from '@grpc/grpc-js'
-import { Injectable } from "@nestjs/common";
-import { RpcException } from '@nestjs/microservices'
+import { status } from '@grpc/grpc-js';
+import { Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { Session, Token, User } from '@org/auth-database';
 import { StringValidationUtil } from '@org/shared-utils';
 import { Roles, SessionInput } from '@org/types';
@@ -11,33 +11,33 @@ import { AuthDatabaseUtil } from './database.util';
 export class AuthValidateUtil {
   constructor(
     private readonly dbUtil: AuthDatabaseUtil,
-    private readonly stringUtil: StringValidationUtil
-  ) { }
+    private readonly stringUtil: StringValidationUtil,
+  ) {}
 
   // EMAIL Validation
 
   async validateRegisterEmailExists(email: string): Promise<void> {
-    const isExists = await this.dbUtil.searchUserByEmail(email)
+    const isExists = await this.dbUtil.searchUserByEmail(email);
 
     if (isExists) {
       throw new RpcException({
         message: 'User with this email already exists',
-        code: status.ALREADY_EXISTS
-      })
+        code: status.ALREADY_EXISTS,
+      });
     }
   }
 
   async validateEmailFound(email: string): Promise<User> {
-    const isExists = await this.dbUtil.searchUserByEmail(email)
+    const isExists = await this.dbUtil.searchUserByEmail(email);
 
     if (!isExists) {
       throw new RpcException({
         message: 'User not found',
-        code: status.NOT_FOUND
-      })
+        code: status.NOT_FOUND,
+      });
     }
 
-    return isExists
+    return isExists;
   }
 
   async validateEmailNotExists(email: string): Promise<void> {
@@ -53,79 +53,86 @@ export class AuthValidateUtil {
   // USER Validation
 
   async validateUserExists(id: string): Promise<User> {
-    const user = await this.dbUtil.searchUserById(id)
+    const user = await this.dbUtil.searchUserById(id);
 
     if (!user) {
       throw new RpcException({
         message: 'User not found',
-        code: status.NOT_FOUND
-      })
+        code: status.NOT_FOUND,
+      });
     }
 
-    return user
+    return user;
   }
 
-  async validateUserWithSessionExists(id: string, sessionId: string): Promise<{ user: User, session: Session }> {
-    const user = await this.dbUtil.getUserWithSession(id, sessionId)
+  async validateUserWithSessionExists(
+    id: string,
+    sessionId: string,
+  ): Promise<{ user: User; session: Session }> {
+    const user = await this.dbUtil.getUserWithSession(id, sessionId);
 
     if (!user) {
       throw new RpcException({
         message: 'User not found',
-        code: status.NOT_FOUND
-      })
+        code: status.NOT_FOUND,
+      });
     }
 
-    return user
+    return user;
   }
 
-  async validateUserBlock(id: string, isBlocked: boolean, blockedUntil: Date | null, blockReason: string | null): Promise<void> {
-    const date = new Date()
+  async validateUserBlock(
+    id: string,
+    isBlocked: boolean,
+    blockedUntil: Date | null,
+    blockReason: string | null,
+  ): Promise<void> {
+    const date = new Date();
 
     if (isBlocked && blockedUntil && blockReason) {
       if (blockedUntil <= date) {
-        await this.dbUtil.removeAllSessions(id)
+        await this.dbUtil.removeAllSessions(id);
         throw new RpcException({
           message: `User blocked until: ${blockedUntil.toDateString()}. Block reason: ${blockReason}`,
-          code: status.UNAUTHENTICATED
-        })
-      }
-      else {
-        await this.dbUtil.unblockUser(id)
+          code: status.UNAUTHENTICATED,
+        });
+      } else {
+        await this.dbUtil.unblockUser(id);
       }
     }
   }
 
   async validateUserCanBePromoted(id: string): Promise<void> {
-    const user = await this.validateUserExists(id)
+    const user = await this.validateUserExists(id);
 
-    const now = new Date()
-    const oneYear = new Date(user.createdAt)
-    oneYear.setFullYear(oneYear.getFullYear() + 1)
+    const now = new Date();
+    const oneYear = new Date(user.createdAt);
+    oneYear.setFullYear(oneYear.getFullYear() + 1);
 
     if (now <= oneYear) {
       throw new RpcException({
-        message: "User cannot be promoted",
-        code: status.ABORTED
-      })
+        message: 'User cannot be promoted',
+        code: status.ABORTED,
+      });
     }
   }
 
   validateUserModerator(role: Roles): void {
     if (role !== Roles.MODERATOR) {
       throw new RpcException({
-        message: "User not moderator",
-        code: status.CANCELLED
-      })
+        message: 'User not moderator',
+        code: status.CANCELLED,
+      });
     }
   }
 
   async validateUserActive(userId: string, isActive: boolean): Promise<void> {
     if (!isActive) {
-      await this.dbUtil.removeAllSessions(userId)
+      await this.dbUtil.removeAllSessions(userId);
       throw new RpcException({
         message: 'User inactive',
-        code: status.UNAUTHENTICATED
-      })
+        code: status.UNAUTHENTICATED,
+      });
     }
   }
 
@@ -134,26 +141,29 @@ export class AuthValidateUtil {
       throw new RpcException({
         message: 'User is not blocked',
         code: status.FAILED_PRECONDITION,
-      })
+      });
     }
   }
 
   // SESSION Validation
 
   async validateSessionExists(sessionId: string): Promise<Session> {
-    const session = await this.dbUtil.getSessionById(sessionId)
+    const session = await this.dbUtil.getSessionById(sessionId);
 
     if (!session) {
       throw new RpcException({
         message: 'Session not found',
-        code: status.UNAUTHENTICATED
-      })
+        code: status.UNAUTHENTICATED,
+      });
     }
 
-    return session
+    return session;
   }
 
-  validateSessionsSimilar(currSession: SessionInput, newSession: SessionInput): void {
+  validateSessionsSimilar(
+    currSession: SessionInput,
+    newSession: SessionInput,
+  ): void {
     if (
       currSession.device !== newSession.device ||
       currSession.os !== newSession.os ||
@@ -166,12 +176,16 @@ export class AuthValidateUtil {
     }
   }
 
-  validateNotCurrentSession(payloadSession: string, neededSession: string): void {
+  validateNotCurrentSession(
+    payloadSession: string,
+    neededSession: string,
+  ): void {
     if (payloadSession === neededSession) {
       throw new RpcException({
-        message: "You can't delete your own session. If you need, you can logout",
-        code: status.INVALID_ARGUMENT
-      })
+        message:
+          "You can't delete your own session. If you need, you can logout",
+        code: status.INVALID_ARGUMENT,
+      });
     }
   }
 
@@ -179,65 +193,67 @@ export class AuthValidateUtil {
     if (userId !== idFromSession) {
       throw new RpcException({
         message: "You can't delete this session",
-        code: status.INVALID_ARGUMENT
-      })
+        code: status.INVALID_ARGUMENT,
+      });
     }
   }
 
   async validatePermissionToDeleteSession(sessionId: string): Promise<void> {
-    const userSession = await this.validateSessionExists(sessionId)
-    const deletePermited = new Date()
-    deletePermited.setDate(deletePermited.getDate() - 1)
+    const userSession = await this.validateSessionExists(sessionId);
+    const deletePermited = new Date();
+    deletePermited.setDate(deletePermited.getDate() - 1);
     if (userSession.createdAt > deletePermited) {
       throw new RpcException({
         message: "You can't delete sessions",
-        code: status.PERMISSION_DENIED
-      })
+        code: status.PERMISSION_DENIED,
+      });
     }
   }
 
   // TOKEN Validation
 
   async validateTokenExisting(email: string): Promise<boolean> {
-    return !!(await this.dbUtil.searchTokenByEmail(email))
+    return !!(await this.dbUtil.searchTokenByEmail(email));
   }
 
-  async validateTokenFound(value: string, format: 'email' | 'id'): Promise<Token> {
-    const date = new Date()
+  async validateTokenFound(
+    value: string,
+    format: 'email' | 'id',
+  ): Promise<Token> {
+    const date = new Date();
 
-    let token: Token | null
+    let token: Token | null;
 
     if (format === 'id') {
-      this.stringUtil.validateId(value)
-      token = await this.dbUtil.searchTokenById(value)
-    }
-    else {
-      this.stringUtil.validateEmail(value)
-      token = await this.dbUtil.searchTokenByEmail(value)
+      this.stringUtil.validateId(value);
+      token = await this.dbUtil.searchTokenById(value);
+    } else {
+      this.stringUtil.validateEmail(value);
+      token = await this.dbUtil.searchTokenByEmail(value);
     }
 
     if (!token) {
       throw new RpcException({
         message: 'Token not found',
-        code: status.NOT_FOUND
-      })
+        code: status.NOT_FOUND,
+      });
     }
 
     if (token.state === 'USED') {
       throw new RpcException({
         message: 'Token already used',
-        code: status.ALREADY_EXISTS
-      })
+        code: status.ALREADY_EXISTS,
+      });
     }
 
     if (token.expiresAt <= date) {
-      await this.dbUtil.updateTokenState(token.id, 'EXPIRED')
+      await this.dbUtil.updateTokenState(token.id, 'EXPIRED');
       throw new RpcException({
         message: 'Token expired',
-        code: status.ALREADY_EXISTS
-      })
+        code: status.ALREADY_EXISTS,
+      });
     }
 
-    return token
+    return token;
   }
 }

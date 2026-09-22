@@ -1,21 +1,21 @@
-import { SessionInput } from "../../shared/validation.type.js";
+import { SessionInput } from '../../shared/validation.type.js';
 
 export interface RegisterInput {
   email: string;
   password: string;
   passwordConfirmation: string;
-  session: SessionInput
+  session: SessionInput;
 }
 
 export interface LoginInput {
   email: string;
   password: string;
-  session: SessionInput
+  session: SessionInput;
 }
 
 export interface RefreshInput {
   refreshToken: string;
-  session: SessionInput
+  session: SessionInput;
 }
 
 export interface ForgotPasswordInput {
@@ -27,5 +27,5 @@ export interface ResetPasswordInput {
   token: string;
   newPassword: string;
   newPasswordConfirmation: string;
-  session: SessionInput
+  session: SessionInput;
 }

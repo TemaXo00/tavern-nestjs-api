@@ -1,7 +1,7 @@
-import { Controller } from "@nestjs/common";
-import { GrpcMethod } from "@nestjs/microservices";
+import { Controller } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 
-import { UserFeatureService } from "./user-feature.service";
+import { UserFeatureService } from './user-feature.service';
 
 import type {
   BlockUserInput,
@@ -18,7 +18,7 @@ import type {
   UnblockUserInput,
   UserOutput,
   UserServiceContract,
-} from "@org/types";
+} from '@org/types';
 
 @Controller()
 export class UserFeatureController implements UserServiceContract {
@@ -50,7 +50,9 @@ export class UserFeatureController implements UserServiceContract {
   }
 
   @GrpcMethod('UserService', 'DemoteFromModerator')
-  async DemoteFromModerator(data: DemoteFromModeratorInput): Promise<UserOutput> {
+  async DemoteFromModerator(
+    data: DemoteFromModeratorInput,
+  ): Promise<UserOutput> {
     return await this.service.DemoteFromModerator(data);
   }
 

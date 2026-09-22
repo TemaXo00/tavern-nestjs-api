@@ -8,7 +8,10 @@ export class RmqService {
 
   private getRmqUrl(): string {
     const rmqUser = this.config.get<string>('TAVERN_RMQ_USER', 'user');
-    const rmqPassword = this.config.get<string>('TAVERN_RMQ_PASSWORD', '123456');
+    const rmqPassword = this.config.get<string>(
+      'TAVERN_RMQ_PASSWORD',
+      '123456',
+    );
     const rmqUrl = this.config.get<string>('TAVERN_RMQ_URL', 'rabbitmq:5672');
 
     return `amqp://${rmqUser}:${rmqPassword}@${rmqUrl}`;

@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import {ResponseType} from "../../types/response.type.js";
+import { ResponseType } from '../../types/response.type.js';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<

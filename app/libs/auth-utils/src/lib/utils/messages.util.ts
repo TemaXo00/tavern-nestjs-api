@@ -1,5 +1,5 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { ClientProxy } from "@nestjs/microservices";
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import {
   AdminBlockUserLog,
   AdminBlockUserProfile,
@@ -32,7 +32,9 @@ import {
   UserSetInactiveMessage,
   UserUpdatedSessionNameMessage,
   UsersCheckByAdminMessage,
-} from "@org/types";
+  AdminBlockUserMessage,
+  AdminBlockUserMail,
+} from '@org/types';
 
 @Injectable()
 export class AuthMessagesUtil {
@@ -60,8 +62,14 @@ export class AuthMessagesUtil {
   }
 
   sendUserForgotPasswordMessage(data: AuthForgotPasswordMessage): void {
-    this.mail.emit(AUTHORIZATION_MESSAGES.FORGOT_PASSWORD, { email: data.email, token: data.token } as AuthMailForgotPassword);
-    this.log.emit(AUTHORIZATION_MESSAGES.FORGOT_PASSWORD, { email: data.email, tokenHash: data.tokenHash } as AuthLogForgotPassword);
+    this.mail.emit(AUTHORIZATION_MESSAGES.FORGOT_PASSWORD, {
+      email: data.email,
+      token: data.token,
+    } as AuthMailForgotPassword);
+    this.log.emit(AUTHORIZATION_MESSAGES.FORGOT_PASSWORD, {
+      email: data.email,
+      tokenHash: data.tokenHash,
+    } as AuthLogForgotPassword);
   }
 
   sendUserRestorePassword(data: AuthRestorePasswordMessage): void {
@@ -119,10 +127,10 @@ export class AuthMessagesUtil {
     this.log.emit(USER_MESSAGES.BY_ID, data);
   }
 
-  sendAdminBlockUser(data: AdminBlockUserLog): void {
-    this.log.emit(USER_MESSAGES.BLOCK, data);
+  sendAdminBlockUser(data: AdminBlockUserMessage): void {
+    this.log.emit(USER_MESSAGES.BLOCK, data as AdminBlockUserLog);
     this.profile.emit(USER_MESSAGES.BLOCK, data as AdminBlockUserProfile);
-    this.mail.emit(USER_MESSAGES.BLOCK, data);
+    this.mail.emit(USER_MESSAGES.BLOCK, data as AdminBlockUserMail);
   }
 
   sendAdminUnblockUser(data: AdminUnblockUserMessage): void {

@@ -2,11 +2,7 @@ import { join } from 'path';
 
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import {
-  ClientsModule,
-  Transport,
-  GrpcOptions,
-} from '@nestjs/microservices';
+import { ClientsModule, Transport, GrpcOptions } from '@nestjs/microservices';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 
 const SERVICES: string[] = ['AUTH'];

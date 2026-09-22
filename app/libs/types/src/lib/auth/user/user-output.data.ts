@@ -1,23 +1,23 @@
-import { PaginationBaseOutput } from "../../shared/pagination.type.js";
+import { PaginationBaseOutput } from '../../shared/pagination.type.js';
 
 export interface UserPaginationOutput extends PaginationBaseOutput {
-  isBlocked?: boolean
-  isActive?: boolean
-  role?: number
+  isBlocked?: boolean;
+  isActive?: boolean;
+  role?: number;
 }
 
 export interface UserOutput {
-  id: string
-  email: string
-  role: number
-  isActive: boolean
-  isBlocked: boolean
-  blockedUntil: Date | null
-  blockReason: string | null
-  createdAt: Date
+  id: string;
+  email: string;
+  role: number;
+  isActive: boolean;
+  isBlocked: boolean;
+  blockedUntil: Date | null;
+  blockReason: string | null;
+  createdAt: Date;
 }
 
 export interface PaginatedUserOutput {
-  pagination: UserPaginationOutput
-  users: UserOutput[]
+  pagination: UserPaginationOutput;
+  users: UserOutput[];
 }

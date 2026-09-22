@@ -5,12 +5,14 @@ import { SessionLogsController } from './controllers/auth/sessions.controller';
 import { TokenLogsController } from './controllers/auth/tokens.controller';
 import { LogsCoreService } from './logs-core.service';
 
-const AUTH_CONTROLLERS = [AuthorizationLogsController, SessionLogsController, TokenLogsController ]
+const AUTH_CONTROLLERS = [
+  AuthorizationLogsController,
+  SessionLogsController,
+  TokenLogsController,
+];
 
 @Module({
-  controllers: [
-    ...AUTH_CONTROLLERS
-  ],
+  controllers: [...AUTH_CONTROLLERS],
   providers: [LogsCoreService],
 })
 export class LogsCoreModule {}

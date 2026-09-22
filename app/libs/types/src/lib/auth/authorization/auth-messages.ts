@@ -1,6 +1,6 @@
-import { SessionInput } from "../../shared/validation.type.js";
+import { SessionInput } from '../../shared/validation.type.js';
 
-export interface AuthRegisteredMessage  {
+export interface AuthRegisteredMessage {
   id: string;
   email: string;
   session: SessionInput;
@@ -24,9 +24,12 @@ export interface AuthForgotPasswordMessage {
   tokenHash: string;
 }
 
-export type AuthMailForgotPassword = Omit<AuthForgotPasswordMessage, 'tokenHash'>
+export type AuthMailForgotPassword = Omit<
+  AuthForgotPasswordMessage,
+  'tokenHash'
+>;
 
-export type AuthLogForgotPassword = Omit<AuthForgotPasswordMessage, 'token'>
+export type AuthLogForgotPassword = Omit<AuthForgotPasswordMessage, 'token'>;
 
 export interface AuthRestorePasswordMessage {
   email: string;

@@ -11,5 +11,5 @@ export interface SessionOutput {
 }
 
 export interface AllSessionsOutput {
-  sessions: SessionOutput[]
+  sessions: SessionOutput[];
 }

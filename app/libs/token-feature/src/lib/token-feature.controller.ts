@@ -1,7 +1,7 @@
-import { Controller } from "@nestjs/common";
-import { GrpcMethod } from "@nestjs/microservices";
+import { Controller } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
 
-import { TokenFeatureService } from "./token-feature.service";
+import { TokenFeatureService } from './token-feature.service';
 
 import type {
   AllTokensOutput,
@@ -13,14 +13,16 @@ import type {
   TokenByIdInput,
   TokenOutput,
   TokenServiceContract,
-} from "@org/types";
+} from '@org/types';
 
 @Controller()
 export class TokenFeatureController implements TokenServiceContract {
   constructor(private readonly service: TokenFeatureService) {}
 
   @GrpcMethod('TokenService', 'GetTokensWithPagination')
-  async GetTokensWithPagination(data: GetTokensInput): Promise<AllTokensOutput> {
+  async GetTokensWithPagination(
+    data: GetTokensInput,
+  ): Promise<AllTokensOutput> {
     return await this.service.GetTokensWithPagination(data);
   }
 
@@ -40,7 +42,9 @@ export class TokenFeatureController implements TokenServiceContract {
   }
 
   @GrpcMethod('TokenService', 'DeleteAllNotActiveTokens')
-  async DeleteAllNotActiveTokens(data: DeleteAllNotActiveTokensInput): Promise<Empty> {
+  async DeleteAllNotActiveTokens(
+    data: DeleteAllNotActiveTokensInput,
+  ): Promise<Empty> {
     return await this.service.DeleteAllNotActiveTokens(data);
   }
 }

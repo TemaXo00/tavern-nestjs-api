@@ -1,42 +1,43 @@
-import { UserPaginationInput } from "./user-input.data.js";
-import { SessionInput } from "../../shared/validation.type.js";
+import { UserPaginationInput } from './user-input.data.js';
+import { SessionInput } from '../../shared/validation.type.js';
 
 interface BaseAdminUserMessage {
-  adminId: string
-  userId: string
+  adminId: string;
+  userId: string;
 }
 
 interface BaseUserMessage {
-  userId: string
+  userId: string;
 }
 
 export interface UsersCheckByAdminMessage {
-  adminId: string
-  query: UserPaginationInput
+  adminId: string;
+  query: UserPaginationInput;
 }
 
-export type UserByIdAdminCheckMessage = BaseAdminUserMessage
+export type UserByIdAdminCheckMessage = BaseAdminUserMessage;
 
-interface AdminBlockUserMessage extends BaseAdminUserMessage {
-  blockReason: string
-  blockedUntil: Date
+export interface AdminBlockUserMessage extends BaseAdminUserMessage {
+  blockReason: string;
+  blockedUntil: Date;
 }
 
-export type AdminBlockUserLog = AdminBlockUserMessage
-export type AdminBlockUserProfile = Omit<AdminBlockUserMessage, 'adminId'>
+export type AdminBlockUserLog = AdminBlockUserMessage;
+export type AdminBlockUserProfile = Omit<AdminBlockUserMessage, 'adminId'>;
+export type AdminBlockUserMail = Omit<AdminBlockUserMessage, 'adminId'>;
 
-export type AdminUnblockUserMessage =  BaseAdminUserMessage
+export type AdminUnblockUserMessage = BaseAdminUserMessage;
 
-export type AdminPromoteUserMessage = BaseAdminUserMessage
-export type AdminDemoteUserMessage = BaseAdminUserMessage
+export type AdminPromoteUserMessage = BaseAdminUserMessage;
+export type AdminDemoteUserMessage = BaseAdminUserMessage;
 
 export interface UserChangeEmailMessage extends BaseUserMessage {
-  session: SessionInput
+  session: SessionInput;
 }
 
 export interface UserChangePasswordMessage extends BaseUserMessage {
-  session: SessionInput
+  session: SessionInput;
 }
 
-export type UserSetInactiveMessage = BaseUserMessage
-export type AdminSetUserActiveMessage = BaseAdminUserMessage
+export type UserSetInactiveMessage = BaseUserMessage;
+export type AdminSetUserActiveMessage = BaseAdminUserMessage;

@@ -4,9 +4,9 @@ import { Request, Response, NextFunction } from 'express';
 type SendFunction = (body: unknown) => Response;
 
 export function loggingMiddleware(
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ): void {
   const logger = new Logger('HTTP');
   const { method, originalUrl, ip, query, params } = req;

@@ -21,7 +21,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { method, url, ip, query, params, body } = request;
 
     this.logger.error(`X ${method} ${url} - Error occurred`);
-    this.logger.error(`  IP: ${ip || request.socket?.remoteAddress || 'unknown'}`);
+    this.logger.error(
+      `  IP: ${ip || request.socket?.remoteAddress || 'unknown'}`,
+    );
 
     if (Object.keys(query).length > 0) {
       this.logger.error(`  Query: ${JSON.stringify(query)}`);

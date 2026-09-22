@@ -1,22 +1,22 @@
-import {Type} from "@nestjs/common";
+import { Type } from '@nestjs/common';
 
 export interface MonolithBootstrapOptions<T> {
-    name: string;
+  name: string;
 
-    module: Type<T>;
+  module: Type<T>;
 
-    logs?: boolean;
+  logs?: boolean;
 
-    globalPrefix?: string;
+  globalPrefix?: string;
 
-    validation?: boolean;
-    interceptors?: boolean;
-    filters?: boolean;
+  validation?: boolean;
+  interceptors?: boolean;
+  filters?: boolean;
 
-    compression?: boolean;
-    rateLimit?: boolean;
+  compression?: boolean;
+  rateLimit?: boolean;
 
-    cors?: boolean;
+  cors?: boolean;
 
-    swagger?: boolean;
+  swagger?: boolean;
 }

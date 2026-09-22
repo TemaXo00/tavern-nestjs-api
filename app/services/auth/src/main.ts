@@ -6,5 +6,5 @@ void microserviceLaunch<AppModule>({
   name: 'Auth',
   module: AppModule,
   logs: true,
-  rmq: true
-})
+  rmq: true,
+});

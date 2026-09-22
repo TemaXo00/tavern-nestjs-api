@@ -1,8 +1,8 @@
-import {Type} from "@nestjs/common";
+import { Type } from '@nestjs/common';
 
 export interface MicroserviceBoostrapOptions<T> {
-    name: string;
-    module: Type<T>
-    logs?: boolean;
-    rmq?: boolean
+  name: string;
+  module: Type<T>;
+  logs?: boolean;
+  rmq?: boolean;
 }

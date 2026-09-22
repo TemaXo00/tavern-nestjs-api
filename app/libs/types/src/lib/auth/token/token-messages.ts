@@ -1,8 +1,8 @@
-import { TokenPaginationInput } from "./token-input.data.js";
+import { TokenPaginationInput } from './token-input.data.js';
 
 export interface AdminCheckTokensMessage {
-  id: string,
-  pagination: TokenPaginationInput
+  id: string;
+  pagination: TokenPaginationInput;
 }
 
 export interface AdminGetTokenByIdMessage {

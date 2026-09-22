@@ -4,8 +4,8 @@ export interface SessionCheckByAdminMessage {
 }
 
 export interface UserUpdatedSessionNameMessage {
-  userId: string
-  sessionId: string
+  userId: string;
+  sessionId: string;
 }
 
 export interface UserRemoveSessionMessage {
@@ -14,5 +14,5 @@ export interface UserRemoveSessionMessage {
 }
 
 export interface UserRemoveAllSessionsMessage {
-  userId: string
+  userId: string;
 }

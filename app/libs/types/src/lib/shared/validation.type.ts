@@ -1,6 +1,6 @@
 export interface ValidateInput {
   accessToken: string;
-  session: SessionInput
+  session: SessionInput;
 }
 
 export interface SessionInput {
