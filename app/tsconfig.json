@@ -56,6 +56,9 @@
     },
     {
       "path": "./libs/user-feature"
+    },
+    {
+      "path": "./libs/bootstrap"
     }
   ],
   "compilerOptions": {}

@@ -1,4 +1,4 @@
-import { microserviceLaunch } from '@temaxo00/nx-nest-bootstrap';
+import { microserviceLaunch } from '@org/bootstrap';
 
 import { AppModule } from './app.module';
 
