@@ -3,7 +3,13 @@ import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport, GrpcOptions } from '@nestjs/microservices';
+import { PassportModule } from '@nestjs/passport'
+import { AuthCoreModule } from '@org/auth-core'
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
+
+import { AuthJWTGuard } from './guards/jwt.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 const SERVICES: string[] = ['AUTH'];
 
@@ -30,9 +36,15 @@ const SERVICES: string[] = ['AUTH'];
         inject: [ConfigService],
       })),
     ),
+    PassportModule,
+    AuthCoreModule
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    JwtStrategy,
+    AuthJWTGuard,
+    RolesGuard
+  ],
   exports: [],
 })
 export class OrgGatewayCoreModule {}
