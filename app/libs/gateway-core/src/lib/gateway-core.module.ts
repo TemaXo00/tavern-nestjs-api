@@ -9,6 +9,7 @@ import { workspaceRoot } from 'nx/src/utils/workspace-root';
 
 import { AuthJWTGuard } from './guards/jwt.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { CookieService } from './services/cookie.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 const SERVICES: string[] = ['AUTH'];
@@ -36,6 +37,7 @@ const SERVICES: string[] = ['AUTH'];
         inject: [ConfigService],
       })),
     ),
+    ConfigModule,
     PassportModule,
     AuthCoreModule
   ],
@@ -43,7 +45,8 @@ const SERVICES: string[] = ['AUTH'];
   providers: [
     JwtStrategy,
     AuthJWTGuard,
-    RolesGuard
+    RolesGuard,
+    CookieService
   ],
   exports: [],
 })
