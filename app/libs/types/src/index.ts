@@ -4,6 +4,7 @@ export * from './lib/auth/authorization/auth.entity.js';
 export * from './lib/auth/authorization/auth-input.data.js';
 export * from './lib/auth/authorization/auth-output.data.js';
 export * from './lib/auth/authorization/auth-messages.js';
+export * from './lib/auth/authorization/auth-gateway.data.js'
 
 // SESSION SERVICE
 export * from './lib/auth/session/session-input.data.js';
