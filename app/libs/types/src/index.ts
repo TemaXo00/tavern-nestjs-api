@@ -26,7 +26,6 @@ export * from './lib/auth/user/user-messages.js';
 // CONTRACTS
 
 export * from './lib/auth/auth.contract.js';
-export * from './lib/auth/auth-gateway.contract.js'
 
 // AUTH MICROSERVICE END
 

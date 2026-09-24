@@ -10,12 +10,12 @@ import { Validate } from "../../decorators/validate.decorator";
 import { CookieService } from "../../services/cookie.service";
 
 import type { ClientGrpc } from "@nestjs/microservices";
-import type { AuthOutput, AuthServiceGateway, SessionInput, UserEntity, ValidateInput } from "@org/types"
+import type { AuthOutput, AuthServiceObservableContract, SessionInput, UserEntity, ValidateInput } from "@org/types"
 import type { Response } from 'express'
 
 @HTTPController({ microserviceName: 'Auth', serviceName: 'Authorization' })
 export class AuthController implements OnModuleInit {
-  private authContract!: AuthServiceGateway
+  private authContract!: AuthServiceObservableContract
 
   constructor(
     @Inject('AUTH_CLIENT') private readonly client: ClientGrpc,
@@ -23,7 +23,7 @@ export class AuthController implements OnModuleInit {
   ) { }
 
   onModuleInit(): void {
-    this.authContract = this.client.getService<AuthServiceGateway>('AuthService')
+    this.authContract = this.client.getService<AuthServiceObservableContract>('AuthService')
   }
 
   @Post('register')
