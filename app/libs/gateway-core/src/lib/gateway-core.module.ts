@@ -10,6 +10,7 @@ import { AuthController } from './controllers/auth/auth.controller';
 import { AuthJWTGuard } from './guards/jwt.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { CookieService } from './services/cookie.service';
+import { GatewayMapService } from './services/map.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 const SERVICES: string[] = ['AUTH'];
@@ -51,7 +52,8 @@ const AUTH_CONTROLLERS = [
     JwtStrategy,
     AuthJWTGuard,
     RolesGuard,
-    CookieService
+    CookieService,
+    GatewayMapService
   ],
   exports: [],
 })
