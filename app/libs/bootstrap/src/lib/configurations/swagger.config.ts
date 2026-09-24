@@ -10,6 +10,7 @@ import {
 export const swaggerConfig = new DocumentBuilder()
   .setTitle('API')
   .setContact(AUTHOR_NAME, AUTHOR_GITHUB, AUTHOR_MAIL)
+  .addBearerAuth()
   .build();
 
 export const swaggerUIConfig: SwaggerCustomOptions = {
