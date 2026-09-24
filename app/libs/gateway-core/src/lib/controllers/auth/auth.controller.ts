@@ -1,13 +1,4 @@
-import {
-  Body,
-  Get,
-  Inject,
-  OnModuleInit,
-  Param,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Inject, OnModuleInit, Param, Req, Res } from '@nestjs/common';
 import {
   ForgotPasswordDto,
   LoginDto,
@@ -17,9 +8,10 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { HTTPController } from '../../decorators/controller.decorator';
+import { GETProtectedMethod } from '../../decorators/methods/get-method.decorator';
+import { POSTMethod } from '../../decorators/methods/post-method.decorator';
 import { SessionInputParam } from '../../decorators/session-input.decorator';
 import { ValidateInputParam } from '../../decorators/validate-input.decorator';
-import { Validate } from '../../decorators/validate.decorator';
 import { CookieService } from '../../services/cookie.service';
 import { GatewayMapService } from '../../services/map.service';
 
@@ -48,7 +40,11 @@ export class AuthController implements OnModuleInit {
       this.client.getService<AuthServiceObservableContract>('AuthService');
   }
 
-  @Post('register')
+  @POSTMethod({
+    path: 'register',
+    operationDesc:
+      'Registration method for user. Create new user, session, JWt tokens',
+  })
   async register(
     @Body() dto: RegisterDto,
     @SessionInputParam() session: SessionInput,
@@ -61,7 +57,10 @@ export class AuthController implements OnModuleInit {
     return { accessToken: response.accessToken };
   }
 
-  @Post('login')
+  @POSTMethod({
+    path: 'login',
+    operationDesc: 'Login method for user. Create new session, JWt tokens',
+  })
   async login(
     @Body() dto: LoginDto,
     @SessionInputParam() session: SessionInput,
@@ -74,7 +73,10 @@ export class AuthController implements OnModuleInit {
     return { accessToken: response.accessToken };
   }
 
-  @Post('refresh')
+  @POSTMethod({
+    path: 'refresh',
+    operationDesc: 'Refresh method by using refresh token',
+  })
   async refresh(
     @SessionInputParam() session: SessionInput,
     @Res({ passthrough: true }) res: Response,
@@ -93,7 +95,10 @@ export class AuthController implements OnModuleInit {
     }
   }
 
-  @Post('logout')
+  @POSTMethod({
+    path: 'logout',
+    operationDesc: 'Logout from application. Destroy session and JWT Tokens',
+  })
   async logout(
     @SessionInputParam() session: SessionInput,
     @Res({ passthrough: true }) res: Response,
@@ -104,12 +109,19 @@ export class AuthController implements OnModuleInit {
     this.cookie.removeRefreshToken(res);
   }
 
-  @Post('forgot-password')
+  @POSTMethod({
+    path: 'forgot-password',
+    operationDesc: 'Using for forgotted passwords. Sends email if user exists',
+  })
   async forgotPassword(@Body() dto: ForgotPasswordDto): Promise<void> {
     await firstValueFrom(this.authContract.ForgotPassword(dto));
   }
 
-  @Post('reset-password/:token')
+  @POSTMethod({
+    path: 'reset-password/:token',
+    operationDesc:
+      'Reset your current password. Destroys all sessions of current user',
+  })
   async resetPassword(
     @Param('token') token: string,
     @SessionInputParam() session: SessionInput,
@@ -120,8 +132,10 @@ export class AuthController implements OnModuleInit {
     );
   }
 
-  @Get('me')
-  @Validate()
+  @GETProtectedMethod({
+    path: 'me',
+    operationDesc: 'Get current user entity by typing Access Token',
+  })
   async me(
     @ValidateInputParam() validation: ValidateInput,
   ): Promise<UserEntityGateway> {
