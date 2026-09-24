@@ -47,6 +47,12 @@
     "cwd": "$ZED_WORKTREE_ROOT/app"
   },
   {
+    "label": "PRETTIER: Fix",
+    "command": "npx prettier --check . --write",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app"
+  },
+  {
     "label": "AUTH: Service DEV",
     "command": "npx nx serve auth",
     "use_new_terminal": true,
