@@ -19,6 +19,16 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.4",
     "@nestjs/microservices": "^11.2.1",
-    "nx": "23.1.1"
+    "nx": "23.1.1",
+    "@org/dto": "0.0.1",
+    "rxjs": "^7.8.0",
+    "@org/types": "0.0.1",
+    "express": "^5.2.1",
+    "@nestjs/swagger": "^11.4.7",
+    "@nestjs/passport": "^12.0.0",
+    "@grpc/grpc-js": "^1.14.4",
+    "@nestjs/core": "^11.0.0",
+    "passport-jwt": "^4.0.1",
+    "ua-parser-js": "^2.0.10"
   }
 }

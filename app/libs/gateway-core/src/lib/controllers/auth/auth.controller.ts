@@ -8,7 +8,12 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from '@org/dto';
+import {
+  ForgotPasswordDto,
+  LoginDto,
+  RegisterDto,
+  ResetPasswordDto,
+} from '@org/dto';
 import { firstValueFrom } from 'rxjs';
 
 import { HTTPController } from '../../decorators/controller.decorator';
@@ -101,12 +106,18 @@ export class AuthController implements OnModuleInit {
 
   @Post('forgot-password')
   async forgotPassword(@Body() dto: ForgotPasswordDto): Promise<void> {
-    await firstValueFrom(this.authContract.ForgotPassword(dto))
+    await firstValueFrom(this.authContract.ForgotPassword(dto));
   }
 
   @Post('reset-password/:token')
-  async resetPassword(@Param('token') token: string, @SessionInputParam() session: SessionInput, @Body() dto: ResetPasswordDto): Promise<void> {
-    await firstValueFrom(this.authContract.ResetPassword({token, session,...dto}))
+  async resetPassword(
+    @Param('token') token: string,
+    @SessionInputParam() session: SessionInput,
+    @Body() dto: ResetPasswordDto,
+  ): Promise<void> {
+    await firstValueFrom(
+      this.authContract.ResetPassword({ token, session, ...dto }),
+    );
   }
 
   @Get('me')

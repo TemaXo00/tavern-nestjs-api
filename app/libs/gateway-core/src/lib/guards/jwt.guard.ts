@@ -8,6 +8,8 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ValidateInput, AuthServiceContract } from '@org/types';
 
+import { getSessionUtil } from '../utils/get-session.util';
+
 import type { ClientGrpc } from '@nestjs/microservices';
 
 @Injectable()
@@ -40,12 +42,7 @@ export class AuthJWTGuard extends AuthGuard('jwt') implements OnModuleInit {
 
     const validation: ValidateInput = {
       accessToken,
-      session: {
-        ip: request.ip,
-        device: request.headers['x-device'] || 'Unknown',
-        browser: request.headers['user-agent'] || 'Unknown',
-        os: request.headers['x-os'] || 'Unknown',
-      },
+      session: getSessionUtil(context),
     };
 
     const payload = await this.authService.Validate(validation);
