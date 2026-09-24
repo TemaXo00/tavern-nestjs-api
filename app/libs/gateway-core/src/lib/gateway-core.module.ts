@@ -3,7 +3,7 @@ import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport, GrpcOptions } from '@nestjs/microservices';
-import { PassportModule } from '@nestjs/passport'
+import { PassportModule } from '@nestjs/passport';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 
 import { AuthController } from './controllers/auth/auth.controller';
@@ -15,9 +15,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 const SERVICES: string[] = ['AUTH'];
 
-const AUTH_CONTROLLERS = [
-  AuthController
-]
+const AUTH_CONTROLLERS = [AuthController];
 
 @Module({
   imports: [
@@ -43,17 +41,15 @@ const AUTH_CONTROLLERS = [
       })),
     ),
     ConfigModule,
-    PassportModule
+    PassportModule,
   ],
-  controllers: [
-    ...AUTH_CONTROLLERS
-  ],
+  controllers: [...AUTH_CONTROLLERS],
   providers: [
     JwtStrategy,
     AuthJWTGuard,
     RolesGuard,
     CookieService,
-    GatewayMapService
+    GatewayMapService,
   ],
   exports: [],
 })

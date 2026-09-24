@@ -15,6 +15,7 @@ export interface MonolithBootstrapOptions<T> {
 
   compression?: boolean;
   rateLimit?: boolean;
+  cookie?: boolean;
 
   cors?: boolean;
 

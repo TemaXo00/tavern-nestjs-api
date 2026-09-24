@@ -1,6 +1,6 @@
-import { applyDecorators } from "@nestjs/common";
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
+import { applyDecorators } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export function Id(): PropertyDecorator {
   return applyDecorators(
@@ -11,6 +11,6 @@ export function Id(): PropertyDecorator {
     }),
     IsNotEmpty(),
     IsString(),
-    IsUUID(7)
-  )
+    IsUUID(7),
+  );
 }

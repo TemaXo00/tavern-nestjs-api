@@ -1,7 +1,7 @@
-import { Email } from "../../decorators/email.decorator.js";
-import { Password } from "../../decorators/password.decorator.js";
+import { Email } from '../../decorators/email.decorator.js';
+import { Password } from '../../decorators/password.decorator.js';
 
-import type { AuthLoginGateway } from "@org/types";
+import type { AuthLoginGateway } from '@org/types';
 
 export class LoginDto implements AuthLoginGateway {
   @Email()
@@ -9,5 +9,4 @@ export class LoginDto implements AuthLoginGateway {
 
   @Password()
   password: string;
-
 }

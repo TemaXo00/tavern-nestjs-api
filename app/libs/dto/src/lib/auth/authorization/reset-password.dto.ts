@@ -1,7 +1,7 @@
-import { Email } from "../../decorators/email.decorator.js";
-import { Password } from "../../decorators/password.decorator.js";
+import { Email } from '../../decorators/email.decorator.js';
+import { Password } from '../../decorators/password.decorator.js';
 
-import type { AuthResetPasswordGateway } from "@org/types";
+import type { AuthResetPasswordGateway } from '@org/types';
 
 export class ResetPasswordDto implements AuthResetPasswordGateway {
   @Email()
@@ -12,5 +12,4 @@ export class ResetPasswordDto implements AuthResetPasswordGateway {
 
   @Password()
   newPasswordConfirmation: string;
-
 }

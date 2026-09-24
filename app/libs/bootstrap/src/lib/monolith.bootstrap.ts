@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import compression = require('compression');
+import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 
 import { corsConfig } from './configurations/cors.config.js';
@@ -77,6 +78,10 @@ export async function monolithLaunch<T>(
     });
   }
 
+  if (options.cookie) {
+    app.use(cookieParser());
+  }
+
   if (options.swagger) {
     const swaggerDocument: OpenAPIObject = SwaggerModule.createDocument(
       app,
@@ -129,6 +134,9 @@ export async function monolithLaunch<T>(
 
     logger.log(
       `Compression status: ${options.compression ? 'enabled' : 'disabled'}`,
+    );
+    logger.log(
+      `Cookie parser status: ${options.cookie ? 'enabled' : 'disabled'}`,
     );
     logger.log(
       `Rate limit status: ${options.rateLimit ? 'enabled' : 'disabled'}`,

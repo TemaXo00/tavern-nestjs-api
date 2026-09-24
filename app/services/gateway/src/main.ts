@@ -11,6 +11,7 @@ void monolithLaunch<AppModule>({
   interceptors: true,
   rateLimit: true,
   filters: true,
+  cookie: true,
   cors: true,
   swagger: true,
   compression: true,

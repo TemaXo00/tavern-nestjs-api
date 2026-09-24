@@ -83,7 +83,8 @@ export interface UserServiceContract {
   ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput>;
 }
 
-export type AuthServiceObservableContract = ToObservable<AuthServiceContract>
-export type SessionServiceObservableContract = ToObservable<SessionServiceContract>
-export type TokenServiceObservableContract = ToObservable<TokenServiceContract>
-export type UserServiceObservableContract = ToObservable<UserServiceContract>
+export type AuthServiceObservableContract = ToObservable<AuthServiceContract>;
+export type SessionServiceObservableContract =
+  ToObservable<SessionServiceContract>;
+export type TokenServiceObservableContract = ToObservable<TokenServiceContract>;
+export type UserServiceObservableContract = ToObservable<UserServiceContract>;

@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 
 export type ToObservable<T> = {
   [K in keyof T]: T[K] extends (...args: infer A) => Promise<infer R>
