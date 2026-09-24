@@ -1,0 +1,48 @@
+import { Body, Get, Inject, OnModuleInit, Post, Res } from "@nestjs/common";
+import { LoginDto, RegisterDto } from '@org/dto'
+import { firstValueFrom } from "rxjs";
+
+
+import { HTTPController } from "../../decorators/controller.decorator";
+import { SessionInputParam } from "../../decorators/session-input.decorator";
+import { ValidateInputParam } from "../../decorators/validate-input.decorator";
+import { Validate } from "../../decorators/validate.decorator";
+import { CookieService } from "../../services/cookie.service";
+
+import type { ClientGrpc } from "@nestjs/microservices";
+import type { AuthOutput, AuthServiceGateway, SessionInput, UserEntity, ValidateInput } from "@org/types"
+import type { Response } from 'express'
+
+@HTTPController({ microserviceName: 'Auth', serviceName: 'Authorization' })
+export class AuthController implements OnModuleInit {
+  private authContract!: AuthServiceGateway
+
+  constructor(
+    @Inject('AUTH_CLIENT') private readonly client: ClientGrpc,
+    private readonly cookie: CookieService
+  ) { }
+
+  onModuleInit(): void {
+    this.authContract = this.client.getService<AuthServiceGateway>('AuthService')
+  }
+
+  @Post('register')
+  async register(@Body() dto: RegisterDto, @SessionInputParam() session: SessionInput, @Res({passthrough: true}) res: Response): Promise<Omit<AuthOutput, 'refreshToken'>> {
+    const response = await firstValueFrom(this.authContract.Register({ session, ...dto }))
+    this.cookie.setRefreshToken(res, response.refreshToken)
+    return { accessToken: response.accessToken }
+  }
+
+  @Post('login')
+  async login(@Body() dto: LoginDto, @SessionInputParam() session: SessionInput, @Res({passthrough: true}) res: Response): Promise<Omit<AuthOutput, 'refreshToken'>> {
+    const response = await firstValueFrom(this.authContract.Login({ session, ...dto }))
+    this.cookie.setRefreshToken(res, response.refreshToken)
+    return { accessToken: response.accessToken }
+  }
+
+  @Get('me')
+  @Validate()
+  async me(@ValidateInputParam() validation: ValidateInput): Promise<UserEntity> {
+    return firstValueFrom(this.authContract.GetMe(validation));
+  }
+}

@@ -1,29 +1,36 @@
-import { BadRequestException, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { AuthValidateService } from "@org/auth-core";
-import { ValidateInput } from "@org/types";
+import { ExecutionContext, Inject, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ValidateInput, AuthServiceContract } from '@org/types';
+
+import type { ClientGrpc } from '@nestjs/microservices';
 
 @Injectable()
-export class AuthJWTGuard extends AuthGuard('jwt') {
-  constructor(private readonly validate: AuthValidateService) {
-    super()
+export class AuthJWTGuard extends AuthGuard('jwt') implements OnModuleInit {
+  private authService!: AuthServiceContract;
+
+  constructor(@Inject('AUTH_CLIENT') private readonly client: ClientGrpc) {
+    super();
+  }
+
+  onModuleInit(): void {
+    this.authService = this.client.getService('AuthService');
   }
 
   override async canActivate(context: ExecutionContext): Promise<boolean> {
-    await super.canActivate(context)
+    await super.canActivate(context);
 
-    const request = context.switchToHttp().getRequest()
-    const authHeader = request.headers.authorization
+    const request = context.switchToHttp().getRequest();
+    const authHeader = request.headers.authorization;
 
     if (typeof authHeader !== 'string') {
-      throw new BadRequestException('Invalid type of auth header')
-    }
-
-    if (!authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing access token');
     }
 
-    const accessToken = authHeader.replace('Bearer ', '')
+    if (!authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Invalid authorization format');
+    }
+
+    const accessToken = authHeader.replace('Bearer ', '');
 
     const validation: ValidateInput = {
       accessToken,
@@ -35,7 +42,7 @@ export class AuthJWTGuard extends AuthGuard('jwt') {
       },
     };
 
-    const payload = await this.validate.Validate(validation);
+    const payload = await this.authService.Validate(validation);
     request.user = payload;
 
     return true;

@@ -8,10 +8,7 @@ export class CookieService {
   private DEV_MODE: boolean
 
   constructor(private readonly config: ConfigService) {
-    this.REFRESH_TOKEN_TTL = this.config.get<number>(
-      'TAVERN_JWT_REFRESH_TOKEN_TTL',
-      30,
-    );
+    this.REFRESH_TOKEN_TTL = Number(this.config.get('TAVERN_JWT_REFRESH_TOKEN_TTL', 30));
     this.DEV_MODE = this.config.get<string>(`TAVERN_DEV_MODE`, 'false') === 'true';
   }
 
