@@ -16,7 +16,7 @@ import type {
 export class SessionController implements OnModuleInit {
   private sessionContract!: SessionServiceObservableContract;
 
-  constructor(@Inject('AUTH_PACKAGE') private readonly client: ClientGrpc) {}
+  constructor(@Inject('AUTH_CLIENT') private readonly client: ClientGrpc) {}
 
   onModuleInit(): void {
     this.sessionContract =
@@ -26,7 +26,7 @@ export class SessionController implements OnModuleInit {
   }
 
   @GETProtectedMethod({
-    path: 'my',
+    path: 'me',
     operationDesc: 'Get all sessions by current user',
   })
   async getMySessions(
