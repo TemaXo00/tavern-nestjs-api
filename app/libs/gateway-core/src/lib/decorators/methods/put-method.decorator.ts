@@ -1,9 +1,8 @@
-import { applyDecorators, Patch } from '@nestjs/common';
+import { applyDecorators, Put } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
-  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
@@ -12,50 +11,43 @@ import { Roles } from '@org/types';
 
 import { Validate } from '../validate.decorator';
 
-interface IPATCHProtectedMethodOptions {
+interface IPUTProtectedMethodOptions {
   path: string;
   operationDesc: string;
   okDesc?: string;
-  noContent?: boolean;
   badRequestDesc?: string;
   unauthorizedDesc?: string;
   forbiddenDesc?: string;
   roles?: Roles[];
 }
 
-type IPATCHMethodOptions = Omit<
-  IPATCHProtectedMethodOptions,
-  'unauthorizedDesc' | 'forbiddenDesc' | 'roles' | 'noContent'
+type IPUTMethodOptions = Omit<
+  IPUTProtectedMethodOptions,
+  'unauthorizedDesc' | 'forbiddenDesc' | 'roles'
 >;
 
-export const PATCHMethod = (options: IPATCHMethodOptions): MethodDecorator => {
+export const PUTMethod = (options: IPUTMethodOptions): MethodDecorator => {
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiOkResponse({
-      description: options.okDesc || 'PATCH Response',
+      description: options.okDesc || 'PUT Response',
     }),
     ApiBadRequestResponse({
       description: options.badRequestDesc || 'Bad Request',
     }),
-    Patch(options.path),
+    Put(options.path),
   );
 };
 
-export const PATCHProtectedMethod = (
-  options: IPATCHProtectedMethodOptions,
+export const PUTProtectedMethod = (
+  options: IPUTProtectedMethodOptions,
 ): MethodDecorator => {
-  const successDecorator = options.noContent
-    ? ApiNoContentResponse({
-        description: 'No Content',
-      })
-    : ApiOkResponse({
-        description: options.okDesc || 'PATCH Response',
-      });
-
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiBearerAuth(),
-    successDecorator,
+    ApiOkResponse({
+      description: options.okDesc || 'PUT Response',
+    }),
     ApiBadRequestResponse({
       description: options.badRequestDesc || 'Bad Request',
     }),
@@ -65,7 +57,7 @@ export const PATCHProtectedMethod = (
     ApiForbiddenResponse({
       description: options.forbiddenDesc || 'Forbidden',
     }),
-    Patch(options.path),
+    Put(options.path),
     Validate(...(options.roles || [])),
   );
 };

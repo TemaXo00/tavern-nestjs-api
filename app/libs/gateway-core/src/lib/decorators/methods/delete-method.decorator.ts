@@ -1,6 +1,5 @@
-import { applyDecorators, Patch } from '@nestjs/common';
+import { applyDecorators, Delete } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -12,60 +11,55 @@ import { Roles } from '@org/types';
 
 import { Validate } from '../validate.decorator';
 
-interface IPATCHProtectedMethodOptions {
+interface IDELETEProtectedMethodOptions {
   path: string;
   operationDesc: string;
   okDesc?: string;
   noContent?: boolean;
-  badRequestDesc?: string;
   unauthorizedDesc?: string;
   forbiddenDesc?: string;
   roles?: Roles[];
 }
 
-type IPATCHMethodOptions = Omit<
-  IPATCHProtectedMethodOptions,
+type IDELETEMethodOptions = Omit<
+  IDELETEProtectedMethodOptions,
   'unauthorizedDesc' | 'forbiddenDesc' | 'roles' | 'noContent'
 >;
 
-export const PATCHMethod = (options: IPATCHMethodOptions): MethodDecorator => {
+export const DELETEMethod = (
+  options: IDELETEMethodOptions,
+): MethodDecorator => {
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiOkResponse({
-      description: options.okDesc || 'PATCH Response',
+      description: options.okDesc || 'DELETE Response',
     }),
-    ApiBadRequestResponse({
-      description: options.badRequestDesc || 'Bad Request',
-    }),
-    Patch(options.path),
+    Delete(options.path),
   );
 };
 
-export const PATCHProtectedMethod = (
-  options: IPATCHProtectedMethodOptions,
+export const DELETEProtectedMethod = (
+  options: IDELETEProtectedMethodOptions,
 ): MethodDecorator => {
   const successDecorator = options.noContent
     ? ApiNoContentResponse({
         description: 'No Content',
       })
     : ApiOkResponse({
-        description: options.okDesc || 'PATCH Response',
+        description: options.okDesc || 'DELETE Response',
       });
 
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiBearerAuth(),
     successDecorator,
-    ApiBadRequestResponse({
-      description: options.badRequestDesc || 'Bad Request',
-    }),
     ApiUnauthorizedResponse({
       description: options.unauthorizedDesc || 'Unauthorized',
     }),
     ApiForbiddenResponse({
       description: options.forbiddenDesc || 'Forbidden',
     }),
-    Patch(options.path),
+    Delete(options.path),
     Validate(...(options.roles || [])),
   );
 };
