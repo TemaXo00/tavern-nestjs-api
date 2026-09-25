@@ -10,6 +10,7 @@ export * from './lib/auth/authorization/auth-gateway.data.js';
 export * from './lib/auth/session/session-input.data.js';
 export * from './lib/auth/session/session-output.data.js';
 export * from './lib/auth/session/session-messages.js';
+export * from './lib/auth/session/session-gateway.data.js';
 
 // TOKEN SERVICE
 

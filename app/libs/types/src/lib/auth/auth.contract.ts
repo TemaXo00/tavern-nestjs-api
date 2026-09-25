@@ -41,7 +41,7 @@ import {
   UnblockUserInput,
 } from './user/user-input.data.js';
 import { PaginatedUserOutput, UserOutput } from './user/user-output.data.js';
-import { ToObservable } from '../utils/grpc-to-observable.js';
+import { ToObservable } from '../utils/to-observable.js';
 
 export interface AuthServiceContract {
   Register(data: RegisterInput): Promise<AuthOutput>;
