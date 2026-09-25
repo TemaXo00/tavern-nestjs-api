@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 
 import { AuthController } from './controllers/auth/auth.controller';
+import { SessionController } from './controllers/auth/session.controller';
 import { AuthJWTGuard } from './guards/jwt.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { CookieService } from './services/cookie.service';
@@ -15,7 +16,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 const SERVICES: string[] = ['AUTH'];
 
-const AUTH_CONTROLLERS = [AuthController];
+const AUTH_CONTROLLERS = [AuthController, SessionController];
 
 @Module({
   imports: [
