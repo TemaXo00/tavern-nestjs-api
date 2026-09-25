@@ -11,7 +11,7 @@ import { Roles } from '@org/types';
 
 import { Validate } from '../validate.decorator';
 
-interface IPOSTMethodOptions {
+interface IPOSTProtectedMethodOptions {
   path: string;
   operationDesc: string;
   createdDesc?: string;
@@ -20,6 +20,11 @@ interface IPOSTMethodOptions {
   forbiddenDesc?: string;
   roles?: Roles[];
 }
+
+type IPOSTMethodOptions = Omit<
+  IPOSTProtectedMethodOptions,
+  'unauthorizedDesc' | 'forbiddenDesc' | 'roles'
+>;
 
 export const POSTMethod = (options: IPOSTMethodOptions): MethodDecorator => {
   return applyDecorators(
@@ -34,7 +39,9 @@ export const POSTMethod = (options: IPOSTMethodOptions): MethodDecorator => {
   );
 };
 
-export const POSTProtected = (options: IPOSTMethodOptions): MethodDecorator => {
+export const POSTProtected = (
+  options: IPOSTProtectedMethodOptions,
+): MethodDecorator => {
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiBearerAuth(),

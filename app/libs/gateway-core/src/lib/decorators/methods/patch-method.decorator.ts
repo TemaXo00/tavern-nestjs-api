@@ -1,5 +1,6 @@
-import { applyDecorators, Get } from '@nestjs/common';
+import { applyDecorators, Patch } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiOkResponse,
@@ -10,38 +11,45 @@ import { Roles } from '@org/types';
 
 import { Validate } from '../validate.decorator';
 
-interface IGETProtectedMethodOptions {
+interface IPATCHProtectedMethodOptions {
   path: string;
-  okDesc?: string;
   operationDesc: string;
+  okDesc?: string;
+  badRequestDesc?: string;
   unauthorizedDesc?: string;
   forbiddenDesc?: string;
   roles?: Roles[];
 }
 
-type IGETMethodOptions = Omit<
-  IGETProtectedMethodOptions,
+type IPATCHMethodOptions = Omit<
+  IPATCHProtectedMethodOptions,
   'unauthorizedDesc' | 'forbiddenDesc' | 'roles'
 >;
 
-export const GETMethod = (options: IGETMethodOptions): MethodDecorator => {
+export const PATCHMethod = (options: IPATCHMethodOptions): MethodDecorator => {
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiOkResponse({
-      description: options.okDesc || 'OK Response',
+      description: options.okDesc || 'PATCH Response',
     }),
-    Get(options.path),
+    ApiBadRequestResponse({
+      description: options.badRequestDesc || 'Bad Request',
+    }),
+    Patch(options.path),
   );
 };
 
-export const GETProtectedMethod = (
-  options: IGETProtectedMethodOptions,
+export const PATCHProtectedMethod = (
+  options: IPATCHProtectedMethodOptions,
 ): MethodDecorator => {
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiBearerAuth(),
     ApiOkResponse({
-      description: options.okDesc || 'OK Response',
+      description: options.okDesc || 'PATCH Response',
+    }),
+    ApiBadRequestResponse({
+      description: options.badRequestDesc || 'Bad Request',
     }),
     ApiUnauthorizedResponse({
       description: options.unauthorizedDesc || 'Unauthorized',
@@ -49,7 +57,7 @@ export const GETProtectedMethod = (
     ApiForbiddenResponse({
       description: options.forbiddenDesc || 'Forbidden',
     }),
-    Get(options.path),
+    Patch(options.path),
     Validate(...(options.roles || [])),
   );
 };
