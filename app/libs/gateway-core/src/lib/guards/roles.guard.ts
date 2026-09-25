@@ -1,7 +1,11 @@
-import { status } from '@grpc/grpc-js';
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RpcException } from '@nestjs/microservices';
 import { ROLE_TO_GRPC, Roles } from '@org/types';
 
 @Injectable()
@@ -22,19 +26,13 @@ export class RolesGuard implements CanActivate {
     const user = request.user;
 
     if (!user) {
-      throw new RpcException({
-        message: 'User not authenticated',
-        code: status.UNAUTHENTICATED,
-      });
+      throw new UnauthorizedException('Unauthorized');
     }
 
     const allowedGrpcRoles = allowedRoles.map((r) => ROLE_TO_GRPC[r]);
 
     if (!allowedGrpcRoles.includes(user.role)) {
-      throw new RpcException({
-        message: `Access denied. Required roles: ${allowedRoles.join(', ')}`,
-        code: status.PERMISSION_DENIED,
-      });
+      throw new ForbiddenException('Access denied');
     }
 
     return true;
