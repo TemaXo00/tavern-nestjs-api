@@ -1,7 +1,4 @@
-import type {
-  GetTokensInput,
-  TokenPaginationInput,
-} from './token-input.data.js';
+import type { TokenPaginationInput } from './token-input.data.js';
 import type {
   TokenOutput,
   TokenPaginationOutput,
@@ -12,11 +9,6 @@ import type { Replace } from '../../utils/replace.js';
 export type TokenPaginationInputGateway = Replace<
   TokenPaginationInput,
   { state?: TokenStates }
->;
-
-export type GetTokensGateway = Replace<
-  Omit<GetTokensInput, 'validation'>,
-  { pagination: TokenPaginationInputGateway }
 >;
 
 export type TokenGatewayOutput = Replace<TokenOutput, { state: TokenStates }>;
