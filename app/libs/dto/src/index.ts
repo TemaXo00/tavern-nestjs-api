@@ -5,3 +5,5 @@ export * from './lib/auth/authorization/register.dto.js';
 export * from './lib/auth/authorization/reset-password.dto.js';
 
 export * from './lib/auth/session/local-name.dto.js';
+
+export * from './lib/auth/token/token-pagination.dto.js';
