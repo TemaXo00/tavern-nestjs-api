@@ -6,17 +6,14 @@ import { ClientsModule, Transport, GrpcOptions } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 
-import { AuthController } from './controllers/auth/auth.controller';
-import { SessionController } from './controllers/auth/session.controller';
+import { AUTH_CONTROLLERS } from './controllers/auth/main';
 import { AuthJWTGuard } from './guards/jwt.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { CookieService } from './services/cookie.service';
-import { GatewayMapService } from './services/map.service';
+import { MAP_SERVICES } from './services/map/map';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 const SERVICES: string[] = ['AUTH'];
-
-const AUTH_CONTROLLERS = [AuthController, SessionController];
 
 @Module({
   imports: [
@@ -50,7 +47,7 @@ const AUTH_CONTROLLERS = [AuthController, SessionController];
     AuthJWTGuard,
     RolesGuard,
     CookieService,
-    GatewayMapService,
+    ...MAP_SERVICES,
   ],
   exports: [],
 })

@@ -13,7 +13,7 @@ import { POSTMethod } from '../../decorators/methods/post-method.decorator';
 import { SessionInputParam } from '../../decorators/session-input.decorator';
 import { ValidateInputParam } from '../../decorators/validate-input.decorator';
 import { CookieService } from '../../services/cookie.service';
-import { GatewayMapService } from '../../services/map.service';
+import { AuthGatewayMapService } from '../../services/map/auth-map.service';
 
 import type { ClientGrpc } from '@nestjs/microservices';
 import type {
@@ -32,7 +32,7 @@ export class AuthController implements OnModuleInit {
   constructor(
     @Inject('AUTH_CLIENT') private readonly client: ClientGrpc,
     private readonly cookie: CookieService,
-    private readonly map: GatewayMapService,
+    private readonly map: AuthGatewayMapService,
   ) {}
 
   onModuleInit(): void {
