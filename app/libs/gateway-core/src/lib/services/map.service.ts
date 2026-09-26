@@ -1,5 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { GRPC_TO_ROLE, UserEntity, UserEntityGateway } from '@org/types';
+import {
+  GRPC_TO_ROLE,
+  GRPC_TO_TOKEN_STATE,
+  TokenGatewayOutput,
+  TokenOutput,
+  UserEntity,
+  UserEntityGateway,
+} from '@org/types';
 
 @Injectable()
 export class GatewayMapService {
@@ -7,6 +14,13 @@ export class GatewayMapService {
     return {
       ...user,
       role: GRPC_TO_ROLE[user.role],
+    };
+  }
+
+  mapTokenResponse(token: TokenOutput): TokenGatewayOutput {
+    return {
+      ...token,
+      state: GRPC_TO_TOKEN_STATE[token.state],
     };
   }
 }
