@@ -105,6 +105,13 @@ export class AuthValidateUtil {
   async validateUserCanBePromoted(id: string): Promise<void> {
     const user = await this.validateUserExists(id);
 
+    if (user.role === 'ADMIN') {
+      throw new RpcException({
+        message: 'You cannot promote admin',
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+
     const now = new Date();
     const oneYear = new Date(user.createdAt);
     oneYear.setFullYear(oneYear.getFullYear() + 1);
