@@ -1,6 +1,7 @@
 import {
   BlockUserInput,
   ChangeEmailInput,
+  ChangePasswordInput,
   UserPaginationInput,
 } from './user-input.data.js';
 import {
@@ -17,7 +18,10 @@ export type UserPaginationGatewayInput = Replace<
 
 export type BlockUserGatewayInput = Omit<BlockUserInput, 'id' | 'validation'>;
 export type ChangeEmailGatewayInput = Omit<ChangeEmailInput, 'validation'>;
-export type ChangePasswordGatewayInput = Omit<ChangeEmailInput, 'validation'>;
+export type ChangePasswordGatewayInput = Omit<
+  ChangePasswordInput,
+  'validation'
+>;
 
 export type UserPaginationGatewayOutput = Replace<
   UserPaginationOutput,
