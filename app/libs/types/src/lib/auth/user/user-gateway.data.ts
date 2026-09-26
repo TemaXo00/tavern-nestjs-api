@@ -4,10 +4,7 @@ import {
   ChangePasswordInput,
   UserPaginationInput,
 } from './user-input.data.js';
-import {
-  PaginatedUserOutput,
-  UserPaginationOutput,
-} from './user-output.data.js';
+import { UserOutput, UserPaginationOutput } from './user-output.data.js';
 import { Roles } from '../../enums/auth.enum.js';
 import { Replace } from '../../utils/replace.js';
 
@@ -27,8 +24,9 @@ export type UserPaginationGatewayOutput = Replace<
   UserPaginationOutput,
   { role?: Roles }
 >;
+export type UserGatewayOutput = Replace<UserOutput, { role: Roles }>;
 
-export type PaginatedUserGatewayOutput = Replace<
-  PaginatedUserOutput,
-  { pagination: UserPaginationGatewayOutput }
->;
+export type PaginatedUserGatewayOutput = {
+  pagination: UserPaginationGatewayOutput;
+  users: UserGatewayOutput[];
+};
