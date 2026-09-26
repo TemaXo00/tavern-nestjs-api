@@ -6,7 +6,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ValidateInput, AuthServiceContract } from '@org/types';
+import { ValidateInput, AuthServiceObservableContract } from '@org/types';
+import { firstValueFrom } from 'rxjs';
 
 import { getSessionUtil } from '../utils/get-session.util';
 
@@ -14,7 +15,7 @@ import type { ClientGrpc } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthJWTGuard extends AuthGuard('jwt') implements OnModuleInit {
-  private authService!: AuthServiceContract;
+  private authService!: AuthServiceObservableContract;
 
   constructor(@Inject('AUTH_CLIENT') private readonly client: ClientGrpc) {
     super();
@@ -45,9 +46,8 @@ export class AuthJWTGuard extends AuthGuard('jwt') implements OnModuleInit {
       session: getSessionUtil(context),
     };
 
-    const payload = await this.authService.Validate(validation);
+    const payload = await firstValueFrom(this.authService.Validate(validation));
     request.user = payload;
-
     return true;
   }
 }
