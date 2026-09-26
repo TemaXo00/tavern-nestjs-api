@@ -2,7 +2,6 @@ import { applyDecorators, Delete } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
-  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
@@ -41,18 +40,12 @@ export const DELETEMethod = (
 export const DELETEProtectedMethod = (
   options: IDELETEProtectedMethodOptions,
 ): MethodDecorator => {
-  const successDecorator = options.noContent
-    ? ApiNoContentResponse({
-        description: 'No Content',
-      })
-    : ApiOkResponse({
-        description: options.okDesc || 'DELETE Response',
-      });
-
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiBearerAuth(),
-    successDecorator,
+    ApiOkResponse({
+      description: options.okDesc || 'DELETE Response',
+    }),
     ApiUnauthorizedResponse({
       description: options.unauthorizedDesc || 'Unauthorized',
     }),

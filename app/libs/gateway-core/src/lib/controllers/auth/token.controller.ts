@@ -10,7 +10,9 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { HTTPController } from '../../decorators/controller.decorator';
+import { DELETEProtectedMethod } from '../../decorators/methods/delete-method.decorator';
 import { GETProtectedMethod } from '../../decorators/methods/get-method.decorator';
+import { PATCHProtectedMethod } from '../../decorators/methods/patch-method.decorator';
 import { QUERYProtectedMethod } from '../../decorators/methods/query-method.decorator';
 import { ValidateInputParam } from '../../decorators/validate-input.decorator';
 import { AuthGatewayMapService } from '../../services/map/auth-map.service';
@@ -37,6 +39,7 @@ export class TokenController implements OnModuleInit {
   @QUERYProtectedMethod({
     path: '',
     operationDesc: 'Get all tokens with pagination',
+    roles: [Roles.ADMIN],
   })
   async getTokensWithPagination(
     @Body() pagination: TokenPaginationDto,
@@ -68,5 +71,48 @@ export class TokenController implements OnModuleInit {
       this.tokenContract.GetTokenById({ id, validation }),
     );
     return this.map.mapTokenResponse(response);
+  }
+
+  @PATCHProtectedMethod({
+    path: ':id/revoke',
+    operationDesc: 'Returns revoked token by ID. Only admin method',
+    roles: [Roles.ADMIN],
+  })
+  async revokeToken(
+    @ValidateInputParam() validation: ValidateInput,
+    @Param('id') id: string,
+  ): Promise<TokenGatewayOutput> {
+    const response = await firstValueFrom(
+      this.tokenContract.SetTokenRevoked({ id, validation }),
+    );
+    return this.map.mapTokenResponse(response);
+  }
+
+  @DELETEProtectedMethod({
+    path: ':id/remove',
+    operationDesc: 'Remove token by ID. Only admin method',
+    roles: [Roles.ADMIN],
+  })
+  async deleteTokensById(
+    @ValidateInputParam() validation: ValidateInput,
+    @Param('id') id: string,
+  ): Promise<TokenGatewayOutput> {
+    const response = await firstValueFrom(
+      this.tokenContract.DeleteTokenById({ id, validation }),
+    );
+    return this.map.mapTokenResponse(response);
+  }
+
+  @DELETEProtectedMethod({
+    path: 'inactive',
+    operationDesc: 'Remove all inactive tokens. Only admin method',
+    roles: [Roles.ADMIN],
+  })
+  async deleteAllTokens(
+    @ValidateInputParam() validation: ValidateInput,
+  ): Promise<void> {
+    await firstValueFrom(
+      this.tokenContract.DeleteAllNotActiveTokens({ validation }),
+    );
   }
 }

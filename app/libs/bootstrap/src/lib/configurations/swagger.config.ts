@@ -26,13 +26,14 @@ export const swaggerUIConfig: SwaggerCustomOptions = {
     ) => {
       const methodOrder: Record<string, number> = {
         get: 1,
-        post: 2,
-        put: 3,
-        patch: 4,
-        delete: 5,
-        head: 6,
-        options: 7,
-        trace: 8,
+        query: 2,
+        post: 3,
+        put: 4,
+        patch: 5,
+        delete: 6,
+        head: 7,
+        options: 8,
+        trace: 9,
       };
       const methodA = a.get('method').toLowerCase();
       const methodB = b.get('method').toLowerCase();

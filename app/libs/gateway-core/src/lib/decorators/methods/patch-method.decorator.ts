@@ -3,7 +3,6 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
-  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
@@ -44,18 +43,12 @@ export const PATCHMethod = (options: IPATCHMethodOptions): MethodDecorator => {
 export const PATCHProtectedMethod = (
   options: IPATCHProtectedMethodOptions,
 ): MethodDecorator => {
-  const successDecorator = options.noContent
-    ? ApiNoContentResponse({
-        description: 'No Content',
-      })
-    : ApiOkResponse({
-        description: options.okDesc || 'PATCH Response',
-      });
-
   return applyDecorators(
     ApiOperation({ description: options.operationDesc }),
     ApiBearerAuth(),
-    successDecorator,
+    ApiOkResponse({
+      description: options.okDesc || 'PATCH Response',
+    }),
     ApiBadRequestResponse({
       description: options.badRequestDesc || 'Bad Request',
     }),
