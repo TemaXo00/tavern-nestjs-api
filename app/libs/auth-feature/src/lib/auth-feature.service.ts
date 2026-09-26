@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { AuthValidateService } from '@org/auth-core';
 import {
-  AuthAuthorizeUtil,
-  AuthCacheUtil,
+  AuthCoreAuthorizeUtil,
+  AuthCoreCacheUtil,
+  AuthCoreDatabaseUtil,
+  AuthCoreJWTUtil,
+  AuthCoreValidateUtil,
+} from '@org/auth-core-utils';
+import {
   AuthDatabaseUtil,
-  AuthJWTUtil,
   AuthMessagesUtil,
   AuthPasswordUtil,
   AuthTokenUtil,
@@ -31,12 +35,15 @@ export class AuthFeatureService implements AuthServiceContract {
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly validationUtil: AuthValidateUtil,
     private readonly passwordUtil: AuthPasswordUtil,
-    private readonly authUtil: AuthAuthorizeUtil,
-    private readonly jwtUtil: AuthJWTUtil,
     private readonly messagesUtil: AuthMessagesUtil,
     private readonly tokenUtil: AuthTokenUtil,
-    private readonly cacheUtil: AuthCacheUtil,
     private readonly validation: AuthValidateService,
+
+    private readonly authUtil: AuthCoreAuthorizeUtil,
+    private readonly jwtUtil: AuthCoreJWTUtil,
+    private readonly cacheUtil: AuthCoreCacheUtil,
+    private readonly validateCoreUtil: AuthCoreValidateUtil,
+    private readonly dbCoreUtil: AuthCoreDatabaseUtil,
   ) {}
 
   async Register(data: RegisterInput): Promise<AuthOutput> {
@@ -67,13 +74,13 @@ export class AuthFeatureService implements AuthServiceContract {
     const existingUser = await this.validationUtil.validateEmailFound(
       data.email,
     );
-    await this.validationUtil.validateUserBlock(
+    await this.validateCoreUtil.validateUserBlock(
       existingUser.id,
       existingUser.isBlocked,
       existingUser.blockedUntil,
       existingUser.blockReason,
     );
-    await this.validationUtil.validateUserActive(
+    await this.validateCoreUtil.validateUserActive(
       existingUser.id,
       existingUser.isActive,
     );
@@ -153,7 +160,7 @@ export class AuthFeatureService implements AuthServiceContract {
     await this.tokenUtil.validateTokenHash(data.token, token.tokenHash);
     await this.dbUtil.updateUserPassword(data.email, data.newPassword);
     await this.dbUtil.updateTokenState(token.id, 'USED');
-    await this.dbUtil.removeAllSessions(user.id);
+    await this.dbCoreUtil.removeAllSessions(user.id);
     await this.cacheUtil.delAllPayloads(user.id);
     this.messagesUtil.sendUserRestorePassword({
       email: data.email,
@@ -165,17 +172,17 @@ export class AuthFeatureService implements AuthServiceContract {
   async GetMe(data: ValidateInput): Promise<UserEntity> {
     const payload = this.jwtUtil.validateAccessToken(data.accessToken);
     const { user, session } =
-      await this.validationUtil.validateUserWithSessionExists(
+      await this.validateCoreUtil.validateUserWithSessionExists(
         payload.id,
         payload.sessionId,
       );
-    await this.validationUtil.validateUserBlock(
+    await this.validateCoreUtil.validateUserBlock(
       user.id,
       user.isBlocked,
       user.blockedUntil,
       user.blockReason,
     );
-    await this.validationUtil.validateUserActive(user.id, user.isActive);
+    await this.validateCoreUtil.validateUserActive(user.id, user.isActive);
     const entity = {
       id: user.id,
       email: user.email,

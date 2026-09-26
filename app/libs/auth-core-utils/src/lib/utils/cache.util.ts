@@ -5,7 +5,7 @@ import { UserPayload } from '@org/types';
 import Redis from 'ioredis';
 
 @Injectable()
-export class AuthCacheUtil {
+export class AuthCoreCacheUtil {
   private accessTTL: number;
 
   constructor(

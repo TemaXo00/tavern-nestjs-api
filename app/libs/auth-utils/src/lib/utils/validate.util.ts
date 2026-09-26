@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Session, Token, User } from '@org/auth-database';
 import { StringValidationUtil } from '@org/shared-utils';
-import { Roles, SessionInput } from '@org/types';
+import { Roles } from '@org/types';
 
 import { AuthDatabaseUtil } from './database.util';
 
@@ -65,45 +65,15 @@ export class AuthValidateUtil {
     return user;
   }
 
-  async validateUserWithSessionExists(
-    id: string,
-    sessionId: string,
-  ): Promise<{ user: User; session: Session }> {
-    const user = await this.dbUtil.getUserWithSession(id, sessionId);
-
-    if (!user) {
-      throw new RpcException({
-        message: 'User not found',
-        code: status.NOT_FOUND,
-      });
-    }
-
-    return user;
-  }
-
-  async validateUserBlock(
-    id: string,
-    isBlocked: boolean,
-    blockedUntil: Date | null,
-    blockReason: string | null,
-  ): Promise<void> {
-    const date = new Date();
-
-    if (isBlocked && blockedUntil && blockReason) {
-      if (blockedUntil <= date) {
-        await this.dbUtil.removeAllSessions(id);
-        throw new RpcException({
-          message: `User blocked until: ${blockedUntil.toDateString()}. Block reason: ${blockReason}`,
-          code: status.UNAUTHENTICATED,
-        });
-      } else {
-        await this.dbUtil.unblockUser(id);
-      }
-    }
-  }
-
   async validateUserCanBePromoted(id: string): Promise<void> {
     const user = await this.validateUserExists(id);
+
+    if (user.role === 'ADMIN') {
+      throw new RpcException({
+        message: 'You cannot promote admin',
+        code: status.INVALID_ARGUMENT,
+      });
+    }
 
     const now = new Date();
     const oneYear = new Date(user.createdAt);
@@ -126,12 +96,18 @@ export class AuthValidateUtil {
     }
   }
 
-  async validateUserActive(userId: string, isActive: boolean): Promise<void> {
-    if (!isActive) {
-      await this.dbUtil.removeAllSessions(userId);
+  validateUserCanChangeStatus(payloadRole: Roles, userRole: Roles): void {
+    if (userRole === Roles.ADMIN) {
       throw new RpcException({
-        message: 'User inactive',
-        code: status.UNAUTHENTICATED,
+        message: 'You cannot change admin status',
+        code: status.PERMISSION_DENIED,
+      });
+    }
+
+    if (payloadRole === userRole) {
+      throw new RpcException({
+        message: 'Cannot change status of user with similar role',
+        code: status.PERMISSION_DENIED,
       });
     }
   }
@@ -158,22 +134,6 @@ export class AuthValidateUtil {
     }
 
     return session;
-  }
-
-  validateSessionsSimilar(
-    currSession: SessionInput,
-    newSession: SessionInput,
-  ): void {
-    if (
-      currSession.device !== newSession.device ||
-      currSession.os !== newSession.os ||
-      currSession.browser !== newSession.browser
-    ) {
-      throw new RpcException({
-        message: 'Invalid session',
-        code: status.UNAUTHENTICATED,
-      });
-    }
   }
 
   validateNotCurrentSession(

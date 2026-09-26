@@ -41,6 +41,7 @@ import {
   UnblockUserInput,
 } from './user/user-input.data.js';
 import { PaginatedUserOutput, UserOutput } from './user/user-output.data.js';
+import { ToObservable } from '../utils/to-observable.js';
 
 export interface AuthServiceContract {
   Register(data: RegisterInput): Promise<AuthOutput>;
@@ -81,3 +82,9 @@ export interface UserServiceContract {
   SetUserInactive(data: SetUserInactiveInput): Promise<Empty>;
   ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput>;
 }
+
+export type AuthServiceObservableContract = ToObservable<AuthServiceContract>;
+export type SessionServiceObservableContract =
+  ToObservable<SessionServiceContract>;
+export type TokenServiceObservableContract = ToObservable<TokenServiceContract>;
+export type UserServiceObservableContract = ToObservable<UserServiceContract>;

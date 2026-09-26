@@ -8,7 +8,7 @@ import { AuthOutput, UserPayload } from '@org/types';
 import * as argon2 from 'argon2';
 
 @Injectable()
-export class AuthJWTUtil {
+export class AuthCoreJWTUtil {
   private readonly accessTTL: number;
   private readonly refreshTTL: number;
 

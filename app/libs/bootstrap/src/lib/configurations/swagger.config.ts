@@ -10,6 +10,8 @@ import {
 export const swaggerConfig = new DocumentBuilder()
   .setTitle('API')
   .setContact(AUTHOR_NAME, AUTHOR_GITHUB, AUTHOR_MAIL)
+  .addBearerAuth()
+  .setOpenAPIVersion('3.2.0')
   .build();
 
 export const swaggerUIConfig: SwaggerCustomOptions = {
@@ -24,13 +26,14 @@ export const swaggerUIConfig: SwaggerCustomOptions = {
     ) => {
       const methodOrder: Record<string, number> = {
         get: 1,
-        post: 2,
-        put: 3,
-        patch: 4,
-        delete: 5,
-        head: 6,
-        options: 7,
-        trace: 8,
+        query: 2,
+        post: 3,
+        put: 4,
+        patch: 5,
+        delete: 6,
+        head: 7,
+        options: 8,
+        trace: 9,
       };
       const methodA = a.get('method').toLowerCase();
       const methodB = b.get('method').toLowerCase();
@@ -51,7 +54,7 @@ export const swaggerUIConfig: SwaggerCustomOptions = {
     showCommonExtensions: true,
     deepLinking: true,
     validatorUrl: null,
-    supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+    supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch', 'query'],
   },
   customSiteTitle: 'API',
   customCss: `

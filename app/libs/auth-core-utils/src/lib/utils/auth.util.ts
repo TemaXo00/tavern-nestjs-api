@@ -8,18 +8,18 @@ import {
 } from '@org/types';
 import { v7 as uuidv7 } from 'uuid';
 
-import { AuthCacheUtil } from './cache.util';
-import { AuthDatabaseUtil } from './database.util';
-import { AuthJWTUtil } from './jwt.util';
-import { AuthValidateUtil } from './validate.util';
+import { AuthCoreCacheUtil } from './cache.util';
+import { AuthCoreDatabaseUtil } from './database.util';
+import { AuthCoreJWTUtil } from './jwt.util';
+import { AuthCoreValidateUtil } from './validate.util';
 
 @Injectable()
-export class AuthAuthorizeUtil {
+export class AuthCoreAuthorizeUtil {
   constructor(
-    private readonly dbUtil: AuthDatabaseUtil,
-    private readonly jwtUtil: AuthJWTUtil,
-    private readonly validationUtil: AuthValidateUtil,
-    private readonly cacheUtil: AuthCacheUtil,
+    private readonly dbUtil: AuthCoreDatabaseUtil,
+    private readonly jwtUtil: AuthCoreJWTUtil,
+    private readonly validationUtil: AuthCoreValidateUtil,
+    private readonly cacheUtil: AuthCoreCacheUtil,
   ) {}
 
   async authorizeNew(user: User, session: SessionInput): Promise<AuthOutput> {

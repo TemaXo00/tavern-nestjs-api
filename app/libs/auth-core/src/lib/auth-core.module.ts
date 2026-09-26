@@ -1,12 +1,11 @@
-import { Global, Module } from '@nestjs/common';
-import { AuthUtilsModule } from '@org/auth-utils';
+import { Module } from '@nestjs/common';
+import { AuthCoreUtilsModule } from '@org/auth-core-utils';
 import { SharedUtilsModule } from '@org/shared-utils';
 
 import { AuthValidateService } from './auth-validate.service';
 
-@Global()
 @Module({
-  imports: [AuthUtilsModule, SharedUtilsModule],
+  imports: [SharedUtilsModule, AuthCoreUtilsModule],
   providers: [AuthValidateService],
   exports: [AuthValidateService],
 })
