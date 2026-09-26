@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  AllTokensGateway,
   GRPC_TO_ROLE,
   GRPC_TO_TOKEN_STATE,
   TokenGatewayOutput,
