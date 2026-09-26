@@ -24,6 +24,7 @@ export * from './lib/auth/token/token-gateway.data.js';
 export * from './lib/auth/user/user-input.data.js';
 export * from './lib/auth/user/user-output.data.js';
 export * from './lib/auth/user/user-messages.js';
+export * from './lib/auth/user/user-gateway.data.js';
 
 // CONTRACTS
 
