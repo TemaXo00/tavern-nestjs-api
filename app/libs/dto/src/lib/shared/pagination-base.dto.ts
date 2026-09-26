@@ -1,8 +1,8 @@
 import { PaginationBaseInput } from '@org/types';
 
-import { Limit } from '../decorators/limit.decorator.js';
-import { Page } from '../decorators/page.decorator.js';
-import { Search } from '../decorators/search.decorator.js';
+import { Limit } from '../decorators/pagination/limit.decorator.js';
+import { Page } from '../decorators/pagination/page.decorator.js';
+import { Search } from '../decorators/pagination/search.decorator.js';
 
 export class BasePaginationDto implements PaginationBaseInput {
   @Page()

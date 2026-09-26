@@ -1,4 +1,4 @@
-import { Email } from '../../decorators/email.decorator.js';
+import { Email } from '../../decorators/shared/email.decorator.js';
 
 import type { AuthForgotPasswordGateway } from '@org/types';
 

@@ -1,6 +1,6 @@
-import { TokenPaginationInputGateway, TokenStates } from '@org/types';
+import { type TokenPaginationInputGateway, TokenStates } from '@org/types';
 
-import { TokenState } from '../../decorators/token-state.decorator.js';
+import { TokenState } from '../../decorators/auth/token-state.decorator.js';
 import { BasePaginationDto } from '../../shared/pagination-base.dto.js';
 
 export class TokenPaginationDto

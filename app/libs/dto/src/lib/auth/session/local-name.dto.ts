@@ -1,6 +1,6 @@
-import { SessionLocalNameGateway } from '@org/types';
+import { LocalName } from '../../decorators/auth/local-name.decorator.js';
 
-import { LocalName } from '../../decorators/local-name.decorator.js';
+import type { SessionLocalNameGateway } from '@org/types';
 
 export class LocalNameDto implements SessionLocalNameGateway {
   @LocalName()
