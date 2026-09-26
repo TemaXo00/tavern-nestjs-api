@@ -1,0 +1,83 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  email        String  @unique
+  passwordHash String @map("password_hash") @db.Text
+
+  role         Roles     @default(USER)
+  isActive     Boolean   @default(true) @map("is_active")
+  isBlocked    Boolean   @default(false) @map("is_blocked")
+  blockedUntil DateTime? @map("blocked_until")
+  blockReason  String?   @map("block_reason")
+
+  sessions      Session[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+  @@index([blockedUntil])
+  @@map("users")
+}
+
+model Session {
+  id String @id @default(uuid(7))
+
+  refreshTokenHash String @map("refresh_token_hash") @db.Text
+
+  localName String? @map("local_name")
+  device    String
+  browser   String
+  os        String
+  ip        String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Token {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  email     String
+  tokenHash String     @unique @map("token_hash")
+  state     TokenState @default(ACTIVE)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+
+  @@index([email])
+  @@index([state])
+  @@index([expiresAt])
+  @@map("tokens")
+}
+
+enum Roles {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+enum TokenState {
+  ACTIVE
+  REVOKED
+  USED
+  EXPIRED
+}

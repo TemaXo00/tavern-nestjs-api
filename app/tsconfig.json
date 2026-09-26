@@ -11,6 +11,57 @@
     },
     {
       "path": "./libs/gateway-core"
+    },
+    {
+      "path": "./services/auth"
+    },
+    {
+      "path": "./libs/dto"
+    },
+    {
+      "path": "./libs/auth-feature"
+    },
+    {
+      "path": "./libs/auth-database"
+    },
+    {
+      "path": "./libs/rmq-config"
+    },
+    {
+      "path": "./services/log"
+    },
+    {
+      "path": "./services/profile"
+    },
+    {
+      "path": "./services/mail"
+    },
+    {
+      "path": "./libs/auth-utils"
+    },
+    {
+      "path": "./libs/session-feature"
+    },
+    {
+      "path": "./libs/token-feature"
+    },
+    {
+      "path": "./libs/shared-utils"
+    },
+    {
+      "path": "./libs/logs-core"
+    },
+    {
+      "path": "./libs/auth-core"
+    },
+    {
+      "path": "./libs/user-feature"
+    },
+    {
+      "path": "./libs/bootstrap"
+    },
+    {
+      "path": "./libs/auth-core-utils"
     }
   ],
   "compilerOptions": {}

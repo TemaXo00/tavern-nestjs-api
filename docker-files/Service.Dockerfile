@@ -14,6 +14,7 @@ COPY tsconfig*.json ./
 
 RUN npm ci
 RUN npm run nx:sync
+RUN npm run $SERVICE_NAME-db:generate
 RUN npx nx build $SERVICE_NAME
 
 FROM node:26.3-alpine AS deps

@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package token;
+
+enum TokenState {
+    ACTIVE = 0;
+    REVOKED = 1;
+    USED = 2;
+    EXPIRED = 3;
+}
+
+// Input Messages
+
+message ValidateInput {
+  string accessToken = 1;
+  SessionInput session = 2;
+}
+
+message SessionInput {
+    string os = 1;
+    string device = 2;
+    string browser = 3;
+    string ip = 4;
+}
+
+message PaginationInput {
+    optional int32 page = 1;
+    optional int32 limit = 2;
+    optional string search = 3;
+    optional TokenState state = 4;
+}
+
+message GetTokensInput {
+    ValidateInput validation = 1;
+    optional PaginationInput pagination = 2;
+}
+
+message TokenByIdInput {
+    ValidateInput validation = 1;
+    string id = 2;
+}
+
+message RevokeTokenInput {
+    string id = 1;
+    ValidateInput validation = 2;
+}
+
+message DeleteTokenInput {
+    string id = 1;
+    ValidateInput validation = 2;
+}
+
+message DeleteAllNotActiveTokensInput {
+    ValidateInput validation = 1;
+}
+
+// Output Messages
+
+message PaginationOutput {
+    int32 page = 1;
+    int32 limit = 2;
+    int32 total = 3;
+    int32 totalPages = 4;
+    bool hasNext = 5;
+    bool hasPrev = 6;
+    optional string search = 7;
+    optional TokenState state = 8;
+}
+
+message TokenOutput {
+    string id = 1;
+    string email = 2;
+    TokenState state = 3;
+    string createdAt = 4;
+    string expiresAt = 5;
+}
+
+message AllTokensOutput {
+    PaginationOutput pagination = 1;
+    repeated TokenOutput tokens = 2;
+}

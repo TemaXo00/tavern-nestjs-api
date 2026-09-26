@@ -1,0 +1,219 @@
+import { status } from '@grpc/grpc-js';
+import { Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { Session, Token, User } from '@org/auth-database';
+import { StringValidationUtil } from '@org/shared-utils';
+import { Roles } from '@org/types';
+
+import { AuthDatabaseUtil } from './database.util';
+
+@Injectable()
+export class AuthValidateUtil {
+  constructor(
+    private readonly dbUtil: AuthDatabaseUtil,
+    private readonly stringUtil: StringValidationUtil,
+  ) {}
+
+  // EMAIL Validation
+
+  async validateRegisterEmailExists(email: string): Promise<void> {
+    const isExists = await this.dbUtil.searchUserByEmail(email);
+
+    if (isExists) {
+      throw new RpcException({
+        message: 'User with this email already exists',
+        code: status.ALREADY_EXISTS,
+      });
+    }
+  }
+
+  async validateEmailFound(email: string): Promise<User> {
+    const isExists = await this.dbUtil.searchUserByEmail(email);
+
+    if (!isExists) {
+      throw new RpcException({
+        message: 'User not found',
+        code: status.NOT_FOUND,
+      });
+    }
+
+    return isExists;
+  }
+
+  async validateEmailNotExists(email: string): Promise<void> {
+    const exists = await this.dbUtil.searchUserByEmail(email);
+    if (exists) {
+      throw new RpcException({
+        message: 'Email already in use',
+        code: status.ALREADY_EXISTS,
+      });
+    }
+  }
+
+  // USER Validation
+
+  async validateUserExists(id: string): Promise<User> {
+    const user = await this.dbUtil.searchUserById(id);
+
+    if (!user) {
+      throw new RpcException({
+        message: 'User not found',
+        code: status.NOT_FOUND,
+      });
+    }
+
+    return user;
+  }
+
+  async validateUserCanBePromoted(id: string): Promise<void> {
+    const user = await this.validateUserExists(id);
+
+    if (user.role === 'ADMIN') {
+      throw new RpcException({
+        message: 'You cannot promote admin',
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+
+    const now = new Date();
+    const oneYear = new Date(user.createdAt);
+    oneYear.setFullYear(oneYear.getFullYear() + 1);
+
+    if (now <= oneYear) {
+      throw new RpcException({
+        message: 'User cannot be promoted',
+        code: status.ABORTED,
+      });
+    }
+  }
+
+  validateUserModerator(role: Roles): void {
+    if (role !== Roles.MODERATOR) {
+      throw new RpcException({
+        message: 'User not moderator',
+        code: status.CANCELLED,
+      });
+    }
+  }
+
+  validateUserCanChangeStatus(payloadRole: Roles, userRole: Roles): void {
+    if (userRole === Roles.ADMIN) {
+      throw new RpcException({
+        message: 'You cannot change admin status',
+        code: status.PERMISSION_DENIED,
+      });
+    }
+
+    if (payloadRole === userRole) {
+      throw new RpcException({
+        message: 'Cannot change status of user with similar role',
+        code: status.PERMISSION_DENIED,
+      });
+    }
+  }
+
+  validateUserNotBlocked(isBlocked: boolean): void {
+    if (!isBlocked) {
+      throw new RpcException({
+        message: 'User is not blocked',
+        code: status.FAILED_PRECONDITION,
+      });
+    }
+  }
+
+  // SESSION Validation
+
+  async validateSessionExists(sessionId: string): Promise<Session> {
+    const session = await this.dbUtil.getSessionById(sessionId);
+
+    if (!session) {
+      throw new RpcException({
+        message: 'Session not found',
+        code: status.UNAUTHENTICATED,
+      });
+    }
+
+    return session;
+  }
+
+  validateNotCurrentSession(
+    payloadSession: string,
+    neededSession: string,
+  ): void {
+    if (payloadSession === neededSession) {
+      throw new RpcException({
+        message:
+          "You can't delete your own session. If you need, you can logout",
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+  }
+
+  validateSessionOnCurrentUser(userId: string, idFromSession: string): void {
+    if (userId !== idFromSession) {
+      throw new RpcException({
+        message: "You can't delete this session",
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+  }
+
+  async validatePermissionToDeleteSession(sessionId: string): Promise<void> {
+    const userSession = await this.validateSessionExists(sessionId);
+    const deletePermited = new Date();
+    deletePermited.setDate(deletePermited.getDate() - 1);
+    if (userSession.createdAt > deletePermited) {
+      throw new RpcException({
+        message: "You can't delete sessions",
+        code: status.PERMISSION_DENIED,
+      });
+    }
+  }
+
+  // TOKEN Validation
+
+  async validateTokenExisting(email: string): Promise<boolean> {
+    return !!(await this.dbUtil.searchTokenByEmail(email));
+  }
+
+  async validateTokenFound(
+    value: string,
+    format: 'email' | 'id',
+  ): Promise<Token> {
+    const date = new Date();
+
+    let token: Token | null;
+
+    if (format === 'id') {
+      this.stringUtil.validateId(value);
+      token = await this.dbUtil.searchTokenById(value);
+    } else {
+      this.stringUtil.validateEmail(value);
+      token = await this.dbUtil.searchTokenByEmail(value);
+    }
+
+    if (!token) {
+      throw new RpcException({
+        message: 'Token not found',
+        code: status.NOT_FOUND,
+      });
+    }
+
+    if (token.state === 'USED') {
+      throw new RpcException({
+        message: 'Token already used',
+        code: status.ALREADY_EXISTS,
+      });
+    }
+
+    if (token.expiresAt <= date) {
+      await this.dbUtil.updateTokenState(token.id, 'EXPIRED');
+      throw new RpcException({
+        message: 'Token expired',
+        code: status.ALREADY_EXISTS,
+      });
+    }
+
+    return token;
+  }
+}
