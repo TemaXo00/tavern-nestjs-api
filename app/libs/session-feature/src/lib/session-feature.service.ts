@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthValidateService } from '@org/auth-core';
+import { AuthCoreCacheUtil } from '@org/auth-core-utils';
 import {
-  AuthCacheUtil,
   AuthDatabaseUtil,
   AuthMessagesUtil,
   AuthValidateUtil,
@@ -26,7 +26,7 @@ export class SessionFeatureService implements SessionServiceContract {
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly validateUtil: AuthValidateUtil,
     private readonly messagesUtil: AuthMessagesUtil,
-    private readonly cacheUtil: AuthCacheUtil,
+    private readonly cacheUtil: AuthCoreCacheUtil,
   ) {}
 
   async GetSessionsByUser(

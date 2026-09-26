@@ -59,6 +59,9 @@
     },
     {
       "path": "./libs/bootstrap"
+    },
+    {
+      "path": "./libs/auth-core-utils"
     }
   ],
   "compilerOptions": {}

@@ -29,12 +29,6 @@
     },
     {
       "path": "../../libs/auth-feature/tsconfig.lib.json"
-    },
-    {
-      "path": "../../libs/auth-database/tsconfig.lib.json"
-    },
-    {
-      "path": "../../libs/auth-core/tsconfig.lib.json"
     }
   ]
 }

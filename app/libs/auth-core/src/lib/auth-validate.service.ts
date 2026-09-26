@@ -1,16 +1,20 @@
 import { status } from '@grpc/grpc-js';
 import { Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { AuthAuthorizeUtil, AuthCacheUtil, AuthJWTUtil } from '@org/auth-utils';
+import {
+  AuthCoreAuthorizeUtil,
+  AuthCoreCacheUtil,
+  AuthCoreJWTUtil,
+} from '@org/auth-core-utils';
 import { StringValidationUtil } from '@org/shared-utils';
 import { ROLE_TO_GRPC, Roles, UserPayload, ValidateInput } from '@org/types';
 
 @Injectable()
 export class AuthValidateService {
   constructor(
-    private readonly jwtUtil: AuthJWTUtil,
-    private readonly cacheUtil: AuthCacheUtil,
-    private readonly authUtil: AuthAuthorizeUtil,
+    private readonly jwtUtil: AuthCoreJWTUtil,
+    private readonly cacheUtil: AuthCoreCacheUtil,
+    private readonly authUtil: AuthCoreAuthorizeUtil,
     private readonly stringUtil: StringValidationUtil,
   ) {}
 

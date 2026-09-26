@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AuthValidateService } from '@org/auth-core';
 import {
-  AuthCacheUtil,
+  AuthCoreCacheUtil,
+  AuthCoreDatabaseUtil,
+  AuthCoreValidateUtil,
+} from '@org/auth-core-utils';
+import {
   AuthDatabaseUtil,
   AuthMapUtil,
   AuthMessagesUtil,
@@ -33,10 +37,12 @@ export class UserFeatureService implements UserServiceContract {
     private readonly dbUtil: AuthDatabaseUtil,
     private readonly validateUtil: AuthValidateUtil,
     private readonly mapUtil: AuthMapUtil,
-    private readonly cacheUtil: AuthCacheUtil,
     private readonly passwordUtil: AuthPasswordUtil,
     private readonly messagesUtil: AuthMessagesUtil,
     private readonly validation: AuthValidateService,
+    private readonly cacheUtil: AuthCoreCacheUtil,
+    private readonly validateCoreUtil: AuthCoreValidateUtil,
+    private readonly dbCoreUtil: AuthCoreDatabaseUtil,
   ) {}
 
   async GetAllUsers(data: GetAllUsersInput): Promise<PaginatedUserOutput> {
@@ -74,7 +80,7 @@ export class UserFeatureService implements UserServiceContract {
       GRPC_TO_ROLE[payload.role],
       user.role as Roles,
     );
-    await this.validateUtil.validateUserBlock(
+    await this.validateCoreUtil.validateUserBlock(
       user.id,
       user.isBlocked,
       user.blockedUntil,
@@ -106,7 +112,7 @@ export class UserFeatureService implements UserServiceContract {
       user.role as Roles,
     );
     this.validateUtil.validateUserNotBlocked(user.isBlocked);
-    const unblockedUser = await this.dbUtil.unblockUser(user.id);
+    const unblockedUser = await this.dbCoreUtil.unblockUser(user.id);
     await this.cacheUtil.delAllPayloads(user.id);
     this.messagesUtil.sendAdminUnblockUser({
       adminId: payload.id,
@@ -180,7 +186,7 @@ export class UserFeatureService implements UserServiceContract {
       data.newPassword,
     );
     await this.dbUtil.updateUserPassword(user.email, hashedPassword);
-    await this.dbUtil.removeAllSessions(user.id);
+    await this.dbCoreUtil.removeAllSessions(user.id);
     await this.cacheUtil.delAllPayloads(user.id);
     this.messagesUtil.sendUserChangePassword({
       userId: payload.id,
@@ -192,7 +198,7 @@ export class UserFeatureService implements UserServiceContract {
   async SetUserInactive(data: SetUserInactiveInput): Promise<Empty> {
     const payload = await this.validation.Validate(data.validation);
     await this.dbUtil.setUserInactive(payload.id);
-    await this.dbUtil.removeAllSessions(payload.id);
+    await this.dbCoreUtil.removeAllSessions(payload.id);
     await this.cacheUtil.delAllPayloads(payload.id);
     this.messagesUtil.sendUserSetInactive({ userId: payload.id });
     return {};
