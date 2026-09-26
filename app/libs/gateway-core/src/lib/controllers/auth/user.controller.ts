@@ -9,6 +9,7 @@ import {
 } from '@org/types';
 import { firstValueFrom } from 'rxjs';
 
+import { HTTPController } from '../../decorators/controller.decorator';
 import { GETProtectedMethod } from '../../decorators/methods/get-method.decorator';
 import { PATCHProtectedMethod } from '../../decorators/methods/patch-method.decorator';
 import { QUERYProtectedMethod } from '../../decorators/methods/query-method.decorator';
@@ -17,6 +18,10 @@ import { AuthGatewayMapService } from '../../services/map/auth-map.service';
 
 import type { ClientGrpc } from '@nestjs/microservices';
 
+@HTTPController({
+  microserviceName: 'Auth',
+  serviceName: 'User',
+})
 export class UserController implements OnModuleInit {
   private userContract!: UserServiceObservableContract;
 
@@ -122,7 +127,7 @@ export class UserController implements OnModuleInit {
     operationDesc: 'Demote moderator to user',
     roles: [Roles.ADMIN],
   })
-  async demoteModeator(
+  async demoteModerator(
     @Param('id') id: string,
     @ValidateInputParam() validation: ValidateInput,
   ): Promise<UserGatewayOutput> {
