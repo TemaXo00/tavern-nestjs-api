@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  AllTokensGateway,
   GRPC_TO_ROLE,
   GRPC_TO_TOKEN_STATE,
   TokenGatewayOutput,
@@ -22,5 +23,14 @@ export class GatewayMapService {
       ...token,
       state: GRPC_TO_TOKEN_STATE[token.state],
     };
+  }
+
+  mapAllTokensResponse(tokens: TokenOutput[]): TokenGatewayOutput[] {
+    return tokens.map((token) => {
+      return {
+        ...token,
+        state: GRPC_TO_TOKEN_STATE[token.state],
+      };
+    });
   }
 }
