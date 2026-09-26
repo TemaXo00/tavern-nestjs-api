@@ -1,5 +1,10 @@
 import { Body, Inject, OnModuleInit, Param } from '@nestjs/common';
-import { BlockUserDto, UserPaginationDto } from '@org/dto';
+import {
+  BlockUserDto,
+  ChangeEmailDto,
+  ChangePasswordDto,
+  UserPaginationDto,
+} from '@org/dto';
 import {
   type PaginatedUserGatewayOutput,
   Roles,
@@ -72,6 +77,44 @@ export class UserController implements OnModuleInit {
   }
 
   @PATCHProtectedMethod({
+    path: 'me/email',
+    operationDesc: 'Change email',
+  })
+  async changeEmail(
+    @ValidateInputParam() validation: ValidateInput,
+    @Body() dto: ChangeEmailDto,
+  ): Promise<UserGatewayOutput> {
+    const response = await firstValueFrom(
+      this.userContract.ChangeEmail({ validation, ...dto }),
+    );
+    return this.map.mapUserResponse(response);
+  }
+
+  @PATCHProtectedMethod({
+    path: 'me/password',
+    operationDesc: 'Change password',
+  })
+  async changePassword(
+    @ValidateInputParam() validation: ValidateInput,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<UserGatewayOutput> {
+    const response = await firstValueFrom(
+      this.userContract.ChangePassword({ validation, ...dto }),
+    );
+    return this.map.mapUserResponse(response);
+  }
+
+  @PATCHProtectedMethod({
+    path: 'me/inactive',
+    operationDesc: 'Set user inactive',
+  })
+  async setInactive(
+    @ValidateInputParam() validation: ValidateInput,
+  ): Promise<void> {
+    await firstValueFrom(this.userContract.SetUserInactive({ validation }));
+  }
+
+  @PATCHProtectedMethod({
     path: ':id/block',
     operationDesc: 'Block user by ID. Need to setup blocked until and reason',
     roles: [Roles.ADMIN, Roles.MODERATOR],
@@ -85,8 +128,7 @@ export class UserController implements OnModuleInit {
       this.userContract.BlockUser({
         id,
         validation,
-        blockReason: dto.blockReason,
-        blockedUntil: dto.blockedUntil,
+        ...dto,
       }),
     );
     return this.map.mapUserResponse(response);
@@ -133,6 +175,21 @@ export class UserController implements OnModuleInit {
   ): Promise<UserGatewayOutput> {
     const response = await firstValueFrom(
       this.userContract.DemoteFromModerator({ id, validation }),
+    );
+    return this.map.mapUserResponse(response);
+  }
+
+  @PATCHProtectedMethod({
+    path: ':id/active',
+    operationDesc: 'Admin set user as active',
+    roles: [Roles.ADMIN],
+  })
+  async setActive(
+    @ValidateInputParam() validation: ValidateInput,
+    @Param('id') id: string,
+  ): Promise<UserGatewayOutput> {
+    const response = await firstValueFrom(
+      this.userContract.ChangeUserToActive({ validation, id }),
     );
     return this.map.mapUserResponse(response);
   }
