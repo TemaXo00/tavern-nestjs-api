@@ -90,7 +90,7 @@ export class AuthValidateUtil {
     const date = new Date();
 
     if (isBlocked && blockedUntil && blockReason) {
-      if (blockedUntil <= date) {
+      if (blockedUntil >= date) {
         await this.dbUtil.removeAllSessions(id);
         throw new RpcException({
           message: `User blocked until: ${blockedUntil.toDateString()}. Block reason: ${blockReason}`,
@@ -129,6 +129,22 @@ export class AuthValidateUtil {
       throw new RpcException({
         message: 'User not moderator',
         code: status.CANCELLED,
+      });
+    }
+  }
+
+  validateUserCanChangeStatus(payloadRole: Roles, userRole: Roles): void {
+    if (userRole === Roles.ADMIN) {
+      throw new RpcException({
+        message: 'You cannot change admin status',
+        code: status.PERMISSION_DENIED,
+      });
+    }
+
+    if (payloadRole === userRole) {
+      throw new RpcException({
+        message: 'Cannot change status of user with similar role',
+        code: status.PERMISSION_DENIED,
       });
     }
   }
