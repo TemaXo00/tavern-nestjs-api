@@ -139,7 +139,7 @@ export class AuthController implements OnModuleInit {
   async me(
     @ValidateInputParam() validation: ValidateInput,
   ): Promise<UserEntityGateway> {
-    return this.map.mapUser(
+    return this.map.mapUserEntity(
       await firstValueFrom(this.authContract.GetMe(validation)),
     );
   }
