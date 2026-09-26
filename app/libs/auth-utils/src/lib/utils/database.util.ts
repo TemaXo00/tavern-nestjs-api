@@ -8,7 +8,11 @@ import {
   User,
   UserWhereInput,
 } from '@org/auth-database';
-import { PaginationUtil, StringValidationUtil } from '@org/shared-utils';
+import {
+  DateMapUtil,
+  PaginationUtil,
+  StringValidationUtil,
+} from '@org/shared-utils';
 import {
   AllTokensOutput,
   GRPC_TO_ROLE,
@@ -27,6 +31,7 @@ export class AuthDatabaseUtil {
     private readonly db: AuthDatabaseService,
     private readonly paginationUtil: PaginationUtil,
     private readonly stringUtil: StringValidationUtil,
+    private readonly mapDateUtil: DateMapUtil,
   ) {}
 
   // GET Methods
@@ -208,6 +213,9 @@ export class AuthDatabaseUtil {
   ): Promise<User> {
     this.stringUtil.validateId(id);
     this.stringUtil.validateAnyString(blockReason, 'block reason');
+
+    const blockedUntilDate = this.mapDateUtil.mapDateAndValidate(blockedUntil);
+
     return await this.db.user.update({
       where: {
         id,
@@ -215,7 +223,7 @@ export class AuthDatabaseUtil {
       data: {
         isBlocked: true,
         blockReason,
-        blockedUntil,
+        blockedUntil: blockedUntilDate,
       },
     });
   }
