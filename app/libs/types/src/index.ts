@@ -17,6 +17,7 @@ export * from './lib/auth/session/session-gateway.data.js';
 export * from './lib/auth/token/token-input.data.js';
 export * from './lib/auth/token/token-output.data.js';
 export * from './lib/auth/token/token-messages.js';
+export * from './lib/auth/token/token-gateway.data.js';
 
 // USER SERVICE
 
