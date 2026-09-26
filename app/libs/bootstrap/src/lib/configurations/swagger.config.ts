@@ -11,6 +11,7 @@ export const swaggerConfig = new DocumentBuilder()
   .setTitle('API')
   .setContact(AUTHOR_NAME, AUTHOR_GITHUB, AUTHOR_MAIL)
   .addBearerAuth()
+  .setOpenAPIVersion('3.2.0')
   .build();
 
 export const swaggerUIConfig: SwaggerCustomOptions = {
@@ -52,7 +53,7 @@ export const swaggerUIConfig: SwaggerCustomOptions = {
     showCommonExtensions: true,
     deepLinking: true,
     validatorUrl: null,
-    supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+    supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch', 'query'],
   },
   customSiteTitle: 'API',
   customCss: `
