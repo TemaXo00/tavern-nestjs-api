@@ -7,6 +7,7 @@ export function BlockReason(): PropertyDecorator {
     ApiProperty({
       description: 'Block reason for blocking user',
       example: 'Does not follow rules',
+      type: 'string',
       minLength: 3,
       maxLength: 800,
     }),
