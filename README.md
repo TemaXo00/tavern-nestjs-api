@@ -10,17 +10,17 @@
 # Клонируем репозиторий
 git clone https://github.com/TemaXo00/tavern-nestjs-api.git
 
-# Создаем переменные окружения из примеров
-cp .env.example .env
-cp app/.env.example app/.env
+# Запускаем скрипт настройки
+bash scripts/setup.sh
 
-# Устанавливаем зависимости и запускаем приложение
-cd app
-npm i
-docker compose up --build -d && npm run all:dev
+# Запускаем Docker-инфраструктуру
+docker compose -f ../docker-compose.infra.yml up --build -d
+
+# Запускаем приложение
+npm run all:dev
 ```
 
-## Установка
+## Ручная установка
 
 1 Клонируем репозиторий
 
@@ -48,13 +48,13 @@ npm i
 4 Запускаем приложение
 
 ```bash
-docker compose up --build -d && npm run all:dev
+docker compose -f ../docker-compose.infra.yml up --build -d && npm run all:dev
 ```
 
 При необходимости тестирования gRPC/HTTP методов без Swagger - можно использовать Bruno. Для настройки переменных окружения следует сделать следующее:
 
 ```bash
-# Переходим в директорию конфигурации
+# Переходим в директорию конфигурации. Делается из корня проекта
 cd .bruno/
 # Клонируем пример и переиименовываем в environments
 cp environments-example environments
