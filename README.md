@@ -11,7 +11,7 @@
 git clone https://github.com/TemaXo00/tavern-nestjs-api.git
 
 # Запускаем скрипт настройки
-bash scripts/setup.sh
+bash scripts/dev-workspace.setup.sh
 
 # Запускаем Docker-инфраструктуру
 docker compose -f ../docker-compose.infra.yml up --build -d
@@ -38,20 +38,26 @@ nano .env
 nano app/.env
 ```
 
-3 Устанавливаем зависимости NPM
+3 Создаем образ tavern-migrator
+
+```bash
+docker build -f docker-files/Db-Migrator.Dockerfile -t tavern/migrator:latest .
+```
+
+4 Устанавливаем зависимости NPM
 
 ```bash
 cd app
 npm i
 ```
 
-4 Запускаем приложение
+5 Запускаем приложение
 
 ```bash
-docker compose -f ../docker-compose.infra.yml up --build -d && npm run all:dev
+docker compose -f docker-compose.infra.yml up --build -d && npm --prefix app run all:dev
 ```
 
-При необходимости тестирования gRPC/HTTP методов без Swagger - можно использовать Bruno. Для настройки переменных окружения следует сделать следующее:
+При необходимости тестирования gRPC методов - можно использовать Bruno. Для настройки переменных окружения следует сделать следующее:
 
 ```bash
 # Переходим в директорию конфигурации. Делается из корня проекта
@@ -59,6 +65,17 @@ cd .bruno/
 # Клонируем пример и переиименовываем в environments
 cp environments-example environments
 # При заходе в Bruno, как Workspace выбираем директорию .bruno в корне проекта
+```
+
+Для тестирования HTTP-методов - рекомендуется использовать Swagger и запущенные микросервисы. При порте 3000 у API Gateway, путь к Swagger следующий: localhost:3000/api/docs
+
+Также поддерживается возможность генерации OpenAPI-документаици в форматах JSON и YAML:
+
+```bash
+# Пример получения документации Swagger в формате JSON
+curl localhost:3000/api/docs/swagger.json
+# Пример получения документации Swagger в формате YAML
+curl localhost:3000/api/docs/swagger.yaml
 ```
 
 ## Техническая информация
@@ -74,7 +91,7 @@ cp environments-example environments
 
 Разработка приложения велась при помощи следующего программного обеспечения:
 
-- [NodeJS 26.8 и новее](https://nodejs.org/en)
+- [NodeJS 26.3 и новее](https://nodejs.org/en)
 - [Docker 29.7.2 и новее](https://www.docker.com/)
 - [Редактор кода Zed](https://zed.dev/)
 - [API клиент Bruno](https://www.usebruno.com/)
@@ -83,21 +100,40 @@ cp environments-example environments
 
 ```text
 .
-├── app                   # Директория приложения
-├── .bruno                # Конфигурация Bruno
-├── docker-compose.yml    # Конфигурация контейнеров
-├── docker-files          # Файлы сборки проекта
-├── .dockerignore         # Игнорируемые файлы Docker
-├── docs                  # Документация
-├── .env.example          # Пример файла .env
-├── .gitignore            # Игнорируемые файлы Git
-├── README.md             # Документация
-├── scripts               # Bash-скрипты
-└── .zed                  # Конфигурация Zed
+├── app/                        # Nx-монорепа с сервисами и libs
+│   ├── services/               # Микросервисы
+│   └── libs/                   # Общие библиотеки (@org/*)
+├── .bruno                      # Конфигурация Bruno
+├── docker-compose.infra.yml    # Конфигурация контейнеров
+├── docker-files                # Файлы сборки проекта
+├── .dockerignore               # Игнорируемые файлы Docker
+├── docs                        # Документация
+├── .env.example                # Пример файла .env
+├── .gitignore                  # Игнорируемые файлы Git
+├── README.md                   # Документация
+├── scripts                     # Bash-скрипты
+└── .zed                        # Конфигурация Zed
 ```
 
 ## Информация о сервисах
 
 Документация по каждому сервису приложения представлена в следующих файлах:
 
+- [API Gateway](docs/gateway.md)
 - [Сервис Авторизации](docs/auth.md)
+
+## Возможные ошибки
+
+### Скрипт dev-workspace.setup.sh не работает
+
+Возможно, необходимо дать ему права на запуск. В Linux/MacOS это делается следующим образом:
+
+```bash
+chmod +x scripts/dev-workspace.setup.sh
+```
+
+После этого скрипт будет отрабатывать корректно
+
+### Docker: Невозможно получить образ tavern/migrator:latest
+
+Возможно при использовании ручного метода установки проекта. Необходимо создать образ tavern/migrator:latest (пункт 3 раздела Ручная установка)
