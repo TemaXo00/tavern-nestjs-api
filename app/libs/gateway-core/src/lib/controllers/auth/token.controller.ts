@@ -4,7 +4,7 @@ import {
   Roles,
   type ValidateInput,
   type TokenServiceObservableContract,
-  type AllTokensGateway,
+  type AllTokensGatewayOutput,
   TokenGatewayOutput,
 } from '@org/types';
 import { firstValueFrom } from 'rxjs';
@@ -44,7 +44,7 @@ export class TokenController implements OnModuleInit {
   async getTokensWithPagination(
     @Body() pagination: TokenPaginationDto,
     @ValidateInputParam() validation: ValidateInput,
-  ): Promise<AllTokensGateway> {
+  ): Promise<AllTokensGatewayOutput> {
     const response = await firstValueFrom(
       this.tokenContract.GetTokensWithPagination({
         validation,

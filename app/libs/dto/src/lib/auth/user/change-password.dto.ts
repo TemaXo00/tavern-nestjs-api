@@ -1,8 +1,8 @@
-import { ChangePasswordGatewayInput } from '@org/types';
+import { ChangePasswordBaseInput } from '@org/types';
 
 import { Password } from '../../decorators/auth/password.decorator.js';
 
-export class ChangePasswordDto implements ChangePasswordGatewayInput {
+export class ChangePasswordDto implements ChangePasswordBaseInput {
   @Password()
   oldPassword: string;
   @Password()

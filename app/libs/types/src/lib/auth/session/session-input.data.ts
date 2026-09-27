@@ -1,24 +1,11 @@
-import { ValidateInput } from '../../shared/validation.type.js';
+import { Protected } from '../../utils/protected.js';
 
-export interface AllSessionsByUserInput {
-  userId: string;
-  validation: ValidateInput;
-}
-
-export interface AllMySessionsInput {
-  validation: ValidateInput;
-}
-
-export interface SessionLocalNameInput {
+export interface SessionLocalNameBaseInput {
   localName: string;
-  validation: ValidateInput;
 }
 
-export interface DeleteSessionByIdInput {
-  sessionId: string;
-  validation: ValidateInput;
-}
-
-export interface DeleteAllSessionsInput {
-  validation: ValidateInput;
-}
+export type AllSessionsByUserInput = Protected<{ userId: string }>;
+export type AllMySessionsInput = Protected<null>;
+export type SessionLocalNameInput = Protected<SessionLocalNameBaseInput>;
+export type DeleteSessionByIdInput = Protected<{ sessionId: string }>;
+export type DeleteAllSessionsInput = Protected<null>;

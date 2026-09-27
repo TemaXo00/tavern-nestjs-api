@@ -4,27 +4,23 @@ export * from './lib/auth/authorization/auth.entity.js';
 export * from './lib/auth/authorization/auth-input.data.js';
 export * from './lib/auth/authorization/auth-output.data.js';
 export * from './lib/auth/authorization/auth-messages.js';
-export * from './lib/auth/authorization/auth-gateway.data.js';
 
 // SESSION SERVICE
 export * from './lib/auth/session/session-input.data.js';
 export * from './lib/auth/session/session-output.data.js';
 export * from './lib/auth/session/session-messages.js';
-export * from './lib/auth/session/session-gateway.data.js';
 
 // TOKEN SERVICE
 
 export * from './lib/auth/token/token-input.data.js';
 export * from './lib/auth/token/token-output.data.js';
 export * from './lib/auth/token/token-messages.js';
-export * from './lib/auth/token/token-gateway.data.js';
 
 // USER SERVICE
 
 export * from './lib/auth/user/user-input.data.js';
 export * from './lib/auth/user/user-output.data.js';
 export * from './lib/auth/user/user-messages.js';
-export * from './lib/auth/user/user-gateway.data.js';
 
 // CONTRACTS
 

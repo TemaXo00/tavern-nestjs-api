@@ -1,31 +1,34 @@
-import { SessionInput } from '../../shared/validation.type.js';
+import { WithSession } from '../../utils/with-session.js';
 
-export interface RegisterInput {
+export interface RegisterBaseInput {
   email: string;
   password: string;
   passwordConfirmation: string;
-  session: SessionInput;
 }
 
-export interface LoginInput {
+export interface LoginBaseInput {
   email: string;
   password: string;
-  session: SessionInput;
 }
 
-export interface RefreshInput {
+export interface RefreshBaseInput {
   refreshToken: string;
-  session: SessionInput;
 }
+
+export interface ResetPasswordBaseInput {
+  email: string;
+  token: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
+}
+
+export type RegisterInput = WithSession<RegisterBaseInput>;
+export type LoginInput = WithSession<LoginBaseInput>;
+export type RefreshInput = WithSession<RefreshBaseInput>;
+export type ResetPasswordInput = WithSession<ResetPasswordBaseInput>;
 
 export interface ForgotPasswordInput {
   email: string;
 }
 
-export interface ResetPasswordInput {
-  email: string;
-  token: string;
-  newPassword: string;
-  newPasswordConfirmation: string;
-  session: SessionInput;
-}
+export type ResetPasswordGatewayInput = Omit<ResetPasswordBaseInput, 'token'>;

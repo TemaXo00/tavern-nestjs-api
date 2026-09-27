@@ -1,8 +1,8 @@
 import { Email } from '../../decorators/shared/email.decorator.js';
 
-import type { AuthForgotPasswordGateway } from '@org/types';
+import type { ForgotPasswordInput } from '@org/types';
 
-export class ForgotPasswordDto implements AuthForgotPasswordGateway {
+export class ForgotPasswordDto implements ForgotPasswordInput {
   @Email()
   email: string;
 }
