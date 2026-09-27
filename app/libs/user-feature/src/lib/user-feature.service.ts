@@ -96,6 +96,7 @@ export class UserFeatureService implements UserServiceContract {
       adminId: payload.id,
       userId: user.id,
       blockReason: data.blockReason,
+      blockedFrom: new Date(),
       blockedUntil: data.blockedUntil,
     });
     return this.mapUtil.mapUser(blockedUser);
@@ -167,6 +168,7 @@ export class UserFeatureService implements UserServiceContract {
     this.messagesUtil.sendUserChangeEmail({
       userId: payload.id,
       session: data.validation.session,
+      newEmail: data.newEmail,
     });
     return this.mapUtil.mapUser(updatedUser);
   }

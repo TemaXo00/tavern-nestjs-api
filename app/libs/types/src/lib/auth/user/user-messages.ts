@@ -19,6 +19,7 @@ export type UserByIdAdminCheckMessage = BaseAdminUserMessage;
 
 export interface AdminBlockUserMessage extends BaseAdminUserMessage {
   blockReason: string;
+  blockedFrom: Date;
   blockedUntil: Date;
 }
 
@@ -32,6 +33,7 @@ export type AdminPromoteUserMessage = BaseAdminUserMessage;
 export type AdminDemoteUserMessage = BaseAdminUserMessage;
 
 export interface UserChangeEmailMessage extends BaseUserMessage {
+  newEmail: string;
   session: SessionInput;
 }
 
