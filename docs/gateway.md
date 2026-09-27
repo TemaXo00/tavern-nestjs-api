@@ -50,6 +50,8 @@ async blockUser(...) { ... }
 - **TAVERN_GATEWAY_PORT** — порт HTTP (по умолчанию 3000)
 - **TAVERN_JWT_SECRET** — JWT-секрет
 - **AUTH_GRPC_URL** — URL auth-сервиса (например, `auth-service:5000` в Docker)
+- **TAVERN_REDIS_URL** - URL для Redis
+- **TAVERN_REDIS_PASSWORD** - пароль для Redis
 
 ## Переменные окружения для клиента
 
