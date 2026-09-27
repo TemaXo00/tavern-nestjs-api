@@ -1,9 +1,9 @@
 import { Password } from '../../decorators/auth/password.decorator.js';
 import { Email } from '../../decorators/shared/email.decorator.js';
 
-import type { AuthRegisterGateway } from '@org/types';
+import type { RegisterBaseInput } from '@org/types';
 
-export class RegisterDto implements AuthRegisterGateway {
+export class RegisterDto implements RegisterBaseInput {
   @Email()
   email: string;
 

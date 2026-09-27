@@ -7,9 +7,9 @@ import {
   TokenGatewayOutput,
   TokenOutput,
   TokenPaginationInput,
-  TokenPaginationInputGateway,
+  TokenGatewayPaginationInput,
   TokenPaginationOutput,
-  TokenPaginationOutputGateway,
+  TokenGatewayPaginationOutput,
   UserEntity,
   UserEntityGateway,
   UserGatewayOutput,
@@ -83,7 +83,7 @@ export class AuthGatewayMapService {
 
   mapTokenPaginationResponse(
     pagination: TokenPaginationOutput,
-  ): TokenPaginationOutputGateway {
+  ): TokenGatewayPaginationOutput {
     return {
       ...pagination,
       state: pagination.state
@@ -93,7 +93,7 @@ export class AuthGatewayMapService {
   }
 
   mapTokenPaginationRequest(
-    pagination: TokenPaginationInputGateway,
+    pagination: TokenGatewayPaginationInput,
   ): TokenPaginationInput {
     return {
       ...pagination,
