@@ -1,4 +1,4 @@
-name: AUTHORIZATION DATA
+name: TAVERN ENV
 variables:
   - name: USER_EMAIL
     value: user@gmail.com
@@ -26,4 +26,7 @@ variables:
     description: ""
   - name: AUTH_GRPC_URL
     value: localhost:5000
+    description: ""
+  - name: GATEWAY_URL
+    value: localhost:3000
     description: ""

@@ -1,0 +1,23 @@
+info:
+  name: Refresh
+  type: grpc
+  seq: 10
+
+grpc:
+  url: "{{AUTH_GRPC_URL}}"
+  method: /auth.AuthService/Refresh
+  methodType: unary
+  protoFilePath: ../../../app/proto/auth.proto
+  message:
+    - title: message 1
+      message: |-
+        {
+          "refreshToken": "{{USER_REFRESH_TOKEN}}",
+          "session": {
+            "device": "{{USER_DEVICE}}",
+            "ip": "{{USER_IP}}",
+            "os": "{{USER_OS}}",
+            "browser": "{{USER_BROWSER}}"
+          }
+        }
+  auth: inherit

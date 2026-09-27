@@ -1,0 +1,28 @@
+info:
+  name: BlockUser
+  type: grpc
+  seq: 2
+
+grpc:
+  url: "{{AUTH_GRPC_URL}}"
+  method: /auth.UserService/BlockUser
+  methodType: unary
+  protoFilePath: ../../../app/proto/auth.proto
+  message:
+    - title: message 1
+      message: |-
+        {
+          "id": "user-uuid",
+          "blockedUntil": "2027-01-01T00:00:00.000Z",
+          "blockReason": "Does not follow rules",
+          "validation": {
+            "accessToken": "{{USER_ACCESS_TOKEN}}",
+            "session": {
+              "device": "{{USER_DEVICE}}",
+              "ip": "{{USER_IP}}",
+              "os": "{{USER_OS}}",
+              "browser": "{{USER_BROWSER}}"
+            }
+          }
+        }
+  auth: inherit

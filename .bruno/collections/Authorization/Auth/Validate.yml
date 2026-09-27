@@ -1,20 +1,18 @@
 info:
-  name: Register
+  name: Validate
   type: grpc
-  seq: 1
+  seq: 17
 
 grpc:
   url: "{{AUTH_GRPC_URL}}"
-  method: /auth.AuthService/Register
+  method: /auth.AuthService/Validate
   methodType: unary
   protoFilePath: ../../../app/proto/auth.proto
   message:
     - title: message 1
       message: |-
         {
-          "email": "{{USER_EMAIL}}",
-          "password": "{{USER_PASSWORD}}",
-          "passwordConfirmation": "{{USER_PASSWORD}}",
+          "accessToken": "{{USER_ACCESS_TOKEN}}",
           "session": {
             "device": "{{USER_DEVICE}}",
             "ip": "{{USER_IP}}",

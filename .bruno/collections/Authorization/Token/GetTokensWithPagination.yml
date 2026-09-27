@@ -1,0 +1,29 @@
+info:
+  name: GetTokensWithPagination
+  type: grpc
+  seq: 2
+
+grpc:
+  url: "{{AUTH_GRPC_URL}}"
+  method: /auth.TokenService/GetTokensWithPagination
+  methodType: unary
+  protoFilePath: ../../../app/proto/auth.proto
+  message:
+    - title: message 1
+      message: |-
+        {
+          "validation": {
+            "accessToken": "{{USER_ACCESS_TOKEN}}",
+            "session": {
+              "device": "{{USER_DEVICE}}",
+              "ip": "{{USER_IP}}",
+              "os": "{{USER_OS}}",
+              "browser": "{{USER_BROWSER}}"
+            }
+          },
+          "pagination": {
+            "page": 1,
+            "limit": 10
+          }
+        }
+  auth: inherit
