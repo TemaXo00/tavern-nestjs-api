@@ -14,9 +14,10 @@ git clone https://github.com/TemaXo00/tavern-nestjs-api.git
 bash scripts/dev-workspace.setup.sh
 
 # Запускаем Docker-инфраструктуру
-docker compose -f ../docker-compose.infra.yml up --build -d
+docker compose -f docker-compose.infra.yml up --build -d
 
 # Запускаем приложение
+cd app
 npm run all:dev
 ```
 
@@ -54,7 +55,8 @@ npm i
 5 Запускаем приложение
 
 ```bash
-docker compose -f docker-compose.infra.yml up --build -d && npm --prefix app run all:dev
+# Из корня проекта
+docker compose -f docker-compose.infra.yml up --build -d && cd app && npm run all:dev
 ```
 
 При необходимости тестирования gRPC методов - можно использовать Bruno. Для настройки переменных окружения следует сделать следующее:

@@ -16,3 +16,4 @@ docker build -f docker-files/Db-Migrator.Dockerfile -t tavern/migrator:latest .
 cd app
 npm ci
 npm run nx:sync
+npm run auth-db:generate
