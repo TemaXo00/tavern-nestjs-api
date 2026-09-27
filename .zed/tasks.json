@@ -119,4 +119,34 @@
     "use_new_terminal": true,
     "cwd": "$ZED_WORKTREE_ROOT/app",
   },
+  {
+    "label": "PROFILE: Service DEV",
+    "command": "npx nx serve profile",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "PROFILE: Service Build",
+    "command": "npx nx build profile",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "PROFILE: DB studio",
+    "command": "npm run profile-db:studio",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "PROFILE: DB Apply Migrations",
+    "command": "npm run profile-db:migrate-deploy",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "PROFILE: DB Create Migration",
+    "command": "npm run profile-db:migrate-dev",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
 ]
