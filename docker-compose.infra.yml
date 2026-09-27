@@ -39,7 +39,7 @@ services:
       POSTGRES_USER: ${TAVERN_AUTH_DB_USER}
       POSTGRES_PASSWORD: ${TAVERN_AUTH_DB_PASSWORD}
     ports:
-      - "${TAVERN_DB_PORT}:5432"
+      - "${TAVERN_AUTH_DB_PORT}:5432"
     healthcheck:
       test:
         [
@@ -52,16 +52,41 @@ services:
     volumes:
       - auth_db_data:/var/lib/postrgesql
 
+  profile-db:
+    image: postgres:18.4-alpine
+    container_name: tavern-profile-db
+    environment:
+      POSTGRES_DB: ${TAVERN_PROFILE_DB_NAME}
+      POSTGRES_USER: ${TAVERN_PROFILE_DB_USER}
+      POSTGRES_PASSWORD: ${TAVERN_PROFILE_DB_PASSWORD}
+    ports:
+      - "${TAVERN_PROFILE_DB_PORT}:5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${TAVERN_PROFILE_DB_USER} -d ${TAVERN_PROFILE_DB_NAME}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - profile_db_data:/var/lib/postrgesql
+
   db_migrator:
     image: tavern/migrator:latest
     container_name: tavern-database-migrator
     environment:
       TAVERN_AUTH_DB_URL: ${TAVERN_AUTH_DB_URL}
+      TAVERN_PROFILE_DB_URL: ${TAVERN_PROFILE_DB_URL}
     depends_on:
       auth-db:
+        condition: service_healthy
+      profile-db:
         condition: service_healthy
     restart: "no"
 
 volumes:
   redis_data:
   auth_db_data:
+  profile_db_data:

@@ -14,7 +14,12 @@
     "auth-db:migrate-dev": "prisma migrate dev --config libs/auth-database/prisma.config.ts",
     "auth-db:migrate-deploy": "prisma migrate deploy --config libs/auth-database/prisma.config.ts",
     "auth-db:migrate-reset": "prisma migrate reset --config libs/auth-database/prisma.config.ts",
-    "auth-db:studio": "prisma studio --config libs/auth-database/prisma.config.ts"
+    "auth-db:studio": "prisma studio --config libs/auth-database/prisma.config.ts",
+    "profile-db:generate": "prisma generate --config libs/profile-database/prisma.config.ts",
+    "profile-db:migrate-dev": "prisma migrate dev --config libs/profile-database/prisma.config.ts",
+    "profile-db:migrate-deploy": "prisma migrate deploy --config libs/profile-database/prisma.config.ts",
+    "profile-db:migrate-reset": "prisma migrate reset --config libs/profile-database/prisma.config.ts",
+    "profile-db:studio": "prisma studio --config libs/profile-database/prisma.config.ts"
   },
   "private": true,
   "dependencies": {
