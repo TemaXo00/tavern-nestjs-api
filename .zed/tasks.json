@@ -1,79 +1,122 @@
 [
   {
-    "label": "DOCKER: Up containers",
-    "command": "docker compose up --build -d",
+    "label": "INFRASTRUCTURE: Up Containers",
+    "command": "docker compose -f docker-compose.infra.yml up --build -d",
     "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT",
+  },
+  {
+    "label": "BUILD: DB Migrator",
+    "command": "docker build -f docker-files/Db-Migrator.Dockerfile -t tavern/migrator:latest .",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT",
+  },
+  {
+    "label": "BUILD: API Gateway",
+    "command": "docker build -f docker-files/Gateway.Dockerfile -t tavern/gateway:latest ./app",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT",
+  },
+  {
+    "label": "BUILD: AUTH Microservice",
+    "command": "docker build -f docker-files/Auth.Dockerfile -t tavern/auth:latest ./app",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT",
   },
   {
     "label": "NPM: Install deps",
     "command": "npm ci",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "NX: Generate Nest lib",
     "command": "npx nx g @nx/nest:lib --buildable --linter eslint --unitTestRunner none",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "NX: Generate TypeScript lib",
     "command": "npx nx g @nx/js:lib --bundler tsc --linter eslint --unitTestRunner none --minimal",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "NX: Graph",
     "command": "npm run nx:graph",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "NX: Clean",
     "command": "npm run nx:clean",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
-  },
-  {
-    "label": "NX: Microservices DEV",
-    "command": "npm run all:dev",
-    "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "LINTER: Fix",
     "command": "npm run all:lint-fix",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "PRETTIER: Fix",
     "command": "npx prettier --check . --write",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "DEV: Start ALl Microservices",
+    "command": "npm run all:dev",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "DEV: Build All Microservices",
+    "command": "npm run all:build",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "GATEWAY: Service DEV",
+    "command": "npx nx serve gateway",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "GATEWAY: Service Build",
+    "command": "npx nx build gateway",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "AUTH: Service DEV",
     "command": "npx nx serve auth",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
+  {
+    "label": "AUTH: Service Build",
+    "command": "npx nx build auth",
+    "use_new_terminal": true,
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "AUTH: DB studio",
     "command": "npm run auth-db:studio",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "AUTH: DB Apply Migrations",
     "command": "npm run auth-db:migrate-deploy",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
+    "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
     "label": "AUTH: DB Create Migration",
     "command": "npm run auth-db:migrate-dev",
     "use_new_terminal": true,
-    "cwd": "$ZED_WORKTREE_ROOT/app"
-  }
+    "cwd": "$ZED_WORKTREE_ROOT/app",
+  },
 ]
