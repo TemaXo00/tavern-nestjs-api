@@ -66,7 +66,7 @@
     "cwd": "$ZED_WORKTREE_ROOT/app",
   },
   {
-    "label": "DEV: Start ALl Microservices",
+    "label": "DEV: Start All Microservices",
     "command": "npm run all:dev",
     "use_new_terminal": true,
     "cwd": "$ZED_WORKTREE_ROOT/app",
