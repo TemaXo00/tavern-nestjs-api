@@ -7,3 +7,87 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Profile {
+  id String @id @default(uuid(7))
+  userId String @unique @map("user_id")
+
+  nickname String @unique()
+  name String?
+  surname String?
+  email String
+
+  avatarId String? @map("avatar_id")
+
+  reputationScore Int @default(0) @map("reputation_score")
+  currentActivity ActivityType @default(ACTIVE)
+
+  activity_logs ProfileActivity[]
+  reputation_logs Reputation[]
+  socials ProfileSocial[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("profiles")
+}
+
+model Reputation {
+  id String @id @default(uuid(7))
+
+  profileId String @map("profile_id")
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  action Actions
+  message String
+  score Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([action])
+  @@index([profileId])
+  @@map("reputation")
+}
+
+model ProfileActivity {
+  id String @id @default(uuid(7))
+
+  profileId String @map("profile_id")
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  status ActivityType
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([status])
+  @@index([profileId])
+  @@map("profile_activities")
+}
+
+model ProfileSocial {
+  id String @id @default(uuid(7))
+
+  profileId String @map("profile_id")
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  socialName String @map("social_name") @db.VarChar(50)
+  socialUrl String @map("social_url")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([profileId])
+  @@map("profile_socials")
+}
+
+enum Actions {
+  EVENT
+  FRIENDSHIP
+  REPORT
+  BLOCK
+  EARLY_UNBLOCK
+}
+
+enum ActivityType {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
