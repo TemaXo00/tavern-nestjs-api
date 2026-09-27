@@ -1,30 +1,19 @@
+import { TokenStates } from '../../enums/auth.enum.js';
 import { PaginationBaseInput } from '../../shared/pagination.type.js';
-import { ValidateInput } from '../../shared/validation.type.js';
+import { Protected } from '../../utils/protected.js';
+import { Replace } from '../../utils/replace.js';
 
 export interface TokenPaginationInput extends PaginationBaseInput {
   state?: number;
 }
 
-export interface GetTokensInput {
-  validation: ValidateInput;
-  pagination: TokenPaginationInput;
-}
+export type GetTokensInput = Protected<{ pagination: TokenPaginationInput }>;
+export type TokenByIdInput = Protected<{ id: string }>;
+export type RevokeTokenInput = Protected<{ id: string }>;
+export type DeleteTokenInput = Protected<{ id: string }>;
+export type DeleteAllNotActiveTokensInput = Protected<null>;
 
-export interface TokenByIdInput {
-  validation: ValidateInput;
-  id: string;
-}
-
-export interface RevokeTokenInput {
-  id: string;
-  validation: ValidateInput;
-}
-
-export interface DeleteTokenInput {
-  id: string;
-  validation: ValidateInput;
-}
-
-export interface DeleteAllNotActiveTokensInput {
-  validation: ValidateInput;
-}
+export type TokenGatewayPaginationInput = Replace<
+  TokenPaginationInput,
+  { state?: TokenStates }
+>;

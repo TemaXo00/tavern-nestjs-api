@@ -1,5 +1,7 @@
+import { Roles } from '../../enums/auth.enum.js';
 import { PaginationBaseInput } from '../../shared/pagination.type.js';
-import { ValidateInput } from '../../shared/validation.type.js';
+import { Protected } from '../../utils/protected.js';
+import { Replace } from '../../utils/replace.js';
 
 export interface UserPaginationInput extends PaginationBaseInput {
   isBlocked?: boolean;
@@ -7,55 +9,35 @@ export interface UserPaginationInput extends PaginationBaseInput {
   role?: number;
 }
 
-export interface GetAllUsersInput {
-  validation: ValidateInput;
-  pagination: UserPaginationInput;
-}
-
-export interface GetUserByIdInput {
-  id: string;
-  validation: ValidateInput;
-}
-
-export interface BlockUserInput {
+export interface BlockUserBaseInput {
   id: string;
   blockedUntil: Date;
   blockReason: string;
-  validation: ValidateInput;
 }
 
-export interface UnblockUserInput {
-  id: string;
-  validation: ValidateInput;
-}
-
-export interface PromoteToModeratorInput {
-  id: string;
-  validation: ValidateInput;
-}
-
-export interface DemoteFromModeratorInput {
-  id: string;
-  validation: ValidateInput;
-}
-
-export interface ChangeEmailInput {
+export interface ChangeEmailBaseInput {
   newEmail: string;
-  validation: ValidateInput;
 }
 
-export interface ChangePasswordInput {
+export interface ChangePasswordBaseInput {
   oldPassword: string;
   newPassword: string;
   newPasswordConfirmation: string;
-  validation: ValidateInput;
 }
 
-export interface SetUserInactiveInput {
-  validation: ValidateInput;
-}
+export type GetAllUsersInput = Protected<{ pagination: UserPaginationInput }>;
+export type GetUserByIdInput = Protected<{ id: string }>;
+export type BlockUserInput = Protected<BlockUserBaseInput>;
+export type UnblockUserInput = Protected<{ id: string }>;
+export type PromoteToModeratorInput = Protected<{ id: string }>;
+export type DemoteFromModeratorInput = Protected<{ id: string }>;
+export type ChangeEmailInput = Protected<ChangeEmailBaseInput>;
+export type ChangePasswordInput = Protected<ChangePasswordBaseInput>;
+export type SetUserInactiveInput = Protected<null>;
+export type ChangeUserToActiveInput = Protected<{ id: string }>;
 
-export interface ChangeUserToActiveInput {
-  id: string;
-  validation: ValidateInput;
-}
+export type UserPaginationGatewayInput = Replace<
+  UserPaginationInput,
+  { role?: Roles }
+>;
+export type BlockUserGatewayInput = Omit<BlockUserBaseInput, 'id'>;

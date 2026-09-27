@@ -32,7 +32,7 @@ message PaginationInput {
 
 message GetTokensInput {
     ValidateInput validation = 1;
-    optional PaginationInput pagination = 2;
+    PaginationInput pagination = 2;
 }
 
 message TokenByIdInput {
