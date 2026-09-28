@@ -14,6 +14,9 @@
   "references": [
     {
       "path": "../../libs/bootstrap/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/profile-rmq-feature/tsconfig.lib.json"
     }
   ]
 }

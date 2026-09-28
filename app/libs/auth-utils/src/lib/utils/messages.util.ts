@@ -53,6 +53,7 @@ export class AuthMessagesUtil {
   }
 
   sendUserLoginMessage(data: AuthLoginMessage): void {
+    this.profile.emit(AUTHORIZATION_MESSAGES.REGISTER, data);
     this.mail.emit(AUTHORIZATION_MESSAGES.LOGIN, data);
     this.log.emit(AUTHORIZATION_MESSAGES.LOGIN, data);
   }
@@ -141,13 +142,11 @@ export class AuthMessagesUtil {
 
   sendAdminPromoteUser(data: AdminPromoteUserMessage): void {
     this.log.emit(USER_MESSAGES.PROMOTE, data);
-    this.profile.emit(USER_MESSAGES.PROMOTE, data);
     this.mail.emit(USER_MESSAGES.PROMOTE, data);
   }
 
   sendAdminDemoteUser(data: AdminDemoteUserMessage): void {
     this.log.emit(USER_MESSAGES.DEMOTE, data);
-    this.profile.emit(USER_MESSAGES.DEMOTE, data);
     this.mail.emit(USER_MESSAGES.DEMOTE, data);
   }
 
