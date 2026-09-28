@@ -16,6 +16,7 @@ import type {
   PromoteToModeratorInput,
   SetUserInactiveInput,
   UnblockUserInput,
+  UserDeleteInput,
   UserOutput,
   UserServiceContract,
 } from '@org/types';
@@ -74,5 +75,10 @@ export class UserFeatureController implements UserServiceContract {
   @GrpcMethod('UserService', 'ChangeUserToActive')
   async ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput> {
     return await this.service.ChangeUserToActive(data);
+  }
+
+  @GrpcMethod('UserService', 'DeleteUser')
+  async DeleteUser(data: UserDeleteInput): Promise<void> {
+    await this.service.DeleteUser(data);
   }
 }

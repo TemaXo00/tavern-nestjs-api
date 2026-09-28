@@ -12,3 +12,4 @@ export * from './lib/auth/user/block-user.dto.js';
 export * from './lib/auth/user/change-email.dto.js';
 export * from './lib/auth/user/change-password.dto.js';
 export * from './lib/auth/user/user-pagination.dto.js';
+export * from './lib/auth/user/delete-user.dto.js';

@@ -46,4 +46,5 @@ service UserService {
     rpc ChangePassword (user.ChangePasswordInput) returns (user.UserOutput);
     rpc SetUserInactive (user.SetUserInactiveInput) returns (shared.Empty);
     rpc ChangeUserToActive (user.ChangeUserToActiveInput) returns (user.UserOutput);
+    rpc DeleteUser (user.DeleteUserInput) returns (shared.Empty);
 }

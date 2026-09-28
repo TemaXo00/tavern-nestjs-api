@@ -43,3 +43,7 @@ export interface UserChangePasswordMessage extends BaseUserMessage {
 
 export type UserSetInactiveMessage = BaseUserMessage;
 export type AdminSetUserActiveMessage = BaseAdminUserMessage;
+
+export interface DeleteUserMessage extends BaseUserMessage {
+  email: string;
+}

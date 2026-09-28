@@ -1,3 +1,4 @@
+import { status } from '@grpc/grpc-js';
 import { Injectable } from '@nestjs/common';
 import { AuthValidateService } from '@org/auth-core';
 import {
@@ -15,6 +16,7 @@ import {
 import {
   GRPC_TO_ROLE,
   Roles,
+  UserDeleteInput,
   type BlockUserInput,
   type ChangeEmailInput,
   type ChangePasswordInput,
@@ -50,11 +52,12 @@ export class UserFeatureService implements UserServiceContract {
       Roles.ADMIN,
       Roles.MODERATOR,
     ]);
+    const response = await this.dbUtil.getPaginatedUsers(data.pagination);
     this.messagesUtil.sendAdminCheckUsers({
       adminId: payload.id,
       query: data.pagination,
     });
-    return await this.dbUtil.getPaginatedUsers(data.pagination);
+    return response;
   }
 
   async GetUserById(data: GetUserByIdInput): Promise<UserOutput> {
@@ -183,6 +186,8 @@ export class UserFeatureService implements UserServiceContract {
     await this.passwordUtil.validatePassword(
       user.passwordHash,
       data.oldPassword,
+      'Invalid password',
+      status.ABORTED,
     );
     const hashedPassword = await this.passwordUtil.hashPassword(
       data.newPassword,
@@ -218,5 +223,19 @@ export class UserFeatureService implements UserServiceContract {
       userId: user.id,
     });
     return this.mapUtil.mapUser(updatedUser);
+  }
+
+  async DeleteUser(data: UserDeleteInput): Promise<void> {
+    const payload = await this.validation.Validate(data.validation);
+    const user = await this.validateUtil.validateUserExists(payload.id);
+    await this.passwordUtil.validatePassword(
+      user.passwordHash,
+      data.password,
+      'Invalid password',
+      status.CANCELLED,
+    );
+    await this.cacheUtil.delAllPayloads(user.id);
+    await this.dbUtil.removeUser(user.id, user.email);
+    this.messagesUtil.sendUserDeleted({ userId: user.id, email: user.email });
   }
 }

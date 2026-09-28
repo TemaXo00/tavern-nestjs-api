@@ -15,6 +15,10 @@
     }
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/microservices": "^11.2.1",
+    "@org/types": "0.0.1",
+    "@org/profile-utils": "0.0.1"
   }
 }

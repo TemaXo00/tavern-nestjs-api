@@ -32,4 +32,5 @@ export enum USER_MESSAGES {
   PASSWORD = 'user.change.password',
   SET_INACTIVE = 'user.inactive',
   SET_ACTIVE = 'user.active',
+  DELETE = 'user.deleted',
 }

@@ -4,7 +4,5 @@ import { OrgGatewayCoreModule } from '@org/gateway-core';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), OrgGatewayCoreModule],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

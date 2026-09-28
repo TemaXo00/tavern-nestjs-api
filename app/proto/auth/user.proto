@@ -84,6 +84,11 @@ message ChangeUserToActiveInput {
     ValidateInput validation = 2;
 }
 
+message DeleteUserInput {
+    ValidateInput validation = 1;
+    string password = 2;
+}
+
 // Output Messages
 
 message UserOutput {

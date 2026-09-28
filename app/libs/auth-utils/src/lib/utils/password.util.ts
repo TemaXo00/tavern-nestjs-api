@@ -21,12 +21,14 @@ export class AuthPasswordUtil {
   async validatePassword(
     passwordHash: string | null,
     inputPassword: string,
+    errorMessage?: string,
+    errorStatus?: status,
   ): Promise<void> {
     this.stringUtil.validateAnyString(inputPassword, 'Password');
     if (!passwordHash) {
       throw new RpcException({
-        message: 'User not found',
-        code: status.NOT_FOUND,
+        message: errorMessage ?? 'User not found',
+        code: errorStatus ?? status.NOT_FOUND,
       });
     }
 

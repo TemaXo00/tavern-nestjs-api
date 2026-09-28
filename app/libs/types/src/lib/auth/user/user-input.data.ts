@@ -25,6 +25,10 @@ export interface ChangePasswordBaseInput {
   newPasswordConfirmation: string;
 }
 
+export interface BaseUserDeleteInput {
+  password: string;
+}
+
 export type GetAllUsersInput = Protected<{ pagination: UserPaginationInput }>;
 export type GetUserByIdInput = Protected<{ id: string }>;
 export type BlockUserInput = Protected<BlockUserBaseInput>;
@@ -35,6 +39,7 @@ export type ChangeEmailInput = Protected<ChangeEmailBaseInput>;
 export type ChangePasswordInput = Protected<ChangePasswordBaseInput>;
 export type SetUserInactiveInput = Protected<null>;
 export type ChangeUserToActiveInput = Protected<{ id: string }>;
+export type UserDeleteInput = Protected<BaseUserDeleteInput>;
 
 export type UserPaginationGatewayInput = Replace<
   UserPaginationInput,

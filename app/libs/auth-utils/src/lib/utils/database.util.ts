@@ -329,6 +329,14 @@ export class AuthDatabaseUtil {
     return tokens.count;
   }
 
+  async removeUser(id: string, email: string): Promise<void> {
+    await this.db.$transaction(async (tx) => {
+      await tx.user.deleteMany({ where: { id } });
+      await tx.session.deleteMany({ where: { userId: id } });
+      await tx.token.deleteMany({ where: { email } });
+    });
+  }
+
   // QUERY BUILDERS
 
   buildQueryForToken(query: TokenPaginationInput): TokenWhereInput {

@@ -3,6 +3,7 @@ import {
   BlockUserDto,
   ChangeEmailDto,
   ChangePasswordDto,
+  DeleteUserDto,
   UserPaginationDto,
 } from '@org/dto';
 import {
@@ -15,6 +16,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 
 import { HTTPController } from '../../decorators/controller.decorator';
+import { DELETEProtectedMethod } from '../../decorators/methods/delete-method.decorator';
 import { GETProtectedMethod } from '../../decorators/methods/get-method.decorator';
 import { PATCHProtectedMethod } from '../../decorators/methods/patch-method.decorator';
 import { QUERYProtectedMethod } from '../../decorators/methods/query-method.decorator';
@@ -192,5 +194,18 @@ export class UserController implements OnModuleInit {
       this.userContract.ChangeUserToActive({ validation, id }),
     );
     return this.map.mapUserResponse(response);
+  }
+
+  @DELETEProtectedMethod({
+    path: 'me/delete',
+    operationDesc: 'Delete current user with all relations',
+  })
+  async deleteUser(
+    @ValidateInputParam() validation: ValidateInput,
+    @Body() dto: DeleteUserDto,
+  ): Promise<void> {
+    await firstValueFrom(
+      this.userContract.DeleteUser({ validation, password: dto.password }),
+    );
   }
 }

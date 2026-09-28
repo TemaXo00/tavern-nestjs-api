@@ -39,6 +39,7 @@ import {
   PromoteToModeratorInput,
   SetUserInactiveInput,
   UnblockUserInput,
+  UserDeleteInput,
 } from './user/user-input.data.js';
 import { PaginatedUserOutput, UserOutput } from './user/user-output.data.js';
 import { ToObservable } from '../utils/to-observable.js';
@@ -81,6 +82,7 @@ export interface UserServiceContract {
   ChangePassword(data: ChangePasswordInput): Promise<UserOutput>;
   SetUserInactive(data: SetUserInactiveInput): Promise<Empty>;
   ChangeUserToActive(data: ChangeUserToActiveInput): Promise<UserOutput>;
+  DeleteUser(data: UserDeleteInput): Promise<void>;
 }
 
 export type AuthServiceObservableContract = ToObservable<AuthServiceContract>;

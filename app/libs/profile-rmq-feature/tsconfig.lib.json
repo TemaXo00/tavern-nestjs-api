@@ -19,6 +19,9 @@
   "references": [
     {
       "path": "../profile-utils/tsconfig.lib.json"
+    },
+    {
+      "path": "../types/tsconfig.lib.json"
     }
   ]
 }

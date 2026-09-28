@@ -21,6 +21,7 @@
     "@org/types": "0.0.1",
     "@org/auth-core": "0.0.1",
     "@org/auth-utils": "0.0.1",
-    "@org/auth-core-utils": "0.0.1"
+    "@org/auth-core-utils": "0.0.1",
+    "@grpc/grpc-js": "^1.14.4"
   }
 }

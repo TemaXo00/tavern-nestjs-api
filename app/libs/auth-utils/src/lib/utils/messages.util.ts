@@ -34,6 +34,7 @@ import {
   UsersCheckByAdminMessage,
   AdminBlockUserMessage,
   AdminBlockUserMail,
+  DeleteUserMessage,
 } from '@org/types';
 
 @Injectable()
@@ -171,5 +172,11 @@ export class AuthMessagesUtil {
     this.log.emit(USER_MESSAGES.SET_ACTIVE, data);
     this.profile.emit(USER_MESSAGES.SET_ACTIVE, data);
     this.mail.emit(USER_MESSAGES.SET_ACTIVE, data);
+  }
+
+  sendUserDeleted(data: DeleteUserMessage): void {
+    this.log.emit(USER_MESSAGES.DELETE, data);
+    this.profile.emit(USER_MESSAGES.DELETE, data);
+    this.mail.emit(USER_MESSAGES.DELETE, data);
   }
 }
