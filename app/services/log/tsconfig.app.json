@@ -14,9 +14,6 @@
   "references": [
     {
       "path": "../../libs/bootstrap/tsconfig.lib.json"
-    },
-    {
-      "path": "../../libs/logs-core/tsconfig.lib.json"
     }
   ]
 }

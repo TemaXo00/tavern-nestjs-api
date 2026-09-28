@@ -49,9 +49,6 @@
       "path": "./libs/shared-utils"
     },
     {
-      "path": "./libs/logs-core"
-    },
-    {
       "path": "./libs/auth-core"
     },
     {
