@@ -54,6 +54,7 @@ model ProfileActivity {
 
   profileId String @map("profile_id")
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  message String?
 
   status ActivityType
   createdAt DateTime @default(now()) @map("created_at")
