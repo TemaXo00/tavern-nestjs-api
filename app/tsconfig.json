@@ -65,6 +65,15 @@
     },
     {
       "path": "./libs/profile-database"
+    },
+    {
+      "path": "./profile-rmq-feature"
+    },
+    {
+      "path": "./libs/profile-rmq-feature"
+    },
+    {
+      "path": "./libs/profile-utils"
     }
   ],
   "compilerOptions": {}

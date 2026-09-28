@@ -92,7 +92,6 @@
     "webpack-dev-server": "^5.2.1"
   },
   "workspaces": [
-    "packages/*",
     "services/*",
     "libs/*"
   ]

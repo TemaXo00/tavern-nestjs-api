@@ -17,7 +17,5 @@ import { UserFeatureModule } from '@org/user-feature';
     TokenFeatureModule,
     UserFeatureModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
