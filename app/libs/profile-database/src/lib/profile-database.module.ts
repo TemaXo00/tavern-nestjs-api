@@ -7,4 +7,4 @@ import { ProfileDatabaseService } from './profile-database.service';
   providers: [ProfileDatabaseService],
   exports: [ProfileDatabaseService],
 })
-export class AuthDatabaseModule {}
+export class ProfileDatabaseModule {}
