@@ -5,13 +5,17 @@ import {
   type Profile,
   ProfileDatabaseService,
 } from '@org/profile-database';
+import { RmqLoggerUtil } from '@org/shared-utils';
 import { AdminBlockUserProfile, AuthRegisteredMessage } from '@org/types';
 
 import { SearchUserHelperType } from './helpers/types.helper';
 
 @Injectable()
 export class ProfileDatabaseUtil {
-  constructor(private readonly db: ProfileDatabaseService) {}
+  constructor(
+    private readonly db: ProfileDatabaseService,
+    private readonly logUtil: RmqLoggerUtil,
+  ) {}
 
   // GET Methods
 
@@ -51,6 +55,11 @@ export class ProfileDatabaseUtil {
       });
 
       if (existing) {
+        this.logUtil.logWarning(
+          ProfileDatabaseService.name,
+          'register',
+          'User already existing, but does not have activity log',
+        );
         if (existing.activity_logs.length === 0) {
           await createActivityLog(existing.id);
         }
@@ -84,6 +93,11 @@ export class ProfileDatabaseUtil {
         },
       });
       if (profiles.length === 0) {
+        this.logUtil.logError(
+          ProfileDatabaseService.name,
+          'block',
+          'Profile does not existing, or not updated',
+        );
         return;
       }
       const updatedProfile = profiles[0];
