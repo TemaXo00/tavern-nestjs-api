@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import {
+  Actions,
   ActivityType,
-  Profile,
+  type Profile,
   ProfileDatabaseService,
 } from '@org/profile-database';
-import { AuthRegisteredMessage } from '@org/types';
+import { AdminBlockUserProfile, AuthRegisteredMessage } from '@org/types';
+
+import { SearchUserHelperType } from './helpers/types.helper';
 
 @Injectable()
 export class ProfileDatabaseUtil {
@@ -13,7 +16,7 @@ export class ProfileDatabaseUtil {
   // GET Methods
 
   async getProfile(
-    type: 'by-id' | 'by-nickname',
+    type: SearchUserHelperType,
     input: string,
   ): Promise<Profile | null> {
     return this.db.profile.findUnique({
@@ -63,6 +66,43 @@ export class ProfileDatabaseUtil {
         },
       });
       await createActivityLog(profile.id);
+    });
+  }
+
+  // UPDATE Methods
+
+  async blockUser(
+    data: AdminBlockUserProfile,
+    reputationScore: number,
+  ): Promise<void> {
+    const penalty = -Math.abs(reputationScore);
+    await this.db.$transaction(async (tx) => {
+      const profiles = await tx.profile.updateManyAndReturn({
+        where: { userId: data.userId },
+        data: {
+          currentActivity: ActivityType.BLOCKED,
+          reputationScore: { increment: penalty },
+        },
+      });
+      if (profiles.length === 0) {
+        return;
+      }
+      const updatedProfile = profiles[0];
+      await tx.profileActivity.create({
+        data: {
+          profileId: updatedProfile.id,
+          status: ActivityType.BLOCKED,
+          message: `Blocked from ${data.blockedFrom.toISOString()} to ${data.blockedUntil.toISOString()}. Reason: ${data.blockReason}`,
+        },
+      });
+      await tx.reputation.create({
+        data: {
+          profileId: updatedProfile.id,
+          score: penalty,
+          message: `Blocked from ${data.blockedFrom.toISOString()} to ${data.blockedUntil.toISOString()}. Reason: ${data.blockReason}`,
+          action: Actions.BLOCK,
+        },
+      });
     });
   }
 }
