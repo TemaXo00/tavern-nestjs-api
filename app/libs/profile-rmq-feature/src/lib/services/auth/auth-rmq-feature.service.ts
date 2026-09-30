@@ -1,12 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { ProfileDatabaseUtil } from '@org/profile-utils';
-import { AuthRegisteredMessage } from '@org/types';
+import { RmqLoggerUtil } from '@org/shared-utils';
+import { AUTHORIZATION_MESSAGES, AuthRegisteredMessage } from '@org/types';
 
 @Injectable()
 export class AuthRmqFeatureService {
-  constructor(private readonly dbUtil: ProfileDatabaseUtil) {}
+  constructor(
+    private readonly dbUtil: ProfileDatabaseUtil,
+    private logUtil: RmqLoggerUtil,
+  ) {}
 
   async handleUserRegistered(payload: AuthRegisteredMessage): Promise<void> {
     await this.dbUtil.createProfile(payload);
+    this.logUtil.logSuccess(
+      AuthRmqFeatureService.name,
+      AUTHORIZATION_MESSAGES.REGISTER,
+      `userId: ${payload.id}`,
+    );
   }
 }
