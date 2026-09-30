@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ProfileDatabaseModule } from '@org/profile-database';
 import { SharedUtilsModule } from '@org/shared-utils';
 
@@ -12,6 +12,7 @@ const UTILS = [
   ProfileReputationUtil,
 ];
 
+@Global()
 @Module({
   imports: [ProfileDatabaseModule, SharedUtilsModule],
   providers: [...UTILS],

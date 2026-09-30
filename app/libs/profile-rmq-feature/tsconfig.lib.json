@@ -18,6 +18,12 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
+      "path": "../profile-database/tsconfig.lib.json"
+    },
+    {
+      "path": "../shared-utils/tsconfig.lib.json"
+    },
+    {
       "path": "../profile-utils/tsconfig.lib.json"
     },
     {
