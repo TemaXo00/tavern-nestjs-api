@@ -121,6 +121,29 @@ export class AuthValidateUtil {
     }
   }
 
+  validateBlockDate(blockedUntil: Date): void {
+    if (isNaN(blockedUntil.getTime())) {
+      throw new RpcException({
+        message: 'Invalid blockedUntil date',
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+    if (blockedUntil <= new Date()) {
+      throw new RpcException({
+        message: 'You cannot block user by previous date',
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+    const maxBlock = new Date();
+    maxBlock.setFullYear(maxBlock.getFullYear() + 10);
+    if (blockedUntil > maxBlock) {
+      throw new RpcException({
+        message: `blockedUntil too far in the future. Max block date: ${maxBlock.toISOString()}`,
+        code: status.INVALID_ARGUMENT,
+      });
+    }
+  }
+
   // SESSION Validation
 
   async validateSessionExists(sessionId: string): Promise<Session> {

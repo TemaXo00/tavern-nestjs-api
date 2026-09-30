@@ -62,7 +62,6 @@ export class AuthFeatureService implements AuthServiceContract {
       id: newUser.id,
       email: data.email,
       session: data.session,
-      createdAt: newUser.createdAt,
     });
     return {
       accessToken,

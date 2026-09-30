@@ -4,7 +4,6 @@ export interface AuthRegisteredMessage {
   id: string;
   email: string;
   session: SessionInput;
-  createdAt: Date;
 }
 
 export interface AuthLoginMessage {

@@ -54,7 +54,6 @@ export class AuthMessagesUtil {
   }
 
   sendUserLoginMessage(data: AuthLoginMessage): void {
-    this.profile.emit(AUTHORIZATION_MESSAGES.REGISTER, data);
     this.mail.emit(AUTHORIZATION_MESSAGES.LOGIN, data);
     this.log.emit(AUTHORIZATION_MESSAGES.LOGIN, data);
   }
