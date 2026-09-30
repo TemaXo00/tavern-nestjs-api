@@ -75,13 +75,12 @@ export class ProfileDatabaseUtil {
     data: AdminBlockUserProfile,
     reputationScore: number,
   ): Promise<void> {
-    const penalty = -Math.abs(reputationScore);
     await this.db.$transaction(async (tx) => {
       const profiles = await tx.profile.updateManyAndReturn({
         where: { userId: data.userId },
         data: {
           currentActivity: ActivityType.BLOCKED,
-          reputationScore: { increment: penalty },
+          reputationScore: { increment: reputationScore },
         },
       });
       if (profiles.length === 0) {
@@ -98,7 +97,7 @@ export class ProfileDatabaseUtil {
       await tx.reputation.create({
         data: {
           profileId: updatedProfile.id,
-          score: penalty,
+          score: reputationScore,
           message: `Blocked from ${data.blockedFrom.toISOString()} to ${data.blockedUntil.toISOString()}. Reason: ${data.blockReason}`,
           action: Actions.BLOCK,
         },
