@@ -6,15 +6,23 @@ import {
   ProfileDatabaseService,
 } from '@org/profile-database';
 import { RmqLoggerUtil } from '@org/shared-utils';
-import { AdminBlockUserProfile, AuthRegisteredMessage } from '@org/types';
+import {
+  AdminBlockUserProfile,
+  AdminSetUserActiveMessage,
+  AdminUnblockUserMessage,
+  AuthRegisteredMessage,
+  UserSetInactiveMessage,
+} from '@org/types';
 
 import { SearchUserHelperType } from './helpers/types.helper';
+import { ProfileUpdateStatusHelper } from './helpers/update-status.helpers';
 
 @Injectable()
 export class ProfileDatabaseUtil {
   constructor(
     private readonly db: ProfileDatabaseService,
     private readonly logUtil: RmqLoggerUtil,
+    private readonly updateStatusHelper: ProfileUpdateStatusHelper,
   ) {}
 
   // GET Methods
@@ -55,12 +63,12 @@ export class ProfileDatabaseUtil {
       });
 
       if (existing) {
-        this.logUtil.logWarning(
-          ProfileDatabaseService.name,
-          'register',
-          'User already existing, but does not have activity log',
-        );
         if (existing.activity_logs.length === 0) {
+          this.logUtil.logWarning(
+            'CreateProfile',
+            'Register',
+            'User exists but has no activity log, repairing',
+          );
           await createActivityLog(existing.id);
         }
         return;
@@ -84,38 +92,66 @@ export class ProfileDatabaseUtil {
     data: AdminBlockUserProfile,
     reputationScore: number,
   ): Promise<void> {
-    await this.db.$transaction(async (tx) => {
-      const profiles = await tx.profile.updateManyAndReturn({
-        where: { userId: data.userId },
-        data: {
-          currentActivity: ActivityType.BLOCKED,
-          reputationScore: { increment: reputationScore },
-        },
-      });
-      if (profiles.length === 0) {
-        this.logUtil.logError(
-          ProfileDatabaseService.name,
-          'block',
-          'Profile does not existing, or not updated',
-        );
-        return;
-      }
-      const updatedProfile = profiles[0];
-      await tx.profileActivity.create({
-        data: {
-          profileId: updatedProfile.id,
-          status: ActivityType.BLOCKED,
-          message: `Blocked from ${data.blockedFrom.toISOString()} to ${data.blockedUntil.toISOString()}. Reason: ${data.blockReason}`,
-        },
-      });
-      await tx.reputation.create({
-        data: {
-          profileId: updatedProfile.id,
-          score: reputationScore,
-          message: `Blocked from ${data.blockedFrom.toISOString()} to ${data.blockedUntil.toISOString()}. Reason: ${data.blockReason}`,
-          action: Actions.BLOCK,
-        },
-      });
+    await this.updateStatusHelper.manipulateBlock({
+      userId: data.userId,
+      searchActivity: ActivityType.ACTIVE,
+      updatingActivity: ActivityType.BLOCKED,
+      reputationScore,
+      action: Actions.BLOCK,
+      logMethod: 'Block',
+      message: `The user blocked from ${data.blockedFrom.toISOString()} to ${data.blockedUntil.toISOString()}. Reason: ${data.blockReason}`,
+    });
+  }
+
+  async unblockUser(
+    data: AdminUnblockUserMessage,
+    reputationScore: number,
+  ): Promise<void> {
+    await this.updateStatusHelper.manipulateBlock({
+      userId: data.userId,
+      searchActivity: ActivityType.BLOCKED,
+      updatingActivity: ActivityType.ACTIVE,
+      reputationScore,
+      action: Actions.EARLY_UNBLOCK,
+      logMethod: 'Early unblock',
+      message: `The user has been unblocked due to changed circumstances.`,
+    });
+  }
+
+  async activateUser(data: AdminSetUserActiveMessage): Promise<void> {
+    await this.updateStatusHelper.manipulateActivity({
+      userId: data.userId,
+      searchActivity: ActivityType.INACTIVE,
+      updatingActivity: ActivityType.ACTIVE,
+      logMethod: 'Activate user',
+      message: 'The user was activated by the service administrator.',
+    });
+  }
+
+  async deactivateUser(data: UserSetInactiveMessage): Promise<void> {
+    await this.updateStatusHelper.manipulateActivity({
+      userId: data.userId,
+      searchActivity: ActivityType.ACTIVE,
+      updatingActivity: ActivityType.INACTIVE,
+      logMethod: 'Deactivate user',
+      message: 'The user was deactivated at their own request',
+    });
+  }
+
+  async updateEmail(userId: string, newEmail: string): Promise<void> {
+    await this.db.profile.updateMany({
+      where: { userId },
+      data: { email: newEmail },
+    });
+  }
+
+  // DELETE Methods
+
+  async deleteProfile(userId: string): Promise<void> {
+    await this.db.profile.deleteMany({
+      where: {
+        userId,
+      },
     });
   }
 }

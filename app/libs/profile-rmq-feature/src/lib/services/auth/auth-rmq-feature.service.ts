@@ -13,7 +13,7 @@ export class AuthRmqFeatureService {
   async handleUserRegistered(payload: AuthRegisteredMessage): Promise<void> {
     await this.dbUtil.createProfile(payload);
     this.logUtil.logSuccess(
-      AuthRmqFeatureService.name,
+      'Create Profile',
       AUTHORIZATION_MESSAGES.REGISTER,
       `userId: ${payload.id}`,
     );

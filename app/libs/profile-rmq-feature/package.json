@@ -19,6 +19,8 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/microservices": "^11.2.1",
     "@org/types": "0.0.1",
-    "@org/profile-utils": "0.0.1"
+    "@org/profile-utils": "0.0.1",
+    "@org/shared-utils": "0.0.1",
+    "@org/profile-database": "0.0.1"
   }
 }
